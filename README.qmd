@@ -1,0 +1,387 @@
+---
+title: "README for `params.yml` Configuration File"
+author: "Cordeliers Artificial Intelligence and Bioinformatics"
+format: 
+  html:
+    toc: true
+editor: source
+---
+
+This `params.yml` file is used to configure the unsupervised RNA-seq analysis pipeline. It allows users to specify settings for clustering, filtering, normalization, and visualization of their RNA-seq dataset. Below, each parameter is explained in detail to help guide you in filling out or understanding this configuration.
+
+## Structure of `params.yml`
+
+The file is formatted in YAML, which makes it easy to read and edit. Below, we break down the purpose of each parameter.
+
+### Project Information
+
+#### `project`
+
+-   **Description**: A descriptive name for the project.
+-   **Example**: `Mouse STING KO`
+-   **Usage**: This will be used as the title of the analysis report to identify the project.
+
+#### `data_file`
+
+-   **Description**: Path to the RNA-seq data file in `.RDS` format.
+-   **Example**: `data/STING_KO/exp_data.RDS`
+-   **Usage**: This should point to the expression data file that you wish to analyze. The `.RDS` file contains your pre-processed gene expression matrix.
+
+#### `use_symbol`
+
+-   **Description**: Whether to convert gene identifiers to gene symbols.
+-   **Options**: `true` or `false`
+-   **Example**: `true`
+-   **Usage**: Set to `true` to rebase Ensembl IDs to gene symbols, which can make downstream analysis and interpretation easier for biological studies.
+
+#### `show_code`
+
+-   **Description**: Whether to display the code in the output report.
+-   **Options**: `true` or `false`
+-   **Example**: `false`
+-   **Usage**: Set this to `true` if you want to include R code in the final output report, which may help for reproducibility or educational purposes.
+
+### Species Information
+
+#### `species`
+
+-   **Description**: Specifies the species of the dataset.
+-   **Example**: `Mus musculus`
+-   **Usage**: This parameter helps select the appropriate gene sets and pathways for the analysis. Here, `Mus musculus` (mouse) is specified.
+
+### Plot Annotations
+
+#### `plot_annotations`
+
+-   **Description**: Metadata fields used to color-code plots.
+-   **Example**: `Genotype`
+-   **Usage**: Specify metadata that can be used to annotate or differentiate groups in visualizations, such as PCA or clustering plots.
+
+### Quality Control (QC)
+
+#### `qc`
+
+This section contains quality control thresholds to filter the dataset.
+
+-   **`min_nsamp`**: Minimum number of samples a gene must be expressed in to be retained.
+    -   **Example**: `2`
+    -   **Usage**: Genes expressed in fewer than this number of samples are removed to reduce noise.
+-   **`min_gene_counts`**: Minimum count for a gene to be retained.
+    -   **Example**: `1`
+    -   **Usage**: Genes with fewer counts than this threshold will be filtered out. This helps remove low-expression, noisy genes.
+
+### Clustering Configuration
+
+#### `exp_cluster`
+
+-   **`k`**: Number of clusters for unsupervised clustering of expression data.
+    -   **Example**: `2`
+    -   **Usage**: Defines how many groups the samples will be clustered into based on expression patterns.
+
+#### `metadata_clusters`
+
+-   **Description**: Controls clustering based on metadata scores, like pathway activity or microenvironment composition.
+-   **`pathway_scores`**: Defines the number of clusters (`k`) for clustering samples based on pathway activity scores.
+    -   **Example**: `k: 2`
+-   **`microenv_scores`**: Defines the number of clusters (`k`) for clustering based on microenvironment scores.
+    -   **Example**: `k: 3`
+
+### Pathway Collections
+
+#### `pathway_collections`
+
+-   **Description**: Defines which pathway collections to use for pathway activity scoring.
+-   **Example**: `CP:KEGG`
+-   **Usage**: Here, the `CP:KEGG` collection from MSigDB is used. You can choose different collections based on your research question.
+
+### Targeted Visualizations
+
+This section defines genes and pathways of interest for visualization.
+
+#### `heatmap_genes`
+
+-   **Description**: Genes or pathways to include in heatmaps.
+
+-   **Example**:
+
+    ``` yaml
+    heatmap_genes: [
+      [Exo1, Lig1, Mlh1, Mlh3, Msh2, Msh3, Msh6, Pcna,
+       Pms2, Pold1, Pold2, Pold3, Pold4, Rfc1, Rfc2, Rfc3,
+       Rfc4, Rfc5, Rpa1, Rpa2, Rpa3, Ssbp1],
+      KEGG_CITRATE_CYCLE_TCA_CYCLE
+    ]
+    ```
+
+-   **Usage**: Provide either a list of specific genes or pathways to be used for heatmap visualizations. This allows you to focus on specific areas of interest.
+
+#### `heatmap_pathways`
+
+-   **Description**: Pathways to include in heatmap visualizations.
+-   **Example**: `[KEGG_CITRATE_CYCLE_TCA_CYCLE, KEGG_MISMATCH_REPAIR]`
+-   **Usage**: Specify pathways to visualize their activity across samples.
+
+#### `boxplot_genes`
+
+-   **Description**: Genes to visualize using boxplots.
+-   **Example**: `[Msh2, Rpa3]`
+-   **Usage**: Define genes for which you want to generate boxplots to compare their expression across conditions.
+
+#### `boxplot_pathways`
+
+-   **Description**: Pathways to visualize using boxplots.
+-   **Example**: `[KEGG_OXIDATIVE_PHOSPHORYLATION, KEGG_MISMATCH_REPAIR]`
+-   **Usage**: Provide pathways to compare their activity across different experimental conditions using boxplots.
+
+#### `correlation_genes`
+
+-   **Description**: Pairs of genes to visualize for correlation analysis.
+-   **Example**: `[[Msh2, Rfc3], [Msh2, Rfc2]]`
+-   **Usage**: Specify pairs of genes to plot correlations between their expression values, helping to reveal co-regulation or interaction.
+
+#### `correlation_pathways`
+
+-   **Description**: Pairs of pathways to visualize for correlation analysis.
+-   **Example**: `[]` (Empty if none)
+-   **Usage**: Define pairs of pathways to examine correlations between their activity. Leave empty if not applicable.
+
+## Example `params.yml` File
+
+Below is an example configuration for `params.yml`:
+
+``` yaml
+project: Mouse STING KO
+data_file: data/STING_KO/exp_data.RDS
+use_symbol: true
+show_code: false
+species: Mus musculus
+plot_annotations: Genotype
+qc:
+  min_nsamp: 2
+  min_gene_counts: 1
+exp_cluster:
+  k: 2
+metadata_clusters:
+  pathway_scores:
+    k: 2
+  microenv_scores:
+    k: 3
+pathway_collections: CP:KEGG
+heatmap_genes: [
+  [Exo1, Lig1, Mlh1, Mlh3, Msh2, Msh3, Msh6, Pcna, Pms2, Pold1, Pold2, Pold3, Pold4, Rfc1, Rfc2, Rfc3, Rfc4, Rfc5, Rpa1, Rpa2, Rpa3, Ssbp1],
+  KEGG_CITRATE_CYCLE_TCA_CYCLE
+  ]
+heatmap_pathways: [KEGG_CITRATE_CYCLE_TCA_CYCLE, KEGG_MISMATCH_REPAIR]
+boxplot_genes: [Msh2, Rpa3]
+boxplot_pathways: [KEGG_OXIDATIVE_PHOSPHORYLATION, KEGG_MISMATCH_REPAIR]
+correlation_genes: [[Msh2, Rfc3], [Msh2, Rfc2]]
+correlation_pathways: []
+```
+
+## Editing Tips
+
+1.  **YAML Formatting**: YAML is indentation-sensitive, so make sure to use consistent spacing to avoid syntax errors.
+2.  **Commenting**: You can add comments using `#` to document specific settings or notes.
+3.  **Validation**: Double-check file paths, gene names, and pathway names to ensure they match the data to avoid errors during analysis.
+
+## Common Issues
+
+-   **Incorrect Paths**: Make sure the `data_file` path is correct so the program can locate the dataset.
+-   **Missing Values**: Parameters must be properly filled in; any missing required parameters can cause the analysis to fail.
+-   **Formatting Errors**: Incorrect indentation in YAML can lead to parsing issues—be mindful of spacing.
+
+Feel free to use this guide to understand and adjust the parameters for your specific RNA-seq analysis needs. If you have any questions or need further assistance, please reach out to your analysis team.
+
+---
+title: "README for `params.yml` Configuration File"
+author: "Cordeliers Artificial Intelligence and Bioinformatics"
+format: 
+  html:
+    toc: true
+editor: source
+---
+
+This `params.yml` file is used to configure the unsupervised RNA-seq analysis pipeline. It allows users to specify settings for clustering, filtering, normalization, and visualization of their RNA-seq dataset. Below, each parameter is explained in detail to help guide you in filling out or understanding this configuration.
+
+## Structure of `params.yml`
+
+The file is formatted in YAML, which makes it easy to read and edit. Below, we break down the purpose of each parameter.
+
+### Project Information
+
+#### `project`
+
+-   **Description**: A descriptive name for the project.
+-   **Example**: `Mouse STING KO`
+-   **Usage**: This will be used as the title of the analysis report to identify the project.
+
+#### `data_file`
+
+-   **Description**: Path to the RNA-seq data file in `.RDS` format.
+-   **Example**: `data/STING_KO/exp_data.RDS`
+-   **Usage**: This should point to the expression data file that you wish to analyze. The `.RDS` file contains your pre-processed gene expression matrix.
+
+#### `use_symbol`
+
+-   **Description**: Whether to convert gene identifiers to gene symbols.
+-   **Options**: `true` or `false`
+-   **Example**: `true`
+-   **Usage**: Set to `true` to rebase Ensembl IDs to gene symbols, which can make downstream analysis and interpretation easier for biological studies.
+
+#### `show_code`
+
+-   **Description**: Whether to display the code in the output report.
+-   **Options**: `true` or `false`
+-   **Example**: `false`
+-   **Usage**: Set this to `true` if you want to include R code in the final output report, which may help for reproducibility or educational purposes.
+
+### Species Information
+
+#### `species`
+
+-   **Description**: Specifies the species of the dataset.
+-   **Example**: `Mus musculus`
+-   **Usage**: This parameter helps select the appropriate gene sets and pathways for the analysis. Here, `Mus musculus` (mouse) is specified.
+
+### Plot Annotations
+
+#### `plot_annotations`
+
+-   **Description**: Metadata fields used to color-code plots.
+-   **Example**: `Genotype`
+-   **Usage**: Specify metadata that can be used to annotate or differentiate groups in visualizations, such as PCA or clustering plots.
+
+### Quality Control (QC)
+
+#### `qc`
+
+This section contains quality control thresholds to filter the dataset.
+
+-   **`min_nsamp`**: Minimum number of samples a gene must be expressed in to be retained.
+    -   **Example**: `2`
+    -   **Usage**: Genes expressed in fewer than this number of samples are removed to reduce noise.
+-   **`min_gene_counts`**: Minimum count for a gene to be retained.
+    -   **Example**: `1`
+    -   **Usage**: Genes with fewer counts than this threshold will be filtered out. This helps remove low-expression, noisy genes.
+
+### Clustering Configuration
+
+#### `exp_cluster`
+
+-   **`k`**: Number of clusters for unsupervised clustering of expression data.
+    -   **Example**: `2`
+    -   **Usage**: Defines how many groups the samples will be clustered into based on expression patterns.
+
+#### `metadata_clusters`
+
+-   **Description**: Controls clustering based on metadata scores, like pathway activity or microenvironment composition.
+-   **`pathway_scores`**: Defines the number of clusters (`k`) for clustering samples based on pathway activity scores.
+    -   **Example**: `k: 2`
+-   **`microenv_scores`**: Defines the number of clusters (`k`) for clustering based on microenvironment scores.
+    -   **Example**: `k: 3`
+
+### Pathway Collections
+
+#### `pathway_collections`
+
+-   **Description**: Defines which pathway collections to use for pathway activity scoring.
+-   **Example**: `CP:KEGG`
+-   **Usage**: Here, the `CP:KEGG` collection from MSigDB is used. You can choose different collections based on your research question.
+
+### Targeted Visualizations
+
+This section defines genes and pathways of interest for visualization.
+
+#### `heatmap_genes`
+
+-   **Description**: Genes or pathways to include in heatmaps.
+
+-   **Example**:
+
+    ``` yaml
+    heatmap_genes: [
+      [Exo1, Lig1, Mlh1, Mlh3, Msh2, Msh3, Msh6, Pcna,
+       Pms2, Pold1, Pold2, Pold3, Pold4, Rfc1, Rfc2, Rfc3,
+       Rfc4, Rfc5, Rpa1, Rpa2, Rpa3, Ssbp1],
+      KEGG_CITRATE_CYCLE_TCA_CYCLE
+    ]
+    ```
+
+-   **Usage**: Provide either a list of specific genes or pathways to be used for heatmap visualizations. This allows you to focus on specific areas of interest.
+
+#### `heatmap_pathways`
+
+-   **Description**: Pathways to include in heatmap visualizations.
+-   **Example**: `[KEGG_CITRATE_CYCLE_TCA_CYCLE, KEGG_MISMATCH_REPAIR]`
+-   **Usage**: Specify pathways to visualize their activity across samples.
+
+#### `boxplot_genes`
+
+-   **Description**: Genes to visualize using boxplots.
+-   **Example**: `[Msh2, Rpa3]`
+-   **Usage**: Define genes for which you want to generate boxplots to compare their expression across conditions.
+
+#### `boxplot_pathways`
+
+-   **Description**: Pathways to visualize using boxplots.
+-   **Example**: `[KEGG_OXIDATIVE_PHOSPHORYLATION, KEGG_MISMATCH_REPAIR]`
+-   **Usage**: Provide pathways to compare their activity across different experimental conditions using boxplots.
+
+#### `correlation_genes`
+
+-   **Description**: Pairs of genes to visualize for correlation analysis.
+-   **Example**: `[[Msh2, Rfc3], [Msh2, Rfc2]]`
+-   **Usage**: Specify pairs of genes to plot correlations between their expression values, helping to reveal co-regulation or interaction.
+
+#### `correlation_pathways`
+
+-   **Description**: Pairs of pathways to visualize for correlation analysis.
+-   **Example**: `[]` (Empty if none)
+-   **Usage**: Define pairs of pathways to examine correlations between their activity. Leave empty if not applicable.
+
+## Example `params.yml` File
+
+Below is an example configuration for `params.yml`:
+
+``` yaml
+project: Mouse STING KO
+data_file: data/STING_KO/exp_data.RDS
+use_symbol: true
+show_code: false
+species: Mus musculus
+plot_annotations: Genotype
+qc:
+  min_nsamp: 2
+  min_gene_counts: 1
+exp_cluster:
+  k: 2
+metadata_clusters:
+  pathway_scores:
+    k: 2
+  microenv_scores:
+    k: 3
+pathway_collections: CP:KEGG
+heatmap_genes: [
+  [Exo1, Lig1, Mlh1, Mlh3, Msh2, Msh3, Msh6, Pcna, Pms2, Pold1, Pold2, Pold3, Pold4, Rfc1, Rfc2, Rfc3, Rfc4, Rfc5, Rpa1, Rpa2, Rpa3, Ssbp1],
+  KEGG_CITRATE_CYCLE_TCA_CYCLE
+  ]
+heatmap_pathways: [KEGG_CITRATE_CYCLE_TCA_CYCLE, KEGG_MISMATCH_REPAIR]
+boxplot_genes: [Msh2, Rpa3]
+boxplot_pathways: [KEGG_OXIDATIVE_PHOSPHORYLATION, KEGG_MISMATCH_REPAIR]
+correlation_genes: [[Msh2, Rfc3], [Msh2, Rfc2]]
+correlation_pathways: []
+```
+
+## Editing Tips
+
+1.  **YAML Formatting**: YAML is indentation-sensitive, so make sure to use consistent spacing to avoid syntax errors.
+2.  **Commenting**: You can add comments using `#` to document specific settings or notes.
+3.  **Validation**: Double-check file paths, gene names, and pathway names to ensure they match the data to avoid errors during analysis.
+
+## Common Issues
+
+-   **Incorrect Paths**: Make sure the `data_file` path is correct so the program can locate the dataset.
+-   **Missing Values**: Parameters must be properly filled in; any missing required parameters can cause the analysis to fail.
+-   **Formatting Errors**: Incorrect indentation in YAML can lead to parsing issues—be mindful of spacing.
+
+Feel free to use this guide to understand and adjust the parameters for your specific RNA-seq analysis needs. If you have any questions or need further assistance, please reach out to your analysis team.

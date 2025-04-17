@@ -1,0 +1,44 @@
+Package: CAIBIrnaseq
+Type: Package
+Title: Supervised and Unsupervised RNAseq(bulk) Analysis 
+Version: 0.1.0
+Authors@R: c(
+    person(
+      "CAIBI", 
+      email = "contact@inserm.fr", 
+      role = c("aut", "cre")
+    )
+  )
+Description: This package provides tools for both supervised and unsupervised analysis of RNA sequencing data, specifically for bulk RNA-seq experiments. It includes functions for data preprocessing, quality control, normalization, clustering, dimensionality reduction (PCA), pathway analysis, and visualization. The package is designed to handle complex RNA-seq datasets, offering various methods for analyzing gene expression, pathway enrichment, and differential expression.
+License: MIT
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.3.2
+Imports:
+    dplyr,
+    tibble,
+    ggplot2,
+    ggpubr,
+    rlang,
+    ggbeeswarm, 
+    readr,
+    DESeq2,
+    magrittr,
+    stats,
+    ggrepel,
+    plotly,
+    msigdbr,
+    GSVA,
+    progeny,
+    MCPcounter,
+    mMCPcounter,
+    patchwork,
+    ggheatmapper,
+    viridisLite
+Depends: 
+    R (>= 4.1.0),
+    SummarizedExperiment,
+    kableExtra,
+    stringr,
+    lubridate
+
