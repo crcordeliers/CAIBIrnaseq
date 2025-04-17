@@ -26,3 +26,7 @@ If devtools is not already installed :
 
 Then install CAIBIrnaseq : 
 `devtools::install_github("your-research-center/CAIBIrnaseq")`
+
+🕒 There is a lot of dependencies, so the installation could take a bit of time...
+
+## ⚙️ Functions
