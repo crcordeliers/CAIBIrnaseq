@@ -8,7 +8,7 @@
 
 <meta name="author" content="Cordeliers Artificial Intelligence and Bioinformatics">
 
-<title>README for params.yml Configuration File</title>
+<title>README for CAIBIrnaseq</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,40 +20,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -80,32 +46,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#structure-of-params.yml" id="toc-structure-of-params.yml" class="nav-link active" data-scroll-target="#structure-of-params.yml">Structure of <code>params.yml</code></a>
+  <li><a href="#caibirnaseq" id="toc-caibirnaseq" class="nav-link active" data-scroll-target="#caibirnaseq">CAIBIrnaseq</a>
   <ul class="collapse">
-  <li><a href="#project-information" id="toc-project-information" class="nav-link" data-scroll-target="#project-information">Project Information</a></li>
-  <li><a href="#species-information" id="toc-species-information" class="nav-link" data-scroll-target="#species-information">Species Information</a></li>
-  <li><a href="#plot-annotations" id="toc-plot-annotations" class="nav-link" data-scroll-target="#plot-annotations">Plot Annotations</a></li>
-  <li><a href="#quality-control-qc" id="toc-quality-control-qc" class="nav-link" data-scroll-target="#quality-control-qc">Quality Control (QC)</a></li>
-  <li><a href="#clustering-configuration" id="toc-clustering-configuration" class="nav-link" data-scroll-target="#clustering-configuration">Clustering Configuration</a></li>
-  <li><a href="#pathway-collections" id="toc-pathway-collections" class="nav-link" data-scroll-target="#pathway-collections">Pathway Collections</a></li>
-  <li><a href="#targeted-visualizations" id="toc-targeted-visualizations" class="nav-link" data-scroll-target="#targeted-visualizations">Targeted Visualizations</a></li>
+  <li><a href="#installation" id="toc-installation" class="nav-link" data-scroll-target="#installation">🔧 Installation</a></li>
   </ul></li>
-  <li><a href="#example-params.yml-file" id="toc-example-params.yml-file" class="nav-link" data-scroll-target="#example-params.yml-file">Example <code>params.yml</code> File</a></li>
-  <li><a href="#editing-tips" id="toc-editing-tips" class="nav-link" data-scroll-target="#editing-tips">Editing Tips</a></li>
-  <li><a href="#common-issues" id="toc-common-issues" class="nav-link" data-scroll-target="#common-issues">Common Issues</a></li>
-  <li><a href="#structure-of-params.yml-1" id="toc-structure-of-params.yml-1" class="nav-link" data-scroll-target="#structure-of-params.yml-1">Structure of <code>params.yml</code></a>
-  <ul class="collapse">
-  <li><a href="#project-information-1" id="toc-project-information-1" class="nav-link" data-scroll-target="#project-information-1">Project Information</a></li>
-  <li><a href="#species-information-1" id="toc-species-information-1" class="nav-link" data-scroll-target="#species-information-1">Species Information</a></li>
-  <li><a href="#plot-annotations-1" id="toc-plot-annotations-1" class="nav-link" data-scroll-target="#plot-annotations-1">Plot Annotations</a></li>
-  <li><a href="#quality-control-qc-1" id="toc-quality-control-qc-1" class="nav-link" data-scroll-target="#quality-control-qc-1">Quality Control (QC)</a></li>
-  <li><a href="#clustering-configuration-1" id="toc-clustering-configuration-1" class="nav-link" data-scroll-target="#clustering-configuration-1">Clustering Configuration</a></li>
-  <li><a href="#pathway-collections-1" id="toc-pathway-collections-1" class="nav-link" data-scroll-target="#pathway-collections-1">Pathway Collections</a></li>
-  <li><a href="#targeted-visualizations-1" id="toc-targeted-visualizations-1" class="nav-link" data-scroll-target="#targeted-visualizations-1">Targeted Visualizations</a></li>
-  </ul></li>
-  <li><a href="#example-params.yml-file-1" id="toc-example-params.yml-file-1" class="nav-link" data-scroll-target="#example-params.yml-file-1">Example <code>params.yml</code> File</a></li>
-  <li><a href="#editing-tips-1" id="toc-editing-tips-1" class="nav-link" data-scroll-target="#editing-tips-1">Editing Tips</a></li>
-  <li><a href="#common-issues-1" id="toc-common-issues-1" class="nav-link" data-scroll-target="#common-issues-1">Common Issues</a></li>
+  <li><a href="#then-install-caibirnaseq" id="toc-then-install-caibirnaseq" class="nav-link" data-scroll-target="#then-install-caibirnaseq">Then install CAIBIrnaseq</a></li>
   </ul>
 </nav>
 </div>
@@ -113,7 +58,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">README for <code>params.yml</code> Configuration File</h1>
+<h1 class="title">README for CAIBIrnaseq</h1>
 </div>
 
 
@@ -136,457 +81,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>This <code>params.yml</code> file is used to configure the unsupervised RNA-seq analysis pipeline. It allows users to specify settings for clustering, filtering, normalization, and visualization of their RNA-seq dataset. Below, each parameter is explained in detail to help guide you in filling out or understanding this configuration.</p>
-<section id="structure-of-params.yml" class="level2">
-<h2 class="anchored" data-anchor-id="structure-of-params.yml">Structure of <code>params.yml</code></h2>
-<p>The file is formatted in YAML, which makes it easy to read and edit. Below, we break down the purpose of each parameter.</p>
-<section id="project-information" class="level3">
-<h3 class="anchored" data-anchor-id="project-information">Project Information</h3>
-<section id="project" class="level4">
-<h4 class="anchored" data-anchor-id="project"><code>project</code></h4>
-<ul>
-<li><strong>Description</strong>: A descriptive name for the project.</li>
-<li><strong>Example</strong>: <code>Mouse STING KO</code></li>
-<li><strong>Usage</strong>: This will be used as the title of the analysis report to identify the project.</li>
-</ul>
-</section>
-<section id="data_file" class="level4">
-<h4 class="anchored" data-anchor-id="data_file"><code>data_file</code></h4>
-<ul>
-<li><strong>Description</strong>: Path to the RNA-seq data file in <code>.RDS</code> format.</li>
-<li><strong>Example</strong>: <code>data/STING_KO/exp_data.RDS</code></li>
-<li><strong>Usage</strong>: This should point to the expression data file that you wish to analyze. The <code>.RDS</code> file contains your pre-processed gene expression matrix.</li>
-</ul>
-</section>
-<section id="use_symbol" class="level4">
-<h4 class="anchored" data-anchor-id="use_symbol"><code>use_symbol</code></h4>
-<ul>
-<li><strong>Description</strong>: Whether to convert gene identifiers to gene symbols.</li>
-<li><strong>Options</strong>: <code>true</code> or <code>false</code></li>
-<li><strong>Example</strong>: <code>true</code></li>
-<li><strong>Usage</strong>: Set to <code>true</code> to rebase Ensembl IDs to gene symbols, which can make downstream analysis and interpretation easier for biological studies.</li>
-</ul>
-</section>
-<section id="show_code" class="level4">
-<h4 class="anchored" data-anchor-id="show_code"><code>show_code</code></h4>
-<ul>
-<li><strong>Description</strong>: Whether to display the code in the output report.</li>
-<li><strong>Options</strong>: <code>true</code> or <code>false</code></li>
-<li><strong>Example</strong>: <code>false</code></li>
-<li><strong>Usage</strong>: Set this to <code>true</code> if you want to include R code in the final output report, which may help for reproducibility or educational purposes.</li>
-</ul>
+<section id="caibirnaseq" class="level1">
+<h1>CAIBIrnaseq</h1>
+<p><strong>CAIBIrnaseq</strong> is an R package developed by the CAIBI platform for the supervised and unsupervised analysis of bulk RNA sequencing (RNA-seq) data.</p>
+<p>It provides a complete pipeline for preprocessing, quality control, normalization, dimensionality reduction, clustering, pathway analysis, and data visualization. This package is designed to be flexible and integrates seamlessly with popular bioinformatics tools like <code>DESeq2</code>, <code>GSVA</code>, and <code>MCPcounter</code>.</p>
+<hr>
+<section id="installation" class="level2">
+<h2 class="anchored" data-anchor-id="installation">🔧 Installation</h2>
+<p>As this package uses non-CRAN dependencies, it is important to install the development version of <strong>CAIBIrnaseq</strong> from GitHub using:</p>
+<p>```r # If devtools is not already installed install.packages(“devtools”)</p>
 </section>
 </section>
-<section id="species-information" class="level3">
-<h3 class="anchored" data-anchor-id="species-information">Species Information</h3>
-<section id="species" class="level4">
-<h4 class="anchored" data-anchor-id="species"><code>species</code></h4>
-<ul>
-<li><strong>Description</strong>: Specifies the species of the dataset.</li>
-<li><strong>Example</strong>: <code>Mus musculus</code></li>
-<li><strong>Usage</strong>: This parameter helps select the appropriate gene sets and pathways for the analysis. Here, <code>Mus musculus</code> (mouse) is specified.</li>
-</ul>
-</section>
-</section>
-<section id="plot-annotations" class="level3">
-<h3 class="anchored" data-anchor-id="plot-annotations">Plot Annotations</h3>
-<section id="plot_annotations" class="level4">
-<h4 class="anchored" data-anchor-id="plot_annotations"><code>plot_annotations</code></h4>
-<ul>
-<li><strong>Description</strong>: Metadata fields used to color-code plots.</li>
-<li><strong>Example</strong>: <code>Genotype</code></li>
-<li><strong>Usage</strong>: Specify metadata that can be used to annotate or differentiate groups in visualizations, such as PCA or clustering plots.</li>
-</ul>
-</section>
-</section>
-<section id="quality-control-qc" class="level3">
-<h3 class="anchored" data-anchor-id="quality-control-qc">Quality Control (QC)</h3>
-<section id="qc" class="level4">
-<h4 class="anchored" data-anchor-id="qc"><code>qc</code></h4>
-<p>This section contains quality control thresholds to filter the dataset.</p>
-<ul>
-<li><strong><code>min_nsamp</code></strong>: Minimum number of samples a gene must be expressed in to be retained.
-<ul>
-<li><strong>Example</strong>: <code>2</code></li>
-<li><strong>Usage</strong>: Genes expressed in fewer than this number of samples are removed to reduce noise.</li>
-</ul></li>
-<li><strong><code>min_gene_counts</code></strong>: Minimum count for a gene to be retained.
-<ul>
-<li><strong>Example</strong>: <code>1</code></li>
-<li><strong>Usage</strong>: Genes with fewer counts than this threshold will be filtered out. This helps remove low-expression, noisy genes.</li>
-</ul></li>
-</ul>
-</section>
-</section>
-<section id="clustering-configuration" class="level3">
-<h3 class="anchored" data-anchor-id="clustering-configuration">Clustering Configuration</h3>
-<section id="exp_cluster" class="level4">
-<h4 class="anchored" data-anchor-id="exp_cluster"><code>exp_cluster</code></h4>
-<ul>
-<li><strong><code>k</code></strong>: Number of clusters for unsupervised clustering of expression data.
-<ul>
-<li><strong>Example</strong>: <code>2</code></li>
-<li><strong>Usage</strong>: Defines how many groups the samples will be clustered into based on expression patterns.</li>
-</ul></li>
-</ul>
-</section>
-<section id="metadata_clusters" class="level4">
-<h4 class="anchored" data-anchor-id="metadata_clusters"><code>metadata_clusters</code></h4>
-<ul>
-<li><strong>Description</strong>: Controls clustering based on metadata scores, like pathway activity or microenvironment composition.</li>
-<li><strong><code>pathway_scores</code></strong>: Defines the number of clusters (<code>k</code>) for clustering samples based on pathway activity scores.
-<ul>
-<li><strong>Example</strong>: <code>k: 2</code></li>
-</ul></li>
-<li><strong><code>microenv_scores</code></strong>: Defines the number of clusters (<code>k</code>) for clustering based on microenvironment scores.
-<ul>
-<li><strong>Example</strong>: <code>k: 3</code></li>
-</ul></li>
-</ul>
-</section>
-</section>
-<section id="pathway-collections" class="level3">
-<h3 class="anchored" data-anchor-id="pathway-collections">Pathway Collections</h3>
-<section id="pathway_collections" class="level4">
-<h4 class="anchored" data-anchor-id="pathway_collections"><code>pathway_collections</code></h4>
-<ul>
-<li><strong>Description</strong>: Defines which pathway collections to use for pathway activity scoring.</li>
-<li><strong>Example</strong>: <code>CP:KEGG</code></li>
-<li><strong>Usage</strong>: Here, the <code>CP:KEGG</code> collection from MSigDB is used. You can choose different collections based on your research question.</li>
-</ul>
-</section>
-</section>
-<section id="targeted-visualizations" class="level3">
-<h3 class="anchored" data-anchor-id="targeted-visualizations">Targeted Visualizations</h3>
-<p>This section defines genes and pathways of interest for visualization.</p>
-<section id="heatmap_genes" class="level4">
-<h4 class="anchored" data-anchor-id="heatmap_genes"><code>heatmap_genes</code></h4>
-<ul>
-<li><p><strong>Description</strong>: Genes or pathways to include in heatmaps.</p></li>
-<li><p><strong>Example</strong>:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">heatmap_genes</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">[</span><span class="at">Exo1</span><span class="kw">,</span><span class="at"> Lig1</span><span class="kw">,</span><span class="at"> Mlh1</span><span class="kw">,</span><span class="at"> Mlh3</span><span class="kw">,</span><span class="at"> Msh2</span><span class="kw">,</span><span class="at"> Msh3</span><span class="kw">,</span><span class="at"> Msh6</span><span class="kw">,</span><span class="at"> Pcna</span><span class="kw">,</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="at">   Pms2</span><span class="kw">,</span><span class="at"> Pold1</span><span class="kw">,</span><span class="at"> Pold2</span><span class="kw">,</span><span class="at"> Pold3</span><span class="kw">,</span><span class="at"> Pold4</span><span class="kw">,</span><span class="at"> Rfc1</span><span class="kw">,</span><span class="at"> Rfc2</span><span class="kw">,</span><span class="at"> Rfc3</span><span class="kw">,</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="at">   Rfc4</span><span class="kw">,</span><span class="at"> Rfc5</span><span class="kw">,</span><span class="at"> Rpa1</span><span class="kw">,</span><span class="at"> Rpa2</span><span class="kw">,</span><span class="at"> Rpa3</span><span class="kw">,</span><span class="at"> Ssbp1</span><span class="kw">],</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="at">  KEGG_CITRATE_CYCLE_TCA_CYCLE</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
-<li><p><strong>Usage</strong>: Provide either a list of specific genes or pathways to be used for heatmap visualizations. This allows you to focus on specific areas of interest.</p></li>
-</ul>
-</section>
-<section id="heatmap_pathways" class="level4">
-<h4 class="anchored" data-anchor-id="heatmap_pathways"><code>heatmap_pathways</code></h4>
-<ul>
-<li><strong>Description</strong>: Pathways to include in heatmap visualizations.</li>
-<li><strong>Example</strong>: <code>[KEGG_CITRATE_CYCLE_TCA_CYCLE, KEGG_MISMATCH_REPAIR]</code></li>
-<li><strong>Usage</strong>: Specify pathways to visualize their activity across samples.</li>
-</ul>
-</section>
-<section id="boxplot_genes" class="level4">
-<h4 class="anchored" data-anchor-id="boxplot_genes"><code>boxplot_genes</code></h4>
-<ul>
-<li><strong>Description</strong>: Genes to visualize using boxplots.</li>
-<li><strong>Example</strong>: <code>[Msh2, Rpa3]</code></li>
-<li><strong>Usage</strong>: Define genes for which you want to generate boxplots to compare their expression across conditions.</li>
-</ul>
-</section>
-<section id="boxplot_pathways" class="level4">
-<h4 class="anchored" data-anchor-id="boxplot_pathways"><code>boxplot_pathways</code></h4>
-<ul>
-<li><strong>Description</strong>: Pathways to visualize using boxplots.</li>
-<li><strong>Example</strong>: <code>[KEGG_OXIDATIVE_PHOSPHORYLATION, KEGG_MISMATCH_REPAIR]</code></li>
-<li><strong>Usage</strong>: Provide pathways to compare their activity across different experimental conditions using boxplots.</li>
-</ul>
-</section>
-<section id="correlation_genes" class="level4">
-<h4 class="anchored" data-anchor-id="correlation_genes"><code>correlation_genes</code></h4>
-<ul>
-<li><strong>Description</strong>: Pairs of genes to visualize for correlation analysis.</li>
-<li><strong>Example</strong>: <code>[[Msh2, Rfc3], [Msh2, Rfc2]]</code></li>
-<li><strong>Usage</strong>: Specify pairs of genes to plot correlations between their expression values, helping to reveal co-regulation or interaction.</li>
-</ul>
-</section>
-<section id="correlation_pathways" class="level4">
-<h4 class="anchored" data-anchor-id="correlation_pathways"><code>correlation_pathways</code></h4>
-<ul>
-<li><strong>Description</strong>: Pairs of pathways to visualize for correlation analysis.</li>
-<li><strong>Example</strong>: <code>[]</code> (Empty if none)</li>
-<li><strong>Usage</strong>: Define pairs of pathways to examine correlations between their activity. Leave empty if not applicable.</li>
-</ul>
-</section>
-</section>
-</section>
-<section id="example-params.yml-file" class="level2">
-<h2 class="anchored" data-anchor-id="example-params.yml-file">Example <code>params.yml</code> File</h2>
-<p>Below is an example configuration for <code>params.yml</code>:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">project</span><span class="kw">:</span><span class="at"> Mouse STING KO</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data_file</span><span class="kw">:</span><span class="at"> data/STING_KO/exp_data.RDS</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">use_symbol</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">show_code</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">species</span><span class="kw">:</span><span class="at"> Mus musculus</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_annotations</span><span class="kw">:</span><span class="at"> Genotype</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">qc</span><span class="kw">:</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">min_nsamp</span><span class="kw">:</span><span class="at"> </span><span class="dv">2</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">min_gene_counts</span><span class="kw">:</span><span class="at"> </span><span class="dv">1</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">exp_cluster</span><span class="kw">:</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">k</span><span class="kw">:</span><span class="at"> </span><span class="dv">2</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="fu">metadata_clusters</span><span class="kw">:</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">pathway_scores</span><span class="kw">:</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">k</span><span class="kw">:</span><span class="at"> </span><span class="dv">2</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">microenv_scores</span><span class="kw">:</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">k</span><span class="kw">:</span><span class="at"> </span><span class="dv">3</span></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="fu">pathway_collections</span><span class="kw">:</span><span class="at"> CP:KEGG</span></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="fu">heatmap_genes</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">[</span><span class="at">Exo1</span><span class="kw">,</span><span class="at"> Lig1</span><span class="kw">,</span><span class="at"> Mlh1</span><span class="kw">,</span><span class="at"> Mlh3</span><span class="kw">,</span><span class="at"> Msh2</span><span class="kw">,</span><span class="at"> Msh3</span><span class="kw">,</span><span class="at"> Msh6</span><span class="kw">,</span><span class="at"> Pcna</span><span class="kw">,</span><span class="at"> Pms2</span><span class="kw">,</span><span class="at"> Pold1</span><span class="kw">,</span><span class="at"> Pold2</span><span class="kw">,</span><span class="at"> Pold3</span><span class="kw">,</span><span class="at"> Pold4</span><span class="kw">,</span><span class="at"> Rfc1</span><span class="kw">,</span><span class="at"> Rfc2</span><span class="kw">,</span><span class="at"> Rfc3</span><span class="kw">,</span><span class="at"> Rfc4</span><span class="kw">,</span><span class="at"> Rfc5</span><span class="kw">,</span><span class="at"> Rpa1</span><span class="kw">,</span><span class="at"> Rpa2</span><span class="kw">,</span><span class="at"> Rpa3</span><span class="kw">,</span><span class="at"> Ssbp1</span><span class="kw">],</span></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="at">  KEGG_CITRATE_CYCLE_TCA_CYCLE</span></span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">]</span></span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="fu">heatmap_pathways</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">KEGG_CITRATE_CYCLE_TCA_CYCLE</span><span class="kw">,</span><span class="at"> KEGG_MISMATCH_REPAIR</span><span class="kw">]</span></span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot_genes</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">Msh2</span><span class="kw">,</span><span class="at"> Rpa3</span><span class="kw">]</span></span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot_pathways</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">KEGG_OXIDATIVE_PHOSPHORYLATION</span><span class="kw">,</span><span class="at"> KEGG_MISMATCH_REPAIR</span><span class="kw">]</span></span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="fu">correlation_genes</span><span class="kw">:</span><span class="at"> </span><span class="kw">[[</span><span class="at">Msh2</span><span class="kw">,</span><span class="at"> Rfc3</span><span class="kw">],</span><span class="at"> </span><span class="kw">[</span><span class="at">Msh2</span><span class="kw">,</span><span class="at"> Rfc2</span><span class="kw">]]</span></span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="fu">correlation_pathways</span><span class="kw">:</span><span class="at"> </span><span class="kw">[]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="editing-tips" class="level2">
-<h2 class="anchored" data-anchor-id="editing-tips">Editing Tips</h2>
-<ol type="1">
-<li><strong>YAML Formatting</strong>: YAML is indentation-sensitive, so make sure to use consistent spacing to avoid syntax errors.</li>
-<li><strong>Commenting</strong>: You can add comments using <code>#</code> to document specific settings or notes.</li>
-<li><strong>Validation</strong>: Double-check file paths, gene names, and pathway names to ensure they match the data to avoid errors during analysis.</li>
-</ol>
-</section>
-<section id="common-issues" class="level2">
-<h2 class="anchored" data-anchor-id="common-issues">Common Issues</h2>
-<ul>
-<li><strong>Incorrect Paths</strong>: Make sure the <code>data_file</code> path is correct so the program can locate the dataset.</li>
-<li><strong>Missing Values</strong>: Parameters must be properly filled in; any missing required parameters can cause the analysis to fail.</li>
-<li><strong>Formatting Errors</strong>: Incorrect indentation in YAML can lead to parsing issues—be mindful of spacing.</li>
-</ul>
-<p>Feel free to use this guide to understand and adjust the parameters for your specific RNA-seq analysis needs. If you have any questions or need further assistance, please reach out to your analysis team.</p>
-<p>This <code>params.yml</code> file is used to configure the unsupervised RNA-seq analysis pipeline. It allows users to specify settings for clustering, filtering, normalization, and visualization of their RNA-seq dataset. Below, each parameter is explained in detail to help guide you in filling out or understanding this configuration.</p>
-</section>
-<section id="structure-of-params.yml-1" class="level2">
-<h2 class="anchored" data-anchor-id="structure-of-params.yml-1">Structure of <code>params.yml</code></h2>
-<p>The file is formatted in YAML, which makes it easy to read and edit. Below, we break down the purpose of each parameter.</p>
-<section id="project-information-1" class="level3">
-<h3 class="anchored" data-anchor-id="project-information-1">Project Information</h3>
-<section id="project-1" class="level4">
-<h4 class="anchored" data-anchor-id="project-1"><code>project</code></h4>
-<ul>
-<li><strong>Description</strong>: A descriptive name for the project.</li>
-<li><strong>Example</strong>: <code>Mouse STING KO</code></li>
-<li><strong>Usage</strong>: This will be used as the title of the analysis report to identify the project.</li>
-</ul>
-</section>
-<section id="data_file-1" class="level4">
-<h4 class="anchored" data-anchor-id="data_file-1"><code>data_file</code></h4>
-<ul>
-<li><strong>Description</strong>: Path to the RNA-seq data file in <code>.RDS</code> format.</li>
-<li><strong>Example</strong>: <code>data/STING_KO/exp_data.RDS</code></li>
-<li><strong>Usage</strong>: This should point to the expression data file that you wish to analyze. The <code>.RDS</code> file contains your pre-processed gene expression matrix.</li>
-</ul>
-</section>
-<section id="use_symbol-1" class="level4">
-<h4 class="anchored" data-anchor-id="use_symbol-1"><code>use_symbol</code></h4>
-<ul>
-<li><strong>Description</strong>: Whether to convert gene identifiers to gene symbols.</li>
-<li><strong>Options</strong>: <code>true</code> or <code>false</code></li>
-<li><strong>Example</strong>: <code>true</code></li>
-<li><strong>Usage</strong>: Set to <code>true</code> to rebase Ensembl IDs to gene symbols, which can make downstream analysis and interpretation easier for biological studies.</li>
-</ul>
-</section>
-<section id="show_code-1" class="level4">
-<h4 class="anchored" data-anchor-id="show_code-1"><code>show_code</code></h4>
-<ul>
-<li><strong>Description</strong>: Whether to display the code in the output report.</li>
-<li><strong>Options</strong>: <code>true</code> or <code>false</code></li>
-<li><strong>Example</strong>: <code>false</code></li>
-<li><strong>Usage</strong>: Set this to <code>true</code> if you want to include R code in the final output report, which may help for reproducibility or educational purposes.</li>
-</ul>
-</section>
-</section>
-<section id="species-information-1" class="level3">
-<h3 class="anchored" data-anchor-id="species-information-1">Species Information</h3>
-<section id="species-1" class="level4">
-<h4 class="anchored" data-anchor-id="species-1"><code>species</code></h4>
-<ul>
-<li><strong>Description</strong>: Specifies the species of the dataset.</li>
-<li><strong>Example</strong>: <code>Mus musculus</code></li>
-<li><strong>Usage</strong>: This parameter helps select the appropriate gene sets and pathways for the analysis. Here, <code>Mus musculus</code> (mouse) is specified.</li>
-</ul>
-</section>
-</section>
-<section id="plot-annotations-1" class="level3">
-<h3 class="anchored" data-anchor-id="plot-annotations-1">Plot Annotations</h3>
-<section id="plot_annotations-1" class="level4">
-<h4 class="anchored" data-anchor-id="plot_annotations-1"><code>plot_annotations</code></h4>
-<ul>
-<li><strong>Description</strong>: Metadata fields used to color-code plots.</li>
-<li><strong>Example</strong>: <code>Genotype</code></li>
-<li><strong>Usage</strong>: Specify metadata that can be used to annotate or differentiate groups in visualizations, such as PCA or clustering plots.</li>
-</ul>
-</section>
-</section>
-<section id="quality-control-qc-1" class="level3">
-<h3 class="anchored" data-anchor-id="quality-control-qc-1">Quality Control (QC)</h3>
-<section id="qc-1" class="level4">
-<h4 class="anchored" data-anchor-id="qc-1"><code>qc</code></h4>
-<p>This section contains quality control thresholds to filter the dataset.</p>
-<ul>
-<li><strong><code>min_nsamp</code></strong>: Minimum number of samples a gene must be expressed in to be retained.
-<ul>
-<li><strong>Example</strong>: <code>2</code></li>
-<li><strong>Usage</strong>: Genes expressed in fewer than this number of samples are removed to reduce noise.</li>
-</ul></li>
-<li><strong><code>min_gene_counts</code></strong>: Minimum count for a gene to be retained.
-<ul>
-<li><strong>Example</strong>: <code>1</code></li>
-<li><strong>Usage</strong>: Genes with fewer counts than this threshold will be filtered out. This helps remove low-expression, noisy genes.</li>
-</ul></li>
-</ul>
-</section>
-</section>
-<section id="clustering-configuration-1" class="level3">
-<h3 class="anchored" data-anchor-id="clustering-configuration-1">Clustering Configuration</h3>
-<section id="exp_cluster-1" class="level4">
-<h4 class="anchored" data-anchor-id="exp_cluster-1"><code>exp_cluster</code></h4>
-<ul>
-<li><strong><code>k</code></strong>: Number of clusters for unsupervised clustering of expression data.
-<ul>
-<li><strong>Example</strong>: <code>2</code></li>
-<li><strong>Usage</strong>: Defines how many groups the samples will be clustered into based on expression patterns.</li>
-</ul></li>
-</ul>
-</section>
-<section id="metadata_clusters-1" class="level4">
-<h4 class="anchored" data-anchor-id="metadata_clusters-1"><code>metadata_clusters</code></h4>
-<ul>
-<li><strong>Description</strong>: Controls clustering based on metadata scores, like pathway activity or microenvironment composition.</li>
-<li><strong><code>pathway_scores</code></strong>: Defines the number of clusters (<code>k</code>) for clustering samples based on pathway activity scores.
-<ul>
-<li><strong>Example</strong>: <code>k: 2</code></li>
-</ul></li>
-<li><strong><code>microenv_scores</code></strong>: Defines the number of clusters (<code>k</code>) for clustering based on microenvironment scores.
-<ul>
-<li><strong>Example</strong>: <code>k: 3</code></li>
-</ul></li>
-</ul>
-</section>
-</section>
-<section id="pathway-collections-1" class="level3">
-<h3 class="anchored" data-anchor-id="pathway-collections-1">Pathway Collections</h3>
-<section id="pathway_collections-1" class="level4">
-<h4 class="anchored" data-anchor-id="pathway_collections-1"><code>pathway_collections</code></h4>
-<ul>
-<li><strong>Description</strong>: Defines which pathway collections to use for pathway activity scoring.</li>
-<li><strong>Example</strong>: <code>CP:KEGG</code></li>
-<li><strong>Usage</strong>: Here, the <code>CP:KEGG</code> collection from MSigDB is used. You can choose different collections based on your research question.</li>
-</ul>
-</section>
-</section>
-<section id="targeted-visualizations-1" class="level3">
-<h3 class="anchored" data-anchor-id="targeted-visualizations-1">Targeted Visualizations</h3>
-<p>This section defines genes and pathways of interest for visualization.</p>
-<section id="heatmap_genes-1" class="level4">
-<h4 class="anchored" data-anchor-id="heatmap_genes-1"><code>heatmap_genes</code></h4>
-<ul>
-<li><p><strong>Description</strong>: Genes or pathways to include in heatmaps.</p></li>
-<li><p><strong>Example</strong>:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">heatmap_genes</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">[</span><span class="at">Exo1</span><span class="kw">,</span><span class="at"> Lig1</span><span class="kw">,</span><span class="at"> Mlh1</span><span class="kw">,</span><span class="at"> Mlh3</span><span class="kw">,</span><span class="at"> Msh2</span><span class="kw">,</span><span class="at"> Msh3</span><span class="kw">,</span><span class="at"> Msh6</span><span class="kw">,</span><span class="at"> Pcna</span><span class="kw">,</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="at">   Pms2</span><span class="kw">,</span><span class="at"> Pold1</span><span class="kw">,</span><span class="at"> Pold2</span><span class="kw">,</span><span class="at"> Pold3</span><span class="kw">,</span><span class="at"> Pold4</span><span class="kw">,</span><span class="at"> Rfc1</span><span class="kw">,</span><span class="at"> Rfc2</span><span class="kw">,</span><span class="at"> Rfc3</span><span class="kw">,</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="at">   Rfc4</span><span class="kw">,</span><span class="at"> Rfc5</span><span class="kw">,</span><span class="at"> Rpa1</span><span class="kw">,</span><span class="at"> Rpa2</span><span class="kw">,</span><span class="at"> Rpa3</span><span class="kw">,</span><span class="at"> Ssbp1</span><span class="kw">],</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="at">  KEGG_CITRATE_CYCLE_TCA_CYCLE</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="kw">]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
-<li><p><strong>Usage</strong>: Provide either a list of specific genes or pathways to be used for heatmap visualizations. This allows you to focus on specific areas of interest.</p></li>
-</ul>
-</section>
-<section id="heatmap_pathways-1" class="level4">
-<h4 class="anchored" data-anchor-id="heatmap_pathways-1"><code>heatmap_pathways</code></h4>
-<ul>
-<li><strong>Description</strong>: Pathways to include in heatmap visualizations.</li>
-<li><strong>Example</strong>: <code>[KEGG_CITRATE_CYCLE_TCA_CYCLE, KEGG_MISMATCH_REPAIR]</code></li>
-<li><strong>Usage</strong>: Specify pathways to visualize their activity across samples.</li>
-</ul>
-</section>
-<section id="boxplot_genes-1" class="level4">
-<h4 class="anchored" data-anchor-id="boxplot_genes-1"><code>boxplot_genes</code></h4>
-<ul>
-<li><strong>Description</strong>: Genes to visualize using boxplots.</li>
-<li><strong>Example</strong>: <code>[Msh2, Rpa3]</code></li>
-<li><strong>Usage</strong>: Define genes for which you want to generate boxplots to compare their expression across conditions.</li>
-</ul>
-</section>
-<section id="boxplot_pathways-1" class="level4">
-<h4 class="anchored" data-anchor-id="boxplot_pathways-1"><code>boxplot_pathways</code></h4>
-<ul>
-<li><strong>Description</strong>: Pathways to visualize using boxplots.</li>
-<li><strong>Example</strong>: <code>[KEGG_OXIDATIVE_PHOSPHORYLATION, KEGG_MISMATCH_REPAIR]</code></li>
-<li><strong>Usage</strong>: Provide pathways to compare their activity across different experimental conditions using boxplots.</li>
-</ul>
-</section>
-<section id="correlation_genes-1" class="level4">
-<h4 class="anchored" data-anchor-id="correlation_genes-1"><code>correlation_genes</code></h4>
-<ul>
-<li><strong>Description</strong>: Pairs of genes to visualize for correlation analysis.</li>
-<li><strong>Example</strong>: <code>[[Msh2, Rfc3], [Msh2, Rfc2]]</code></li>
-<li><strong>Usage</strong>: Specify pairs of genes to plot correlations between their expression values, helping to reveal co-regulation or interaction.</li>
-</ul>
-</section>
-<section id="correlation_pathways-1" class="level4">
-<h4 class="anchored" data-anchor-id="correlation_pathways-1"><code>correlation_pathways</code></h4>
-<ul>
-<li><strong>Description</strong>: Pairs of pathways to visualize for correlation analysis.</li>
-<li><strong>Example</strong>: <code>[]</code> (Empty if none)</li>
-<li><strong>Usage</strong>: Define pairs of pathways to examine correlations between their activity. Leave empty if not applicable.</li>
-</ul>
-</section>
-</section>
-</section>
-<section id="example-params.yml-file-1" class="level2">
-<h2 class="anchored" data-anchor-id="example-params.yml-file-1">Example <code>params.yml</code> File</h2>
-<p>Below is an example configuration for <code>params.yml</code>:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">project</span><span class="kw">:</span><span class="at"> Mouse STING KO</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data_file</span><span class="kw">:</span><span class="at"> data/STING_KO/exp_data.RDS</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">use_symbol</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">show_code</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">species</span><span class="kw">:</span><span class="at"> Mus musculus</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_annotations</span><span class="kw">:</span><span class="at"> Genotype</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="fu">qc</span><span class="kw">:</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">min_nsamp</span><span class="kw">:</span><span class="at"> </span><span class="dv">2</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">min_gene_counts</span><span class="kw">:</span><span class="at"> </span><span class="dv">1</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="fu">exp_cluster</span><span class="kw">:</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">k</span><span class="kw">:</span><span class="at"> </span><span class="dv">2</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="fu">metadata_clusters</span><span class="kw">:</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">pathway_scores</span><span class="kw">:</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">k</span><span class="kw">:</span><span class="at"> </span><span class="dv">2</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">microenv_scores</span><span class="kw">:</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">k</span><span class="kw">:</span><span class="at"> </span><span class="dv">3</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="fu">pathway_collections</span><span class="kw">:</span><span class="at"> CP:KEGG</span></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="fu">heatmap_genes</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">[</span><span class="at">Exo1</span><span class="kw">,</span><span class="at"> Lig1</span><span class="kw">,</span><span class="at"> Mlh1</span><span class="kw">,</span><span class="at"> Mlh3</span><span class="kw">,</span><span class="at"> Msh2</span><span class="kw">,</span><span class="at"> Msh3</span><span class="kw">,</span><span class="at"> Msh6</span><span class="kw">,</span><span class="at"> Pcna</span><span class="kw">,</span><span class="at"> Pms2</span><span class="kw">,</span><span class="at"> Pold1</span><span class="kw">,</span><span class="at"> Pold2</span><span class="kw">,</span><span class="at"> Pold3</span><span class="kw">,</span><span class="at"> Pold4</span><span class="kw">,</span><span class="at"> Rfc1</span><span class="kw">,</span><span class="at"> Rfc2</span><span class="kw">,</span><span class="at"> Rfc3</span><span class="kw">,</span><span class="at"> Rfc4</span><span class="kw">,</span><span class="at"> Rfc5</span><span class="kw">,</span><span class="at"> Rpa1</span><span class="kw">,</span><span class="at"> Rpa2</span><span class="kw">,</span><span class="at"> Rpa3</span><span class="kw">,</span><span class="at"> Ssbp1</span><span class="kw">],</span></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="at">  KEGG_CITRATE_CYCLE_TCA_CYCLE</span></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">]</span></span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="fu">heatmap_pathways</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">KEGG_CITRATE_CYCLE_TCA_CYCLE</span><span class="kw">,</span><span class="at"> KEGG_MISMATCH_REPAIR</span><span class="kw">]</span></span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot_genes</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">Msh2</span><span class="kw">,</span><span class="at"> Rpa3</span><span class="kw">]</span></span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot_pathways</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">KEGG_OXIDATIVE_PHOSPHORYLATION</span><span class="kw">,</span><span class="at"> KEGG_MISMATCH_REPAIR</span><span class="kw">]</span></span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="fu">correlation_genes</span><span class="kw">:</span><span class="at"> </span><span class="kw">[[</span><span class="at">Msh2</span><span class="kw">,</span><span class="at"> Rfc3</span><span class="kw">],</span><span class="at"> </span><span class="kw">[</span><span class="at">Msh2</span><span class="kw">,</span><span class="at"> Rfc2</span><span class="kw">]]</span></span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="fu">correlation_pathways</span><span class="kw">:</span><span class="at"> </span><span class="kw">[]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="editing-tips-1" class="level2">
-<h2 class="anchored" data-anchor-id="editing-tips-1">Editing Tips</h2>
-<ol type="1">
-<li><strong>YAML Formatting</strong>: YAML is indentation-sensitive, so make sure to use consistent spacing to avoid syntax errors.</li>
-<li><strong>Commenting</strong>: You can add comments using <code>#</code> to document specific settings or notes.</li>
-<li><strong>Validation</strong>: Double-check file paths, gene names, and pathway names to ensure they match the data to avoid errors during analysis.</li>
-</ol>
-</section>
-<section id="common-issues-1" class="level2">
-<h2 class="anchored" data-anchor-id="common-issues-1">Common Issues</h2>
-<ul>
-<li><strong>Incorrect Paths</strong>: Make sure the <code>data_file</code> path is correct so the program can locate the dataset.</li>
-<li><strong>Missing Values</strong>: Parameters must be properly filled in; any missing required parameters can cause the analysis to fail.</li>
-<li><strong>Formatting Errors</strong>: Incorrect indentation in YAML can lead to parsing issues—be mindful of spacing.</li>
-</ul>
-<p>Feel free to use this guide to understand and adjust the parameters for your specific RNA-seq analysis needs. If you have any questions or need further assistance, please reach out to your analysis team.</p>
+<section id="then-install-caibirnaseq" class="level1">
+<h1>Then install CAIBIrnaseq</h1>
+<p>devtools::install_github(“your-research-center/CAIBIrnaseq”) ```r</p>
+<p>This way, all the dependencies should be installed at the same time.</p>
 </section>
 
 </main>
