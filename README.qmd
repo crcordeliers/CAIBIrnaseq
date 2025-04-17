@@ -1,10 +1,11 @@
 ---
 title: "README for CAIBIrnaseq"
 author: "Cordeliers Artificial Intelligence and Bioinformatics"
-format: 
-  html:
+output: 
+  html_document:
     toc: true
-editor: source
+editor_options: 
+  markdown: default
 ---
 
 # CAIBIrnaseq
@@ -19,12 +20,9 @@ It provides a complete pipeline for preprocessing, quality control, normalizatio
 
 As this package uses non-CRAN dependencies, it is important to install the development version of **CAIBIrnaseq** from GitHub using:
 
-```r
-# If devtools is not already installed
-install.packages("devtools")
 
-# Then install CAIBIrnaseq
-devtools::install_github("your-research-center/CAIBIrnaseq")
-```r
+If devtools is not already installed : 
+`install.packages("devtools")`
 
-This way, all the dependencies should be installed at the same time. 
+Then install CAIBIrnaseq : 
+`devtools::install_github("your-research-center/CAIBIrnaseq")`
