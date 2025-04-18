@@ -1,3 +1,4 @@
+require(SummarizedExperiment)
 #' Principal Component Analysis (PCA) on Gene Expression Data
 #'
 #' This function performs PCA (Principal Component Analysis) on the gene expression data.
