@@ -29,10 +29,11 @@ Then then you can try execute this command :
 
 This package uses non-CRAN dependencies so it may cause some problems.
 
-If you have an error in the package's installation of the dependency 'ggheatmapper', you can do this command before in the console :   
-`if (!requireNamespace("BiocManager", quietly = TRUE))`
-  `install.packages("BiocManager")`
-`BiocManager::install("ggtree")`
+If you have an error in the package's installation of the dependencies, you can do this command before in the console :   
+`if (!requireNamespace("BiocManager", quietly = TRUE))`  
+  `install.packages("BiocManager")`  
+`BiocManager::install("ggtree")`  
+`BiocManager::install("msigdbdf")`  
 
 The package is made to only require this command to work :   
 `devtools::install_github("your-research-center/CAIBIrnaseq")`

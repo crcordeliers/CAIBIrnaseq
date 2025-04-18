@@ -31,7 +31,6 @@ Imports:
     ggrepel,
     plotly,
     msigdbr,
-    msigdbdf,
     patchwork,
     viridisLite,
     remotes,
