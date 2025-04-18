@@ -18,22 +18,28 @@ It provides a complete pipeline for preprocessing, quality control, normalizatio
 
 ## 🔧 Installation
 
-As this package uses non-CRAN dependencies, it is important to install the development version of **CAIBIrnaseq** from GitHub using:
-
-
-If devtools is not already installed : 
+As **CAIBIrnaseq** package is available on Github, you will need to install devtools:  
 `install.packages("devtools")`
 
-Then install CAIBIrnaseq : 
+Then then you can try execute this command :   
 `devtools::install_github("your-research-center/CAIBIrnaseq")`
 
-🕒 There is a lot of dependencies, so the installation could take a bit of time...
+🕒 There is a lot of dependencies, so the installation might take some time (~40min) ...
 
-If you have an error in the package's installation of the dependency 'ggheatmapper', you can do this command before in the console : 
+
+This package uses non-CRAN dependencies so it may cause some problems.
+
+If you have an error in the package's installation of the dependency 'ggheatmapper', you can do this command before in the console :   
 `if (!requireNamespace("BiocManager", quietly = TRUE))`
   `install.packages("BiocManager")`
 `BiocManager::install("ggtree")`
 
-It should facilitate th
+The package is made to only require this command to work :   
+`devtools::install_github("your-research-center/CAIBIrnaseq")`
+
+There may be problems installing dependencies. The Console will tell you which packages are missing. Do not hesitate to install the missing packages manually. It may be easier and faster. 
 
 ## ⚙️ Functions
+About the available functions, there are different types of functions : pre-processing functions, plot functions (heatmaps, boxplots), scores functions, pathway functions, cluster functions...
+
+For each function, documentation is available with some precision about the parameters and the function's utility.

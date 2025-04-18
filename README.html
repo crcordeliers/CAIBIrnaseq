@@ -76,15 +76,22 @@ ul.task-list li input[type="checkbox"] {
 <hr>
 <section id="installation" class="level2">
 <h2 class="anchored" data-anchor-id="installation">🔧 Installation</h2>
-<p>As this package uses non-CRAN dependencies, it is important to install the development version of <strong>CAIBIrnaseq</strong> from GitHub using:</p>
-<p>If devtools is not already installed : <code>install.packages("devtools")</code></p>
-<p>Then install CAIBIrnaseq : <code>devtools::install_github("your-research-center/CAIBIrnaseq")</code></p>
-<p>🕒 There is a lot of dependencies, so the installation could take a bit of time…</p>
-<p>If you have an error in the package’s installation of the dependency ‘ggheatmapper’, you can do this command before in the console : <code>if (!requireNamespace("BiocManager", quietly = TRUE))</code> <code>install.packages("BiocManager")</code> <code>BiocManager::install("ggtree")</code></p>
-<p>It should facilitate th</p>
+<p>As <strong>CAIBIrnaseq</strong> package is available on Github, you will need to install devtools:<br>
+<code>install.packages("devtools")</code></p>
+<p>Then then you can try execute this command :<br>
+<code>devtools::install_github("your-research-center/CAIBIrnaseq")</code></p>
+<p>🕒 There is a lot of dependencies, so the installation might take some time (~40min) …</p>
+<p>This package uses non-CRAN dependencies so it may cause some problems.</p>
+<p>If you have an error in the package’s installation of the dependency ‘ggheatmapper’, you can do this command before in the console :<br>
+<code>if (!requireNamespace("BiocManager", quietly = TRUE))</code> <code>install.packages("BiocManager")</code> <code>BiocManager::install("ggtree")</code></p>
+<p>The package is made to only require this command to work :<br>
+<code>devtools::install_github("your-research-center/CAIBIrnaseq")</code></p>
+<p>There may be problems installing dependencies. The Console will tell you which packages are missing. Do not hesitate to install the missing packages manually. It may be easier and faster.</p>
 </section>
 <section id="functions" class="level2">
 <h2 class="anchored" data-anchor-id="functions">⚙️ Functions</h2>
+<p>About the available functions, there are different types of functions : pre-processing functions, plot functions (heatmaps, boxplots), scores functions, pathway functions, cluster functions…</p>
+<p>For each function, documentation is available with some precision about the parameters and the function’s utility.</p>
 </section>
 </section>
 
