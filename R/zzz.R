@@ -21,23 +21,23 @@ utils::globalVariables(c(
   "metadata"
 ))
 
-.onLoad <- function(libname, pkgname) {
-  github_pkgs <- list(
-    ggheatmapper = "eurriti/ggheatmapper",
-    progeny = "inmf-lab/progeny",
-    MCPcounter = "ebecht/MCPcounter",
-    mMCPcounter = "diegommcc/mMCPcounter"
-  )
-  
-  to_install <- names(github_pkgs)[!vapply(names(github_pkgs), requireNamespace, FUN.VALUE = logical(1), quietly = TRUE)]
-  
-  if (length(to_install) > 0) {
-    if (!requireNamespace("remotes", quietly = TRUE)) {
-      install.packages("remotes")
-    }
-    message("Installing GitHub dependencies for CAIBIrnaseq: ", paste(to_install, collapse = ", "))
-    for (pkg in to_install) {
-      remotes::install_github(github_pkgs[[pkg]])
-    }
-  }
-}
+# .onLoad <- function(libname, pkgname) {
+#   github_pkgs <- list(
+#     ggheatmapper = "eurriti/ggheatmapper",
+#     progeny = "inmf-lab/progeny",
+#     MCPcounter = "ebecht/MCPcounter",
+#     mMCPcounter = "diegommcc/mMCPcounter"
+#   )
+#
+#   to_install <- names(github_pkgs)[!vapply(names(github_pkgs), requireNamespace, FUN.VALUE = logical(1), quietly = TRUE)]
+#
+#   if (length(to_install) > 0) {
+#     if (!requireNamespace("remotes", quietly = TRUE)) {
+#       install.packages("remotes")
+#     }
+#     message("Installing GitHub dependencies for CAIBIrnaseq: ", paste(to_install, collapse = ", "))
+#     for (pkg in to_install) {
+#       remotes::install_github(github_pkgs[[pkg]])
+#     }
+#   }
+# }

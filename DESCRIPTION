@@ -11,6 +11,11 @@ License: MIT
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.2
+Depends: 
+    R (>= 4.1.0),
+    kableExtra,
+    stringr,
+    lubridate
 Imports:
     R.utils,
     tidyverse,
@@ -21,28 +26,26 @@ Imports:
     rlang,
     ggbeeswarm, 
     readr,
-    DESeq2,
     magrittr,
     stats,
     ggrepel,
     plotly,
     msigdbr,
+    patchwork,
+    viridisLite,
+    remotes,
+    DESeq2,
     GSVA,
     progeny,
     MCPcounter,
     mMCPcounter,
-    patchwork,
-    ggheatmapper,
-    viridisLite,
-    remotes
-Depends: 
-    R (>= 4.1.0),
     SummarizedExperiment,
-    kableExtra,
-    stringr,
-    lubridate
+    ggheatmapper
 Remotes:
-    saezlab/progeny,
-    ebechtlab/mMCPcounter,
-    jperon/ggheatmapper
-
+    cit-bioinfo/mMCP-counter,
+    csgroen/ggheatmapper,
+    ebecht/MCPcounter/Source,
+    bioc::SummarizedExperiment,
+    bioc::GSVA,
+    bioc::DESeq2,
+    bioc::progeny
