@@ -43,7 +43,7 @@ plot_progeny_heatmap <- function(progeny_scores,
   } else {
     # Si progeny_scores est un SummarizedExperiment, récupérer les scores dans les métadonnées
     exp_data <- progeny_scores
-    progeny_scores <- metadata(exp_data)[["progeny_scores"]]
+    progeny_scores <- S4Vectors::metadata(exp_data)[["progeny_scores"]]
 
     # Vérifier la présence des scores dans les métadonnées
     if (is.null(progeny_scores)) {

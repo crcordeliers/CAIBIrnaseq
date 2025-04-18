@@ -25,7 +25,7 @@ cluster_metadata <- function(exp_data, k,
                              features = NULL,
                              dist_method = "euclidean",
                              hc_method = "complete") {
-  scores <- metadata(exp_data)[[metadata_name]]
+  scores <- S4Vectors::metadata(exp_data)[[metadata_name]]
 
   if (is.null(scores)) {
     stop(paste0("No scores found in metadata(exp_data)[['", metadata_name, "']]"))

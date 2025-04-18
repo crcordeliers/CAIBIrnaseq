@@ -25,7 +25,7 @@ plot_path_scatter <- function(exp_data, pathway1, pathway2,
                               fheight = 3){
 
   # Extract pathway scores from the metadata of the SummarizedExperiment object
-  pathway_scores <- metadata(exp_data)[["pathway_scores"]]
+  pathway_scores <- S4Vectors::metadata(exp_data)[["pathway_scores"]]
 
   # Check if pathway scores are present in the metadata
   if(is.null(pathway_scores)) {

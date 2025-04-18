@@ -26,7 +26,7 @@ plot_microenv_heatmap <- function(exp_data,
                                   fheight = 5,
                                   ...) {
   # Extraire les scores de microenvironnement depuis les métadonnées
-  microenv_scores <- metadata(exp_data)[["microenv_scores"]]
+  microenv_scores <- S4Vectors::metadata(exp_data)[["microenv_scores"]]
 
   # Vérifier si les scores existent dans les métadonnées
   if (is.null(microenv_scores)) {

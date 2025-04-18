@@ -30,7 +30,7 @@ plot_path_boxplot <- function(exp_data, pathway, annotation,
                               fname = NULL,
                               fwidth = 5,
                               fheight = 3) {
-  pathway_scores <- metadata(exp_data)[["pathway_scores"]]
+  pathway_scores <- S4Vectors::metadata(exp_data)[["pathway_scores"]]
 
   if (is.null(pathway_scores)) {
     stop('No pathway scores found in `metadata(exp_data)[["pathway_scores"]]`')

@@ -45,7 +45,7 @@ plot_pathway_heatmap <- function(pathway_scores,
   } else {
     # Si pathway_scores est un SummarizedExperiment, récupérer les scores dans les métadonnées
     exp_data <- pathway_scores
-    pathway_scores <- metadata(pathway_scores)[["pathway_scores"]]
+    pathway_scores <- S4Vectors::metadata(pathway_scores)[["pathway_scores"]]
 
     # Vérifier la présence des scores dans les métadonnées
     if (is.null(pathway_scores)) {

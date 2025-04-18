@@ -31,6 +31,7 @@ Imports:
     ggrepel,
     plotly,
     msigdbr,
+    msigdbdf,
     patchwork,
     viridisLite,
     remotes,
@@ -41,7 +42,8 @@ Imports:
     mMCPcounter,
     SummarizedExperiment,
     ggheatmapper,
-    ggtree
+    ggtree,
+    S4Vectors
 Remotes:
     cit-bioinfo/mMCP-counter,
     csgroen/ggheatmapper,
