@@ -29,4 +29,11 @@ Then install CAIBIrnaseq :
 
 🕒 There is a lot of dependencies, so the installation could take a bit of time...
 
+If you have an error in the package's installation of the dependency 'ggheatmapper', you can do this command before in the console : 
+`if (!requireNamespace("BiocManager", quietly = TRUE))`
+  `install.packages("BiocManager")`
+`BiocManager::install("ggtree")`
+
+It should facilitate th
+
 ## ⚙️ Functions

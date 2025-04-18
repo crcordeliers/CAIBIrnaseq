@@ -40,7 +40,8 @@ Imports:
     MCPcounter,
     mMCPcounter,
     SummarizedExperiment,
-    ggheatmapper
+    ggheatmapper,
+    ggtree
 Remotes:
     cit-bioinfo/mMCP-counter,
     csgroen/ggheatmapper,
@@ -48,4 +49,5 @@ Remotes:
     bioc::SummarizedExperiment,
     bioc::GSVA,
     bioc::DESeq2,
-    bioc::progeny
+    bioc::progeny,
+    bioc::ggtree
