@@ -3,16 +3,17 @@ Type: Package
 Title: Supervised and Unsupervised RNAseq(bulk) Analysis 
 Version: 0.1.0
 Authors@R: c(
-    person("Nicolas", "Salaün", email = "nicolas.salaun@inserm.fr", role = "cre"),
+    person("Nicolas", "Salaün", email = "nicolas.salaun@inserm.fr", role = "ctb"),
     person("Clarice", "Groeneveld", email = "clarice.groeneveld@inserm.fr", role = "cre"),
-    person("Chloe", "Witz", email = "chloewitz.pro@gmail.com", role = "aut")
-)
+    person("Chloe", "Witz", email = "chloewitz.pro@gmail.com", role = "aut"))
 Description: This package provides tools for both supervised and unsupervised analysis of RNA sequencing data, specifically for bulk RNA-seq experiments. It includes functions for data preprocessing, quality control, normalization, clustering, dimensionality reduction (PCA), pathway analysis, and visualization. The package is designed to handle complex RNA-seq datasets, offering various methods for analyzing gene expression, pathway enrichment, and differential expression.
 License: MIT
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.2
 Imports:
+    R.utils,
+    tidyverse,
     dplyr,
     tibble,
     ggplot2,
@@ -32,11 +33,16 @@ Imports:
     mMCPcounter,
     patchwork,
     ggheatmapper,
-    viridisLite
+    viridisLite,
+    remotes
 Depends: 
     R (>= 4.1.0),
     SummarizedExperiment,
     kableExtra,
-    stringr,ou
+    stringr,
     lubridate
+Remotes:
+    saezlab/progeny,
+    ebechtlab/mMCPcounter,
+    jperon/ggheatmapper
 
