@@ -78,20 +78,75 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="installation">🔧 Installation</h2>
 <p>As <strong>CAIBIrnaseq</strong> package is available on Github, you will need to install devtools:<br>
 <code>install.packages("devtools")</code></p>
-<p>Then then you can try execute this command :<br>
+<p>Then you can try execute this command :<br>
 <code>devtools::install_github("your-research-center/CAIBIrnaseq")</code></p>
 <p>🕒 There is a lot of dependencies, so the installation might take some time (~40min) …</p>
-<p>This package uses non-CRAN dependencies so it may cause some problems.</p>
-<p>If you have an error in the package’s installation of the dependency ‘ggheatmapper’, you can do this command before in the console :<br>
-<code>if (!requireNamespace("BiocManager", quietly = TRUE))</code> <code>install.packages("BiocManager")</code> <code>BiocManager::install("ggtree")</code></p>
+<p>This package uses non-CRAN and Bioc dependencies so it may cause some problems.</p>
+<p>If you have an error in the package’s installation of the dependencies, you can do this command before in the console :<br>
+<code>if (!requireNamespace("BiocManager", quietly = TRUE))</code><br>
+<code>install.packages("BiocManager")</code></p>
 <p>The package is made to only require this command to work :<br>
 <code>devtools::install_github("your-research-center/CAIBIrnaseq")</code></p>
 <p>There may be problems installing dependencies. The Console will tell you which packages are missing. Do not hesitate to install the missing packages manually. It may be easier and faster.</p>
 </section>
 <section id="functions" class="level2">
 <h2 class="anchored" data-anchor-id="functions">⚙️ Functions</h2>
-<p>About the available functions, there are different types of functions : pre-processing functions, plot functions (heatmaps, boxplots), scores functions, pathway functions, cluster functions…</p>
-<p>For each function, documentation is available with some precision about the parameters and the function’s utility.</p>
+<p>Below is a summary of the available functions, grouped by their purpose in the RNA-seq analysis workflow. <strong>🧹 Preprocessing &amp; Filtering</strong></p>
+<pre><code>gexp_preprocess.R: Main pipeline for preprocessing the gene expression matrix (filtering, normalization, etc.).
+
+filter_gexp.R: Applies gene- or sample-level filters based on user-defined thresholds.
+
+normalize_gexp.R: Normalizes raw gene expression data (log2 transformation, scaling, etc.).
+
+read_rnaseq_out.R: Reads the output files from RNA-seq processing pipelines and prepares them for analysis.
+
+rebase_gexp.R: Re-indexes or aligns the gene expression matrix to a common gene set.
+
+highly_variable_genes.R: Detects the most variable genes across samples for downstream dimensionality reduction.</code></pre>
+<p><strong>📊 Visualization</strong></p>
+<pre><code>plot_exp_heatmap.R: Heatmap of expression levels across samples or groups.
+
+plot_exp_boxplot.R: Boxplot visualization for selected gene(s) expression across conditions.
+
+plot_exp_scatter.R: Scatter plots of gene expression values.
+
+plot_pathway_heatmap.R: Heatmap of pathway scores (e.g., GSVA).
+
+plot_path_boxplot.R: Boxplot of pathway activity scores across conditions.
+
+plot_path_scatter.R: Scatter plot of pathway scores.
+
+plot_progeny_heatmap.R: Heatmap showing pathway activity using the PROGENy method.
+
+plot_microenv_heatmap.R: Heatmap for microenvironment estimation results (e.g., MCP-counter).
+
+plt_boxplot.R, plt_heatmap.R, plt_scatter.R: Internal helper functions for standardized plotting.</code></pre>
+<p><strong>🧪 Dimensionality Reduction &amp; Clustering</strong></p>
+<pre><code>pca_gexp.R: Runs PCA on gene expression data and returns PCA results.
+
+plot_pca.R: Visualizes PCA output with group annotation.
+
+cluster_exp.R: Clusters gene expression profiles using hierarchical or k-means clustering.
+
+cluster_k_hc.R: Applies k-means or hierarchical clustering with a customizable number of clusters.</code></pre>
+<p><strong>🧬 Pathway &amp; Annotation Handling</strong></p>
+<pre><code>get_pathway_genes.R: Retrieves genes associated with selected pathways.
+
+get_annotation_collection.R: Loads a gene set collection (e.g., MSigDB, Reactome).
+
+get_exp_df.R: Formats expression data into a dataframe for plotting.
+
+get_pathway_df.R: Prepares a tidy dataframe of pathway scores for visualization.</code></pre>
+<p><strong>📈 Scoring &amp; Enrichment</strong></p>
+<pre><code>mcp_counter.R: Runs MCP-counter to estimate immune and stromal cell populations in bulk RNA-seq data.
+
+prep_scores_hm.R: Prepares a matrix of scores (e.g., GSVA, PROGENy) for heatmap visualization.
+
+prep_exp_hm.R: Formats expression data for heatmap visualization.
+
+prep_scored_hm.R: Combines expression and score-based data into a unified heatmap input.</code></pre>
+<p><strong>🗂️ Metadata Utilities</strong></p>
+<pre><code>cluster_metadata.R: Extracts and organizes metadata (e.g., conditions, clusters) for downstream analysis.</code></pre>
 </section>
 </section>
 
