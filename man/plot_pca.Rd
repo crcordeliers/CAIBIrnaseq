@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_pca.R
 \name{plot_pca}
 \alias{plot_pca}
-\title{PCA Plot for Gene Expression Data}
+\title{Plot PCA Results for Gene Expression Data}
 \usage{
 plot_pca(
   exp_data,
@@ -18,29 +18,37 @@ plot_pca(
 )
 }
 \arguments{
-\item{exp_data}{A SummarizedExperiment object containing gene expression data.}
+\item{exp_data}{A `SummarizedExperiment` object containing gene expression data. PCA results must be stored in `exp_data@metadata` under the name specified by `res_name`.}
 
-\item{color}{Variable in the data for coloring the points (default is NA).}
+\item{color}{A character string specifying the column name in `colData(exp_data)` to use for coloring the points. Default is `NA`, meaning no coloring.}
 
-\item{shape}{Variable in the data for changing the shape of the points (default is NA).}
+\item{shape}{A character string specifying the column name in `colData(exp_data)` to use for shaping the points. Default is `NA`, meaning no shaping.}
 
-\item{fname}{File name to save the plot (default is "results/qc/plot_PCA.pdf").}
+\item{fname}{A character string specifying the file path to save the plot as a PDF. Default is `"results/qc/plot_PCA.pdf"`. Set to `NULL` to skip saving.}
 
-\item{pcs}{A vector of two integers specifying which principal components to plot (default is c(1, 2)).}
+\item{pcs}{An integer vector of length 2 specifying the principal components to plot on the x and y axes. Default is `c(1, 2)`.}
 
-\item{res_name}{Name of the PCA result stored in the metadata of the `exp_data` object (default is "pca_res").}
+\item{res_name}{A character string specifying the name of the PCA results stored in `exp_data@metadata`. Default is `"pca_res"`.}
 
-\item{id_name}{Column name for sample identifiers (default is "sample_id").}
+\item{id_name}{A character string specifying the column name in `colData(exp_data)` containing sample identifiers. Default is `"sample_id"`.}
 
-\item{point_size}{Size of the points in the plot (default is 2).}
+\item{point_size}{A numeric value specifying the size of the points in the plot. Default is `2`.}
 
-\item{color_in}{Either "color" or "fill" specifying how to handle color mapping (default is "color").}
+\item{color_in}{A character string indicating whether the color aesthetic should be applied to `"color"` (border) or `"fill"` (interior). Default is `"color"`.}
 
-\item{out}{Output format: either "plotly" for interactive or "ggplot" for static (default is "plotly").}
+\item{out}{A character string indicating the output type: `"plotly"` (interactive Plotly plot) or `"ggplot"` (static ggplot). Default is `"plotly"`.}
 }
 \value{
-A ggplot or plotly object depending on the output format selected.
+A PCA plot, either as a `plotly` interactive object or a `ggplot` static object, depending on the `out` parameter.
 }
 \description{
-PCA Plot for Gene Expression Data
+This function generates a PCA plot for a `SummarizedExperiment` object using precomputed PCA results.
+}
+\details{
+The function creates a scatter plot of the specified principal components (`pcs[1]` and `pcs[2]`). Users can optionally:
+- Color points based on a metadata column (`color`).
+- Shape points based on a metadata column (`shape`).
+- Save the static plot as a PDF if `fname` is not `NULL`.
+
+If PCA results are not precomputed using `pca_gexp`, the function will throw an error. The proportion of variance explained by the principal components is displayed on the axis labels.
 }

@@ -1,26 +1,36 @@
-#' Plot a boxplot of pathway scores by annotation group
+#' Plot Pathway Boxplot
 #'
-#' This function generates a boxplot (or alternative summaries) of pathway scores for a given pathway,
-#' grouped by a chosen annotation variable (e.g., condition). It can optionally color the points,
-#' and save the figure.
+#' Creates a boxplot to visualize pathway scores across annotations, with optional statistical comparisons and customization.
 #'
-#' @param exp_data A `SummarizedExperiment` object containing the pathway scores in its metadata.
-#' @param pathway A character string indicating the name of the pathway to plot.
-#' @param annotation A character string indicating the column in the sample metadata to group the data by (x-axis).
-#' @param color_var A character string for the column to use for coloring points. Default is `NA`.
-#' @param pt_size Numeric. Point size for the scatter/boxplot. Default is 1.
-#' @param summary_type Character. One of `"box"`, `"line"`, or `"choose"` (default).
-#' @param stat_comparisons Optional. Statistical comparison groups (for adding p-values). Default is `NA`.
-#' @param stat_format Optional. Format string for displaying p-values. Default is `NULL`.
-#' @param fname Optional. File name to save the figure. Default is `NULL` (no saving).
-#' @param fwidth Numeric. Width of the saved plot in inches. Default is 5.
-#' @param fheight Numeric. Height of the saved plot in inches. Default is 3.
+#' @param exp_data A `SummarizedExperiment` object containing pathway scores in the `metadata(exp_data)[["pathway_scores"]]` slot.
+#' @param pathway A character string specifying the name of the pathway to plot.
+#' @param annotation A character string specifying the column in `colData(exp_data)` to use for grouping samples in the plot.
+#' @param color_var A character string specifying a column in `colData(exp_data)` to use for coloring the plot. Default is `NA` (no coloring).
+#' @param pt_size Numeric; size of the points in the plot. Default is `1`.
+#' @param summary_type Character; type of summary to overlay on the plot. Options are `"choose"` (default), `"line"`, or `"box"`.
+#' @param stat_comparisons A list of character vectors specifying groups for pairwise statistical comparisons. Default is `NA` (no statistical comparisons).
+#' @param stat_format A character string specifying the format for displaying statistical results. Default is `NULL` (no formatting).
+#' @param fname A character string specifying the file name to save the plot. Default is `NULL` (do not save).
+#' @param fwidth Numeric; width of the saved plot in inches. Default is `5`.
+#' @param fheight Numeric; height of the saved plot in inches. Default is `3`.
 #'
-#' @return A `ggplot2` object representing the plot.
-#' @export
+#' @details
+#' The function extracts pathway scores from the `metadata(exp_data)[["pathway_scores"]]` slot and merges them with sample annotations from `colData(exp_data)`.
+#' It generates a boxplot using a helper function `.plt_boxplot`. Statistical comparisons can be added to the plot, and the plot can be saved as an image file if `fname` is provided.
 #'
+#' The `summary_type` argument determines the type of summary overlay:
+#' \describe{
+#'   \item{"choose"}{No additional summary overlay.}
+#'   \item{"line"}{Adds a line connecting the median of each group.}
+#'   \item{"box"}{Adds a summary box around each group.}
+#' }
+#'
+#' @return A ggplot object representing the boxplot.
+#'
+#' @importFrom S4Vectors metadata
 #' @importFrom ggplot2 ggsave
 #'
+#' @export
 plot_path_boxplot <- function(exp_data, pathway, annotation,
                               color_var = NA,
                               pt_size = 1,

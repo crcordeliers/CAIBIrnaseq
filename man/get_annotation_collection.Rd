@@ -2,18 +2,33 @@
 % Please edit documentation in R/get_annotation_collection.R
 \name{get_annotation_collection}
 \alias{get_annotation_collection}
-\title{Get Annotation Collections from MSigDB}
+\title{Get Annotation Collection}
 \usage{
 get_annotation_collection(collections, species = "Homo sapiens")
 }
 \arguments{
-\item{collections}{A character vector of MSigDB sub-collections (e.g., "Hallmark", "CP:KEGG", etc.).}
+\item{collections}{A character vector specifying the names of the collections to retrieve. Collections can include MSigDB subcategories or "HALLMARKS".}
 
-\item{species}{The species for which to retrieve gene sets (default: "Homo sapiens").}
+\item{species}{A character string specifying the species for which the gene sets should be retrieved. Default is `"Homo sapiens"`.}
 }
 \value{
-A data frame with gene set annotations, including collection name, pathway, Ensembl gene ID, and gene symbol.
+A data frame with the following columns:
+  \describe{
+    \item{collection}{The name of the collection.}
+    \item{pathway}{The pathway name.}
+    \item{gene_id}{The Ensembl gene ID.}
+    \item{gene_symbol}{The gene symbol.}
+  }
+If no valid collections are found, the function returns `NULL`.
 }
 \description{
-This function retrieves gene sets from specified MSigDB collections.
+Retrieves gene sets from specified collections for a given species using the MSigDB database.
+}
+\details{
+The function queries the MSigDB database via the `msigdbr` package to collect gene sets for the specified collections and species.
+If a collection is not found in the MSigDB subcategories, a warning message is displayed, and that collection is skipped.
+
+For the "HALLMARKS" collection, the function maps the "H" category to "HALLMARKS" for consistency.
+
+The output contains unique gene sets, including the collection name, pathway name, Ensembl gene IDs, and gene symbols.
 }

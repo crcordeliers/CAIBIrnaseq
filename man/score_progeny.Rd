@@ -2,19 +2,22 @@
 % Please edit documentation in R/score_progeny.R
 \name{score_progeny}
 \alias{score_progeny}
-\title{Score PROGENy Pathways for Gene Expression Data}
+\title{Score PROGENy Pathways}
 \usage{
 score_progeny(exp_data, species = "Homo sapiens")
 }
 \arguments{
 \item{exp_data}{A `SummarizedExperiment` object containing normalized gene expression data.}
 
-\item{species}{The species for which to score the pathways. Defaults to "Homo sapiens" ("Human").}
+\item{species}{A character string specifying the species, either `"Homo sapiens"` (default) or `"Mus musculus"`.}
 }
 \value{
-A data frame containing the PROGENy pathway scores for each sample.
+A data frame containing PROGENy pathway activity scores for each sample.
 }
 \description{
-This function calculates pathway scores for gene expression data using the PROGENy algorithm.
-PROGENy is an algorithm that predicts pathway activity based on gene expression data.
+Calculate PROGENy pathway activity scores based on normalized gene expression data.
+}
+\details{
+The function uses the normalized gene expression data from the specified assay of the `SummarizedExperiment` object to compute PROGENy scores.
+PROGENy scores represent pathway activity and are computed based on predefined pathway models for the specified species.
 }

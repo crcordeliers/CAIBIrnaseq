@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_exp_scatter.R
 \name{plot_exp_scatter}
 \alias{plot_exp_scatter}
-\title{Save or return a scatter plot of two genes from a SummarizedExperiment}
+\title{Plot Expression Scatter Plot}
 \usage{
 plot_exp_scatter(
   exp_data,
@@ -16,26 +16,33 @@ plot_exp_scatter(
 )
 }
 \arguments{
-\item{exp_data}{A `SummarizedExperiment` object containing expression data and sample metadata.}
+\item{exp_data}{A `SummarizedExperiment` object containing gene expression data in the assays slot.}
 
-\item{gene1}{A character string indicating the name of the gene for the x-axis.}
+\item{gene1}{A character string specifying the first gene for the x-axis.}
 
-\item{gene2}{A character string indicating the name of the gene for the y-axis.}
+\item{gene2}{A character string specifying the second gene for the y-axis.}
 
-\item{color_var}{Optional character string indicating a column in metadata used for coloring points. Default is `NA`.}
+\item{color_var}{A character string specifying a column in `colData(exp_data)` to use for coloring the points. Default is `NA` (no coloring).}
 
-\item{pt_size}{Numeric. Size of the points in the scatter plot. Default is 2.}
+\item{pt_size}{Numeric; size of the points in the scatter plot. Default is `2`.}
 
-\item{fname}{Optional. A file name (with extension, e.g., `"scatterplot.png"`) to save the plot. If `NULL`, the plot is not saved.}
+\item{fname}{A character string specifying the file name to save the plot. Default is `NULL` (do not save).}
 
-\item{fwidth}{Numeric. Width of the output figure in inches. Default is 5.}
+\item{fwidth}{Numeric; width of the saved plot in inches. Default is `5`.}
 
-\item{fheight}{Numeric. Height of the output figure in inches. Default is 3.}
+\item{fheight}{Numeric; height of the saved plot in inches. Default is `3`.}
 }
 \value{
-A `ggplot2` object (the scatter plot).
+A ggplot object representing the scatter plot.
 }
 \description{
-This function extracts expression values for two genes from a `SummarizedExperiment` object,
-generates a scatter plot, and optionally saves it to a file.
+Creates a scatter plot to visualize the expression relationship between two genes, with optional coloring by a variable.
+}
+\details{
+The function extracts expression values for the specified genes (`gene1` and `gene2`) from the `assays(exp_data)` slot and combines them with sample annotations from `colData(exp_data)`.
+It generates a scatter plot using a helper function `.plt_scatter`, with optional coloring based on a variable (`color_var`) from the sample annotations.
+
+The plot includes a correlation statistic computed with the `stat_cor()` function from the `ggpubr` package.
+
+If `fname` is provided, the plot will be saved as an image file.
 }

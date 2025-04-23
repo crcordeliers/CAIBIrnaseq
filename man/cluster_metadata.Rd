@@ -2,7 +2,7 @@
 % Please edit documentation in R/cluster_metadata.R
 \name{cluster_metadata}
 \alias{cluster_metadata}
-\title{Cluster Samples Based on Metadata Scores (e.g., Pathways)}
+\title{Cluster Metadata in Expression Data}
 \usage{
 cluster_metadata(
   exp_data,
@@ -16,27 +16,32 @@ cluster_metadata(
 )
 }
 \arguments{
-\item{exp_data}{A `SummarizedExperiment` object.}
+\item{exp_data}{A SummarizedExperiment object containing expression data and metadata.}
 
-\item{k}{Integer. Number of clusters to assign.}
+\item{k}{An integer specifying the number of clusters to generate.}
 
-\item{metadata_name}{Character. Name of the metadata slot element to use (e.g., "pathway_scores").}
+\item{metadata_name}{A character string specifying the name of the metadata variable
+to use for clustering. Defaults to "pathway_scores".}
 
-\item{pca}{Logical. Whether to reduce dimensionality using PCA before clustering. Default is TRUE.}
+\item{pca}{Logical. If TRUE, principal component analysis (PCA) is applied before clustering. Defaults to TRUE.}
 
-\item{n_pcs}{Integer. Number of principal components to use if PCA is enabled. Default is 10.}
+\item{n_pcs}{An integer specifying the number of principal components to retain if PCA is applied. Defaults to 10.}
 
-\item{features}{Optional character vector of row names (e.g., pathways) to use for clustering. If NULL, use all.}
+\item{features}{A character vector of feature names to use for clustering. If NULL, all features are used. Defaults to NULL.}
 
-\item{dist_method}{Distance metric for clustering ("euclidean", "pearson", "spearman", etc.). Default is "euclidean".}
+\item{dist_method}{A character string specifying the distance metric to use for hierarchical clustering. Defaults to "euclidean".}
 
-\item{hc_method}{Linkage method for hierarchical clustering. Default is "complete".}
+\item{hc_method}{A character string specifying the hierarchical clustering linkage method. Defaults to "complete".}
 }
 \value{
-A `SummarizedExperiment` object with cluster assignments added to `colData()` as `path_cluster`.
+A SummarizedExperiment object with updated sample annotations including the clustering results in the "path_cluster" column.
 }
 \description{
-This function clusters samples using hierarchical clustering on metadata scores
-(e.g., pathway activity, cell type scores, etc.) stored in the `metadata()`
-slot of a `SummarizedExperiment` object.
+This function performs hierarchical clustering on specified metadata scores
+within the provided expression dataset. It updates the dataset's sample annotations
+with the clustering results.
+}
+\details{
+If no features are provided, all rows in the specified metadata are used for clustering.
+  PCA can be applied to reduce dimensionality before clustering.
 }

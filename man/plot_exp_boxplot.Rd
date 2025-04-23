@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_exp_boxplot.R
 \name{plot_exp_boxplot}
 \alias{plot_exp_boxplot}
-\title{Plot expression boxplot for a gene}
+\title{Plot Expression Boxplot}
 \usage{
 plot_exp_boxplot(
   exp_data,
@@ -19,32 +19,31 @@ plot_exp_boxplot(
 )
 }
 \arguments{
-\item{exp_data}{A data frame or matrix containing expression data with genes as rows and samples as columns.}
+\item{exp_data}{A data object containing expression data.}
 
-\item{gene}{Character. The gene name to be plotted.}
+\item{gene}{A character string specifying the gene for which expression is plotted.}
 
-\item{annotation}{A data frame with sample annotations. Must contain row names or a column matching the sample names in `exp_data`.}
+\item{annotation}{A character string specifying the grouping variable for the boxplot.}
 
-\item{color_var}{Character. Column name in `annotation` to use for color grouping. Default is `NA` (no coloring).}
+\item{color_var}{Optional. A character string specifying the variable to color the points. Defaults to NA.}
 
-\item{pt_size}{Numeric. Size of the individual points on the plot. Default is 1.}
+\item{pt_size}{Numeric. The size of the points in the boxplot. Defaults to 1.}
 
-\item{summary_type}{Character. Type of summary to add: "choose" (automatic), "line", or "box". Default is "choose".}
+\item{summary_type}{A character string specifying the type of summary to display ("choose", "line", or "box"). Defaults to "choose".}
 
-\item{stat_comparisons}{A list of group comparisons for statistical testing (passed to `ggpubr::stat_compare_means`). Default is `NA`.}
+\item{stat_comparisons}{Optional. Statistical comparisons to be displayed on the plot. Defaults to NA.}
 
-\item{stat_format}{A function or format for customizing statistical annotations. Default is `NULL`.}
+\item{stat_format}{Optional. A format for statistical annotations. Defaults to NULL.}
 
-\item{fname}{Character. If not `NULL`, the filename to save the plot to (PDF, PNG, etc.). Default is `NULL`.}
+\item{fname}{Optional. A character string specifying the file name to save the plot. Defaults to NULL.}
 
-\item{fwidth}{Numeric. Width of the saved figure in inches. Default is 5.}
+\item{fwidth}{Numeric. The width of the saved plot file. Defaults to 5.}
 
-\item{fheight}{Numeric. Height of the saved figure in inches. Default is 3.}
+\item{fheight}{Numeric. The height of the saved plot file. Defaults to 3.}
 }
 \value{
-A ggplot object containing the boxplot.
+A ggplot object representing the boxplot.
 }
 \description{
-This function generates a boxplot (or similar summary plot) of gene expression
-using a provided expression matrix, gene of interest, and sample annotations.
+This function generates a boxplot for the expression of a specified gene, grouped by a given annotation.
 }

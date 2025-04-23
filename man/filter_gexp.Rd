@@ -2,25 +2,28 @@
 % Please edit documentation in R/filter_gexp.R
 \name{filter_gexp}
 \alias{filter_gexp}
-\title{Filter gene expression data based on counts and sample presence}
+\title{Filter Gene Expression Data}
 \usage{
 filter_gexp(exp_data, min_nsamp = 1, min_counts = 10)
 }
 \arguments{
-\item{exp_data}{A `SummarizedExperiment` object containing the gene expression data.}
+\item{exp_data}{A `SummarizedExperiment` object containing the gene expression data with a `counts` assay.}
 
-\item{min_nsamp}{An integer. The minimum number of samples in which a gene must have
-at least `min_counts` to be retained. Default is 1.}
+\item{min_nsamp}{An integer specifying the minimum number of samples in which a gene must have expression above `min_counts` to be retained. Default is 1.}
 
-\item{min_counts}{An integer. The minimum number of counts for a gene to be retained
-in each sample. Default is 10.}
+\item{min_counts}{An integer specifying the minimum count threshold a gene must have in `min_nsamp` samples to be retained. Default is 10.}
 }
 \value{
-A `SummarizedExperiment` object containing only the genes that meet the criteria.
+A filtered `SummarizedExperiment` object containing only the genes that meet the specified criteria. Two new columns are added to `colData`:
+- `ncounts`: Total counts per sample.
+- `nfeats`: Number of features (genes) detected per sample.
 }
 \description{
-This function filters genes from a `SummarizedExperiment` object based on the
-number of counts in at least a certain number of samples. Genes that do not
-meet the specified threshold for both the minimum number of samples and the
-minimum number of counts per sample are removed.
+This function filters genes from a `SummarizedExperiment` object based on minimum expression thresholds.
+}
+\details{
+This function removes genes that do not meet the specified thresholds for expression. It adds sample-level metrics (`ncounts` and `nfeats`) to the `colData` of the `SummarizedExperiment` object for downstream analysis.
+
+The filtering criteria are:
+- A gene must have expression greater than or equal to `min_counts` in at least `min_nsamp` samples.
 }

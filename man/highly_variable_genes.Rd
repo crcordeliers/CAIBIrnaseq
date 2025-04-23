@@ -2,19 +2,22 @@
 % Please edit documentation in R/highly_variable_genes.R
 \name{highly_variable_genes}
 \alias{highly_variable_genes}
-\title{Identify Highly Variable Genes (HVGs)}
+\title{Identify Highly Variable Genes}
 \usage{
 highly_variable_genes(gexp, n_hvg = 2000)
 }
 \arguments{
-\item{gexp}{A gene expression matrix or a SummarizedExperiment object containing normalized gene expression data.}
+\item{gexp}{A normalized gene expression matrix (genes in rows, samples in columns), or a `SummarizedExperiment` object containing normalized counts in the `"norm"` assay.}
 
-\item{n_hvg}{The number of highly variable genes to return (default is 2000).}
+\item{n_hvg}{An integer specifying the number of highly variable genes to select. Default is `2000`.}
 }
 \value{
-A character vector of gene names representing the highly variable genes.
+A character vector containing the names of the top `n_hvg` highly variable genes.
 }
 \description{
-This function identifies the top n highly variable genes (HVGs) from a gene expression matrix.
-It calculates the robust coefficient of variation for each gene and selects the top `n_hvg` genes with the highest variability.
+This function selects the most highly variable genes from a normalized gene expression matrix or a `SummarizedExperiment` object.
+}
+\details{
+The function computes the robust coefficient of variation (CV) for each gene and selects the top `n_hvg` genes with the highest CV values.
+If the input is a `SummarizedExperiment` object, the `"norm"` assay is automatically extracted for processing.
 }

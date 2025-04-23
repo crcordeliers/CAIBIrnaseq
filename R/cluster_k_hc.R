@@ -14,13 +14,13 @@
 #' @return A named integer vector with cluster assignments for each sample.
 #' @export
 #'
-#'@importFrom stats as.dist cor cutree dist hclust
+#'@importFrom stats as.dist cor cutree dist hclust prcomp
 #'
 cluster_k_hc <- function(data, k, pca = TRUE, n_pcs = 10,
                          dist_method = "euclidean", hc_method = "complete") {
   if (pca) {
     message("-- Reducing dimensionality using PCA")
-    pca_res <- prcomp(t(data), center = TRUE, scale. = TRUE)
+    pca_res <- stats::prcomp(t(data), center = TRUE, scale. = TRUE)
     data <- t(pca_res$x[, 1:n_pcs, drop = FALSE])
   }
 

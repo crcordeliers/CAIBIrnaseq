@@ -1,22 +1,27 @@
-#' Plot Heatmap of Progeny Scores with Optional Annotations
+#' Plot Progeny Heatmap
 #'
-#' This function generates a heatmap of progeny scores from either a data frame or a `SummarizedExperiment`
-#' object containing progeny scores. Annotations can optionally be added to the heatmap for further customization.
+#' Generates a heatmap for Progeny pathway scores, with optional sample annotations and customization options.
 #'
-#' @param progeny_scores A `data.frame` or a `SummarizedExperiment` object. If a `data.frame`, it should contain progeny scores. If a `SummarizedExperiment`, it should have progeny scores stored in the metadata.
-#' @param annotations Optional. A data frame or list of sample annotations to overlay on the heatmap. Default is `NA` (no annotations).
-#' @param annotation_prop Proportion of the heatmap's height to allocate to the annotation tracks. Default is 0.1.
-#' @param annotation_colors A vector of colors to use for the annotation tracks. Default is `NULL`.
-#' @param fname Optional. The file name to save the heatmap plot to. Default is `NULL` (no file is saved).
-#' @param fwidth The width (in inches) of the saved heatmap. Default is 7 inches.
-#' @param fheight The height (in inches) of the saved heatmap. Default is 5 inches.
-#' @param ... Additional arguments to pass to the `plt_heatmap` function.
+#' @param progeny_scores A data frame of pathway scores or a `SummarizedExperiment` object containing pathway scores in its metadata.
+#' @param annotations (Optional) Annotations for the samples to be displayed as tracks on the heatmap. Default is `NA`, meaning no annotations are used.
+#' @param annotation_prop Proportion of the heatmap width allocated to annotations, if provided. Default is `0.1`.
+#' @param annotation_colors (Optional) A named list of colors for the annotation tracks. Names must match the annotation variables.
+#' @param fname (Optional) File name to save the heatmap as an image. If `NULL`, the heatmap is displayed but not saved. Default is `NULL`.
+#' @param fwidth Width of the saved heatmap image in inches. Default is `7`.
+#' @param fheight Height of the saved heatmap image in inches. Default is `5`.
+#' @param ... Additional arguments passed to the internal heatmap plotting function.
 #'
-#' @returns A `ggplot` object representing the heatmap.
-#' @export
+#' @details
+#' If `progeny_scores` is a data frame, it is assumed to contain pathway scores with row names as pathway names and column names as sample IDs.
+#' If it is a `SummarizedExperiment` object, pathway scores are extracted from the metadata under `progeny_scores`.
+#'
+#' Annotations can be added to the heatmap if provided, and their appearance can be customized using `annotation_colors`.
+#'
+#' @return A heatmap object showing Progeny pathway scores.
 #'
 #' @importFrom viridisLite viridis
 #'
+#' @export
 plot_progeny_heatmap <- function(progeny_scores,
                                  annotations = NA,
                                  annotation_prop = 0.1,
@@ -25,46 +30,36 @@ plot_progeny_heatmap <- function(progeny_scores,
                                  fwidth = 7,
                                  fheight = 5,
                                  ...) {
-  # Si progeny_scores est un data.frame (scores de progeny)
-  if (is.data.frame(progeny_scores)) {
-    if (!is.na(annotations)) {
-      warning("Plotting progeny score matrix, no sample annotation will be plotted")
+  if(is.data.frame(progeny_scores)) {
+    if(!is.na(annotations)) {
+      warning("Plotting pathway score matrix, no sample annotation will be plotted")
     }
-    # Préparer les données du heatmap pour un data.frame de scores
     hm_data <- prep_scoredf_hm(progeny_scores)
-    # Créer et personnaliser le heatmap
     hm <- plt_heatmap(hm_data,
-                      colors_title = "Progeny score",
-                      hm_colors = viridisLite::viridis(100),
-                      fname = fname,
-                      fwidth = fwidth,
-                      fheight = fheight,
-                      ...)
+                       colors_title = "Pathway score",
+                       hm_colors = viridisLite::viridis(100),
+                       fname = fname,
+                       fwidth = fwidth,
+                       fheight = fheight,
+                       ...)
   } else {
-    # Si progeny_scores est un SummarizedExperiment, récupérer les scores dans les métadonnées
     exp_data <- progeny_scores
-    progeny_scores <- S4Vectors::metadata(exp_data)[["progeny_scores"]]
-
-    # Vérifier la présence des scores dans les métadonnées
-    if (is.null(progeny_scores)) {
-      stop('No progeny scores found in `metadata(exp_data)[["progeny_scores"]])`')
+    progeny_scores <- metadata(exp_data)[["progeny_scores"]]
+    if(is.null(progeny_scores)) {
+      stop('No pathway scores found in `metadata(exp_data)[["progeny_scores"]])`')
     }
-
-    # Préparer les données du heatmap pour un SummarizedExperiment
     hm_data <- prep_scores_hm(exp_data, progeny_scores)
-    # Créer et personnaliser le heatmap
     hm <- plt_heatmap(hm_data,
-                      annotations = annotations,
-                      colors_title = "Progeny score",
-                      hm_colors = viridisLite::viridis(100),
-                      track_prop = annotation_prop,
-                      track_colors = annotation_colors,
-                      fname = fname,
-                      fwidth = fwidth,
-                      fheight = fheight,
-                      ...)
+                       annotations = annotations,
+                       colors_title = "Pathway score",
+                       hm_colors = viridisLite::viridis(100),
+                       track_prop = annotation_prop,
+                       track_colors = annotation_colors,
+                       fname = fname,
+                       fwidth = 7,
+                       fheight = 5,
+                       ...)
   }
 
-  # Retourner l'objet heatmap
   return(hm)
 }

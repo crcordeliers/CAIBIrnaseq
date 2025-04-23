@@ -15,11 +15,6 @@
 #' @importFrom rlang sym
 #' @importFrom ggpubr stat_cor
 #'
-#' @examples
-#' # Example with dummy data
-#' df <- data.frame(GENE1 = rnorm(10), GENE2 = rnorm(10), group = rep(c("A", "B"), 5))
-#' plt_scatter(df, "GENE1", "GENE2", "group", pt_size = 3)
-#'
 plt_scatter <- function(exp_df, gene1, gene2, color_var, pt_size) {
   plt <- ggplot2::ggplot(exp_df, ggplot2::aes(!!rlang::sym(gene1), !!rlang::sym(gene2))) +
     ggpubr::stat_cor() +

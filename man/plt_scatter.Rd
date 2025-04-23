@@ -23,9 +23,3 @@ A `ggplot2` object representing the scatter plot with optional coloring and corr
 \description{
 Creates a scatter plot of expression for two genes from a data frame, optionally colored by a variable.
 }
-\examples{
-# Example with dummy data
-df <- data.frame(GENE1 = rnorm(10), GENE2 = rnorm(10), group = rep(c("A", "B"), 5))
-plt_scatter(df, "GENE1", "GENE2", "group", pt_size = 3)
-
-}

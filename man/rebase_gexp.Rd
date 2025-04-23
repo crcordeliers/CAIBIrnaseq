@@ -2,19 +2,26 @@
 % Please edit documentation in R/rebase_gexp.R
 \name{rebase_gexp}
 \alias{rebase_gexp}
-\title{Rebase gene expression matrix using a specific gene annotation}
+\title{Rebase Gene Expression Matrix}
 \usage{
 rebase_gexp(exp_data, annotation = "gene_name")
 }
 \arguments{
 \item{exp_data}{A `SummarizedExperiment` object containing the gene expression data.}
 
-\item{annotation}{A character string specifying the annotation to use as the primary annotation (default is "gene_name").}
+\item{annotation}{A character string specifying the column in the gene annotation to use as the main identifier. Default is `"gene_name"`.}
 }
 \value{
-A `SummarizedExperiment` object with updated gene expression and annotations.
+A `SummarizedExperiment` object with rebased gene expression data. The output includes updated `rowData` with summarized gene-level information, and new `assays` containing rebased `counts` and `tpm` matrices.
 }
 \description{
-This function rebases the gene expression matrix using a selected annotation,
-and generates a new `SummarizedExperiment` object with updated gene annotations and TPM values.
+This function rebases the gene expression matrix in a `SummarizedExperiment` object using a specified annotation as the primary identifier.
+}
+\details{
+This function rebases the gene expression data by aggregating counts based on the specified annotation. It also calculates transcripts per million (TPM) using the aggregated data and associated gene lengths.
+
+The function performs the following steps:
+- Aggregates gene counts and metadata based on the specified annotation.
+- Calculates TPM values using the rebased gene counts and average gene lengths.
+- Constructs a new `SummarizedExperiment` object with the rebased data.
 }

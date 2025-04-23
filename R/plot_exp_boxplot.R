@@ -1,24 +1,25 @@
-#' Plot expression boxplot for a gene
+#' Plot Expression Boxplot
 #'
-#' This function generates a boxplot (or similar summary plot) of gene expression
-#' using a provided expression matrix, gene of interest, and sample annotations.
-#'
-#' @param exp_data A data frame or matrix containing expression data with genes as rows and samples as columns.
-#' @param gene Character. The gene name to be plotted.
-#' @param annotation A data frame with sample annotations. Must contain row names or a column matching the sample names in `exp_data`.
-#' @param color_var Character. Column name in `annotation` to use for color grouping. Default is `NA` (no coloring).
-#' @param pt_size Numeric. Size of the individual points on the plot. Default is 1.
-#' @param summary_type Character. Type of summary to add: "choose" (automatic), "line", or "box". Default is "choose".
-#' @param stat_comparisons A list of group comparisons for statistical testing (passed to `ggpubr::stat_compare_means`). Default is `NA`.
-#' @param stat_format A function or format for customizing statistical annotations. Default is `NULL`.
-#' @param fname Character. If not `NULL`, the filename to save the plot to (PDF, PNG, etc.). Default is `NULL`.
-#' @param fwidth Numeric. Width of the saved figure in inches. Default is 5.
-#' @param fheight Numeric. Height of the saved figure in inches. Default is 3.
-#'
-#' @return A ggplot object containing the boxplot.
-#' @export
+#' This function generates a boxplot for the expression of a specified gene, grouped by a given annotation.
 #'
 #' @importFrom ggplot2 ggsave
+#' @param exp_data A data object containing expression data.
+#' @param gene A character string specifying the gene for which expression is plotted.
+#' @param annotation A character string specifying the grouping variable for the boxplot.
+#' @param color_var Optional. A character string specifying the variable to color the points. Defaults to NA.
+#' @param pt_size Numeric. The size of the points in the boxplot. Defaults to 1.
+#' @param summary_type A character string specifying the type of summary to display ("choose", "line", or "box"). Defaults to "choose".
+#' @param stat_comparisons Optional. Statistical comparisons to be displayed on the plot. Defaults to NA.
+#' @param stat_format Optional. A format for statistical annotations. Defaults to NULL.
+#' @param fname Optional. A character string specifying the file name to save the plot. Defaults to NULL.
+#' @param fwidth Numeric. The width of the saved plot file. Defaults to 5.
+#' @param fheight Numeric. The height of the saved plot file. Defaults to 3.
+#'
+#' @return A ggplot object representing the boxplot.
+#'
+#' @importFrom ggplot2 ggsave
+#'
+#' @export
 #'
 plot_exp_boxplot <- function(exp_data, gene, annotation,
                              color_var = NA,

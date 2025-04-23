@@ -1,15 +1,21 @@
-#' Extract Genes from Selected Pathways
+#' Get Pathway Genes
 #'
-#' This function extracts gene identifiers from selected pathways within an annotation collection.
+#' Extracts genes associated with specific pathways from an annotation collection.
 #'
-#' @param annotation_collection A data frame containing pathway annotations (e.g., from `get_annotation_collection()`).
-#' @param pathway_names A character vector of pathway names to extract genes from.
-#' @param annotation The column to use for gene identifiers. Default is "gene_symbol".
+#' @param annotation_collection A data frame containing pathway annotations. It should have at least two columns: `pathway` (pathway names) and a column for gene annotations (e.g., `gene_symbol` or `gene_id`).
+#' @param pathway_names A character vector specifying the names of pathways for which to retrieve associated genes.
+#' @param annotation A character string specifying the column in `annotation_collection` to use for gene annotations. Default is `"gene_symbol"`.
 #'
-#' @returns A character vector of gene identifiers present in the specified pathways.
-#' @export
+#' @details
+#' This function filters the provided annotation collection for the specified pathway names and extracts the corresponding genes based on the selected annotation column.
+#'
+#' The `annotation` argument allows for flexibility in retrieving genes by different identifiers, such as `gene_symbol` or `gene_id`.
+#'
+#' @return A vector of genes associated with the specified pathways. The type of genes (e.g., symbols or Ensembl IDs) depends on the `annotation` argument.
 #'
 #' @importFrom dplyr filter pull
+#'
+#' @export
 #'
 get_pathway_genes <- function(annotation_collection,
                               pathway_names,

@@ -1,22 +1,23 @@
-#' Plot Heatmap of Pathway Scores with Optional Annotations
+#' Plot Pathway Heatmap
 #'
-#' This function generates a heatmap of pathway scores from either a data frame or a `SummarizedExperiment`
-#' object containing pathway scores. Annotations can optionally be added to the heatmap for further customization.
+#' This function generates a heatmap of pathway scores, with optional sample annotations.
 #'
-#' @param pathway_scores A `data.frame` or a `SummarizedExperiment` object. If a `data.frame`, it should contain pathway scores. If a `SummarizedExperiment`, it should have pathway scores stored in the metadata.
-#' @param pathways A vector of indices or pathway names to be included in the heatmap. Default is 1:20.
-#' @param annotations Optional. A data frame or list of sample annotations to overlay on the heatmap. Default is `NA` (no annotations).
-#' @param annotation_prop Proportion of the heatmap's height to allocate to the annotation tracks. Default is 0.1.
-#' @param annotation_colors A vector of colors to use for the annotation tracks. Default is `NULL`.
-#' @param fname Optional. The file name to save the heatmap plot to. Default is `NULL` (no file is saved).
-#' @param fwidth The width (in inches) of the saved heatmap. Default is 7 inches.
-#' @param fheight The height (in inches) of the saved heatmap. Default is 5 inches.
-#' @param ... Additional arguments to pass to the `plt_heatmap` function.
+#' @param pathway_scores Either a data frame of pathway scores or a SummarizedExperiment object
+#'   containing pathway scores in its metadata.
+#' @param pathways A vector specifying the pathways to include in the heatmap. Defaults to the first 20 pathways.
+#' @param annotations Optional. Sample annotations to include in the heatmap. Defaults to NA.
+#' @param annotation_prop A numeric value specifying the proportion of the heatmap allocated to annotations. Defaults to 0.1.
+#' @param annotation_colors Optional. A list of colors for annotations. Defaults to NULL.
+#' @param fname Optional. A character string specifying the file name to save the heatmap. Defaults to NULL.
+#' @param fwidth Numeric. The width of the saved heatmap file. Defaults to 7.
+#' @param fheight Numeric. The height of the saved heatmap file. Defaults to 5.
+#' @param ... Additional parameters passed to the heatmap plotting function.
 #'
-#' @returns A `ggplot` object representing the heatmap.
-#' @export
+#' @return A heatmap plot object.
 #'
 #' @importFrom viridisLite viridis
+#'
+#' @export
 #'
 plot_pathway_heatmap <- function(pathway_scores,
                                  pathways = 1:20,

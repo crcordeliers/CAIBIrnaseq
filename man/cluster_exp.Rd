@@ -2,7 +2,7 @@
 % Please edit documentation in R/cluster_exp.R
 \name{cluster_exp}
 \alias{cluster_exp}
-\title{Cluster Expression Data Using Hierarchical Clustering}
+\title{Cluster Samples Based on Gene Expression}
 \usage{
 cluster_exp(
   exp_data,
@@ -15,26 +15,27 @@ cluster_exp(
 )
 }
 \arguments{
-\item{exp_data}{A `SummarizedExperiment` object with normalized expression data stored in the "norm" assay.}
+\item{exp_data}{A `SummarizedExperiment` object containing the normalized expression data matrix.}
 
-\item{k}{Integer. The number of clusters to assign.}
+\item{k}{An integer specifying the number of clusters to generate.}
 
-\item{genes}{Optional character vector of gene IDs or symbols to use for clustering. If NULL (default), the top 2000 highly variable genes are selected using `highly_variable_genes()`.}
+\item{genes}{A character vector of gene names to be used for clustering. If `NULL`, the top 2000 highly variable genes are selected automatically.}
 
-\item{pca}{Logical. Whether to reduce dimensionality using PCA before clustering. Default is TRUE.}
+\item{pca}{Logical. If `TRUE`, principal component analysis (PCA) is performed to reduce dimensionality before clustering. Default is `TRUE`.}
 
-\item{n_pcs}{Integer. Number of principal components to retain if `pca = TRUE`. Default is 10.}
+\item{n_pcs}{An integer specifying the number of principal components to retain if `pca = TRUE`. Default is 10.}
 
-\item{dist_method}{Character. Distance metric to use ("euclidean", "pearson", "spearman", etc.). Default is "euclidean".}
+\item{dist_method}{A character string specifying the distance metric to use. Can be one of `"euclidean"`, `"manhattan"`, `"pearson"`, or `"spearman"`. Default is `"euclidean"`.}
 
-\item{hc_method}{Character. Hierarchical clustering linkage method (e.g., "complete", "average", "ward.D"). Default is "complete".}
+\item{hc_method}{A character string specifying the agglomeration method for hierarchical clustering. Default is `"complete"`.}
 }
 \value{
-A `SummarizedExperiment` object with an added `exp_cluster` column in `colData`.
+A `SummarizedExperiment` object with an updated column in `colData`, named `"exp_cluster"`, containing the cluster assignments as a factor.
 }
 \description{
-This function performs hierarchical clustering on normalized gene expression data
-from a `SummarizedExperiment` object. Clustering is based on a selected set of genes,
-optionally using PCA for dimensionality reduction. The resulting cluster assignments
-are added to the sample metadata (`colData`) as a new column `exp_cluster`.
+This function performs hierarchical clustering on samples using normalized gene expression data.
+}
+\details{
+If no specific genes are provided, the function automatically selects the top 2000 highly variable genes for clustering.
+Optionally, PCA can be applied to reduce dimensionality, which can be useful for datasets with a large number of genes.
 }

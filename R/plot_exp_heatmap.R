@@ -1,22 +1,29 @@
-#' Plot Heatmap of Gene Expression with Optional Annotations
+#' Plot Expression Heatmap
 #'
-#' This function generates a heatmap of gene expression data from a `SummarizedExperiment` object,
-#' with the option to add annotations to the heatmap. The data is pre-processed before plotting,
-#' and the heatmap can be customized in terms of colors, font size, and file output.
+#' Generate a heatmap for gene expression data from a `SummarizedExperiment` object, with optional sample annotations and custom styling.
 #'
-#' @param expData A `SummarizedExperiment` object containing the expression data. The `norm` assay is used by default.
-#' @param genes A character vector of gene names or IDs to include in the heatmap.
-#' @param annotations A data frame or list of annotations to overlay on the heatmap. Default is `NA` (no annotations).
-#' @param assay The assay to use from the `expData` object. Default is `"norm"`.
-#' @param gene_name The column name in `rowData(expData)` that contains the gene identifiers. Default is `"gene_name"`.
-#' @param annotation_prop The proportion of the heatmap's height to allocate to the annotation tracks. Default is 0.1.
-#' @param annotation_colors A vector of colors for the annotation tracks. Default is `NULL`.
-#' @param fname Optional. The file name to save the heatmap plot to. Default is `NULL` (no file is saved).
-#' @param fwidth The width (in inches) of the saved heatmap. Default is 7 inches.
-#' @param fheight The height (in inches) of the saved heatmap. Default is 5 inches.
-#' @param ... Additional arguments to pass to the `plt_heatmap` function.
+#' @param expData A `SummarizedExperiment` object containing gene expression data.
+#' @param genes A character vector of gene identifiers (e.g., `gene_name`) to include in the heatmap.
+#' @param annotations A character vector of column names in the `colData` of `expData` to use for sample annotations in the heatmap. Default is `NA` (no annotations).
+#' @param assay A character string specifying the assay to use from `expData`. Default is `"norm"`.
+#' @param gene_name A character string specifying the gene identifier column in `rowData(expData)`. Default is `"gene_name"`.
+#' @param annotation_prop A numeric value specifying the proportion of the heatmap height/width allocated to the annotation tracks. Default is `0.1`.
+#' @param annotation_colors A named list of colors for the annotation tracks. Default is `NULL` (automatic coloring).
+#' @param fname A character string specifying the file name for saving the heatmap. Default is `NULL` (no file saved).
+#' @param fwidth Numeric, the width of the saved plot in inches. Default is `7`.
+#' @param fheight Numeric, the height of the saved plot in inches. Default is `5`.
+#' @param ... Additional arguments passed to the underlying heatmap plotting functions.
 #'
-#' @returns A `ggplot` object representing the heatmap.
+#' @return A `ggplot` object representing the heatmap.
+#'
+#' @details
+#' The function extracts and scales the expression data for the specified genes, optionally adds sample annotations from the `colData` of the `SummarizedExperiment`, and plots a heatmap using hierarchical clustering.
+#' If a file name (`fname`) is provided, the heatmap is saved to the specified location.
+#'
+#' @importFrom SummarizedExperiment colData rowData
+#' @importFrom ggplot2 ggplot
+
+#'
 #' @export
 #'
 plot_exp_heatmap <- function(expData,

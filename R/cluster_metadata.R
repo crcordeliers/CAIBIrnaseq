@@ -1,23 +1,27 @@
-#' Cluster Samples Based on Metadata Scores (e.g., Pathways)
+#' Cluster Metadata in Expression Data
 #'
-#' This function clusters samples using hierarchical clustering on metadata scores
-#' (e.g., pathway activity, cell type scores, etc.) stored in the `metadata()`
-#' slot of a `SummarizedExperiment` object.
+#' This function performs hierarchical clustering on specified metadata scores
+#' within the provided expression dataset. It updates the dataset's sample annotations
+#' with the clustering results.
 #'
-#' @param exp_data A `SummarizedExperiment` object.
-#' @param k Integer. Number of clusters to assign.
-#' @param metadata_name Character. Name of the metadata slot element to use (e.g., "pathway_scores").
-#' @param pca Logical. Whether to reduce dimensionality using PCA before clustering. Default is TRUE.
-#' @param n_pcs Integer. Number of principal components to use if PCA is enabled. Default is 10.
-#' @param features Optional character vector of row names (e.g., pathways) to use for clustering. If NULL, use all.
-#' @param dist_method Distance metric for clustering ("euclidean", "pearson", "spearman", etc.). Default is "euclidean".
-#' @param hc_method Linkage method for hierarchical clustering. Default is "complete".
+#' @param exp_data A SummarizedExperiment object containing expression data and metadata.
+#' @param k An integer specifying the number of clusters to generate.
+#' @param metadata_name A character string specifying the name of the metadata variable
+#'   to use for clustering. Defaults to "pathway_scores".
+#' @param pca Logical. If TRUE, principal component analysis (PCA) is applied before clustering. Defaults to TRUE.
+#' @param n_pcs An integer specifying the number of principal components to retain if PCA is applied. Defaults to 10.
+#' @param features A character vector of feature names to use for clustering. If NULL, all features are used. Defaults to NULL.
+#' @param dist_method A character string specifying the distance metric to use for hierarchical clustering. Defaults to "euclidean".
+#' @param hc_method A character string specifying the hierarchical clustering linkage method. Defaults to "complete".
 #'
-#' @return A `SummarizedExperiment` object with cluster assignments added to `colData()` as `path_cluster`.
-#' @export
+#' @return A SummarizedExperiment object with updated sample annotations including the clustering results in the "path_cluster" column.
+#'
+#' @details If no features are provided, all rows in the specified metadata are used for clustering.
+#'   PCA can be applied to reduce dimensionality before clustering.
 #'
 #' @importFrom SummarizedExperiment colData
 #'
+#' @export
 cluster_metadata <- function(exp_data, k,
                              metadata_name = "pathway_scores",
                              pca = TRUE,

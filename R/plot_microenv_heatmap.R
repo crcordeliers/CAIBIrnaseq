@@ -1,21 +1,21 @@
-#' Plot Heatmap of Microenvironment Population Scores with Optional Annotations
+#' Plot Microenvironment Heatmap
 #'
-#' This function generates a heatmap of microenvironment population scores from a `SummarizedExperiment`
-#' object, with optional annotations that can be added to the heatmap for additional customization.
+#' This function generates a heatmap of microenvironment population scores, with optional sample annotations.
 #'
-#' @param exp_data A `SummarizedExperiment` object containing microenvironment population scores stored in the metadata.
-#' @param annotations Optional. A data frame or list of sample annotations to overlay on the heatmap. Default is `NA` (no annotations).
-#' @param annotation_prop Proportion of the heatmap's height to allocate to the annotation tracks. Default is 0.1.
-#' @param annotation_colors A vector of colors to use for the annotation tracks. Default is `NULL`.
-#' @param fname Optional. The file name to save the heatmap plot to. Default is `NULL` (no file is saved).
-#' @param fwidth The width (in inches) of the saved heatmap. Default is 7 inches.
-#' @param fheight The height (in inches) of the saved heatmap. Default is 5 inches.
-#' @param ... Additional arguments to pass to the `plt_heatmap` function.
+#' @param exp_data A SummarizedExperiment object containing microenvironment population scores in its metadata.
+#' @param annotations Optional. Sample annotations to include in the heatmap. Defaults to NA.
+#' @param annotation_prop A numeric value specifying the proportion of the heatmap allocated to annotations. Defaults to 0.1.
+#' @param annotation_colors Optional. A list of colors for annotations. Defaults to NULL.
+#' @param fname Optional. A character string specifying the file name to save the heatmap. Defaults to NULL.
+#' @param fwidth Numeric. The width of the saved heatmap file. Defaults to 7.
+#' @param fheight Numeric. The height of the saved heatmap file. Defaults to 5.
+#' @param ... Additional parameters passed to the heatmap plotting function.
 #'
-#' @returns A `ggplot` object representing the heatmap.
-#' @export
+#' @return A heatmap plot object.
 #'
 #' @importFrom viridisLite plasma
+#'
+#' @export
 #'
 plot_microenv_heatmap <- function(exp_data,
                                   annotations = NA,

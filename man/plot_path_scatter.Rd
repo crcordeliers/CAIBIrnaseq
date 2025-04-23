@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_path_scatter.R
 \name{plot_path_scatter}
 \alias{plot_path_scatter}
-\title{Plot a scatter plot of two pathway scores}
+\title{Plot Pathway Scatter Plot}
 \usage{
 plot_path_scatter(
   exp_data,
@@ -16,27 +16,32 @@ plot_path_scatter(
 )
 }
 \arguments{
-\item{exp_data}{A `SummarizedExperiment` object containing the pathway scores in its metadata.}
+\item{exp_data}{An object containing experimental data. Must include pathway scores in `metadata(exp_data)[["pathway_scores"]]`.}
 
-\item{pathway1}{A character string indicating the name of the first pathway to plot.}
+\item{pathway1}{A string specifying the name of the first pathway for comparison.}
 
-\item{pathway2}{A character string indicating the name of the second pathway to plot.}
+\item{pathway2}{A string specifying the name of the second pathway for comparison.}
 
-\item{color_var}{A character string indicating the column in the metadata for coloring the points. Default is `NA` (no coloring).}
+\item{color_var}{(Optional) A variable used to color points in the scatter plot. Default is `NA`.}
 
-\item{pt_size}{Numeric. The size of the points in the scatter plot. Default is 2.}
+\item{pt_size}{A numeric value specifying the size of points in the scatter plot. Default is `2`.}
 
-\item{fname}{Optional. A file name to save the plot (e.g., `"scatterplot.png"`). If `NULL`, the plot will not be saved.}
+\item{fname}{(Optional) A string specifying the file name to save the plot. If `NULL`, the plot is not saved. Default is `NULL`.}
 
-\item{fwidth}{Numeric. The width of the output figure in inches. Default is 5.}
+\item{fwidth}{A numeric value specifying the width of the saved plot in inches. Default is `5`.}
 
-\item{fheight}{Numeric. The height of the output figure in inches. Default is 3.}
+\item{fheight}{A numeric value specifying the height of the saved plot in inches. Default is `3`.}
 }
 \value{
-A `ggplot2` object containing the scatter plot.
+A `ggplot` object representing the scatter plot.
 }
 \description{
-This function generates a scatter plot of two selected pathway scores extracted from
-a `SummarizedExperiment` object. It uses the `pathway_scores` metadata and
-optionally colors the points based on a variable from the sample annotations.
+Creates a scatter plot comparing scores for two pathways from the pathway scores
+stored in the metadata of a given dataset. Optionally saves the plot to a file.
+}
+\details{
+This function extracts pathway scores from the metadata of the provided experimental
+data object, then creates a scatter plot comparing the scores of the specified pathways.
+An optional variable can be used to color the points. If a file name is provided, the
+plot is saved to the specified location.
 }

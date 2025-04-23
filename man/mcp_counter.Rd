@@ -2,21 +2,20 @@
 % Please edit documentation in R/mcp_counter.R
 \name{mcp_counter}
 \alias{mcp_counter}
-\title{Estimate Immune and Stromal Cell Populations using MCPcounter}
+\title{MCP-counter wrapper for SummarizedExperiment objects}
 \usage{
 mcp_counter(exp_data, species, feature_type = "gene_name")
 }
 \arguments{
-\item{exp_data}{A `SummarizedExperiment` object containing normalized gene expression data.}
+\item{exp_data}{A SummarizedExperiment object containing TPM expression data in the "tpm" assay.}
 
-\item{species}{Character. Either "Homo sapiens" or "Mus musculus", specifying the organism.}
+\item{species}{Character. Either "Homo sapiens" or "Mus musculus".}
 
-\item{feature_type}{Character. Either "gene_name" or "ensembl_gene_id", specifying the gene annotation used in rownames.}
+\item{feature_type}{Character. Either "gene_name" or "ensembl_gene_id".}
 }
 \value{
-A data frame with estimated cell population scores for each sample.
+A data.frame with MCPcounter scores.
 }
 \description{
-This function estimates the abundance of various immune and stromal cell populations
-in bulk transcriptomic data using the MCPcounter algorithm (for human) or mMCPcounter (for mouse).
+Estimates immune and stromal cell populations using MCPcounter or mMCPcounter.
 }

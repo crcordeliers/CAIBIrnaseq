@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_path_boxplot.R
 \name{plot_path_boxplot}
 \alias{plot_path_boxplot}
-\title{Plot a boxplot of pathway scores by annotation group}
+\title{Plot Pathway Boxplot}
 \usage{
 plot_path_boxplot(
   exp_data,
@@ -19,33 +19,42 @@ plot_path_boxplot(
 )
 }
 \arguments{
-\item{exp_data}{A `SummarizedExperiment` object containing the pathway scores in its metadata.}
+\item{exp_data}{A `SummarizedExperiment` object containing pathway scores in the `metadata(exp_data)[["pathway_scores"]]` slot.}
 
-\item{pathway}{A character string indicating the name of the pathway to plot.}
+\item{pathway}{A character string specifying the name of the pathway to plot.}
 
-\item{annotation}{A character string indicating the column in the sample metadata to group the data by (x-axis).}
+\item{annotation}{A character string specifying the column in `colData(exp_data)` to use for grouping samples in the plot.}
 
-\item{color_var}{A character string for the column to use for coloring points. Default is `NA`.}
+\item{color_var}{A character string specifying a column in `colData(exp_data)` to use for coloring the plot. Default is `NA` (no coloring).}
 
-\item{pt_size}{Numeric. Point size for the scatter/boxplot. Default is 1.}
+\item{pt_size}{Numeric; size of the points in the plot. Default is `1`.}
 
-\item{summary_type}{Character. One of `"box"`, `"line"`, or `"choose"` (default).}
+\item{summary_type}{Character; type of summary to overlay on the plot. Options are `"choose"` (default), `"line"`, or `"box"`.}
 
-\item{stat_comparisons}{Optional. Statistical comparison groups (for adding p-values). Default is `NA`.}
+\item{stat_comparisons}{A list of character vectors specifying groups for pairwise statistical comparisons. Default is `NA` (no statistical comparisons).}
 
-\item{stat_format}{Optional. Format string for displaying p-values. Default is `NULL`.}
+\item{stat_format}{A character string specifying the format for displaying statistical results. Default is `NULL` (no formatting).}
 
-\item{fname}{Optional. File name to save the figure. Default is `NULL` (no saving).}
+\item{fname}{A character string specifying the file name to save the plot. Default is `NULL` (do not save).}
 
-\item{fwidth}{Numeric. Width of the saved plot in inches. Default is 5.}
+\item{fwidth}{Numeric; width of the saved plot in inches. Default is `5`.}
 
-\item{fheight}{Numeric. Height of the saved plot in inches. Default is 3.}
+\item{fheight}{Numeric; height of the saved plot in inches. Default is `3`.}
 }
 \value{
-A `ggplot2` object representing the plot.
+A ggplot object representing the boxplot.
 }
 \description{
-This function generates a boxplot (or alternative summaries) of pathway scores for a given pathway,
-grouped by a chosen annotation variable (e.g., condition). It can optionally color the points,
-and save the figure.
+Creates a boxplot to visualize pathway scores across annotations, with optional statistical comparisons and customization.
+}
+\details{
+The function extracts pathway scores from the `metadata(exp_data)[["pathway_scores"]]` slot and merges them with sample annotations from `colData(exp_data)`.
+It generates a boxplot using a helper function `.plt_boxplot`. Statistical comparisons can be added to the plot, and the plot can be saved as an image file if `fname` is provided.
+
+The `summary_type` argument determines the type of summary overlay:
+\describe{
+  \item{"choose"}{No additional summary overlay.}
+  \item{"line"}{Adds a line connecting the median of each group.}
+  \item{"box"}{Adds a summary box around each group.}
+}
 }

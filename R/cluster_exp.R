@@ -1,23 +1,24 @@
-#' Cluster Expression Data Using Hierarchical Clustering
+#' Cluster Samples Based on Gene Expression
 #'
-#' This function performs hierarchical clustering on normalized gene expression data
-#' from a `SummarizedExperiment` object. Clustering is based on a selected set of genes,
-#' optionally using PCA for dimensionality reduction. The resulting cluster assignments
-#' are added to the sample metadata (`colData`) as a new column `exp_cluster`.
+#' This function performs hierarchical clustering on samples using normalized gene expression data.
 #'
-#' @param exp_data A `SummarizedExperiment` object with normalized expression data stored in the "norm" assay.
-#' @param k Integer. The number of clusters to assign.
-#' @param genes Optional character vector of gene IDs or symbols to use for clustering. If NULL (default), the top 2000 highly variable genes are selected using `highly_variable_genes()`.
-#' @param pca Logical. Whether to reduce dimensionality using PCA before clustering. Default is TRUE.
-#' @param n_pcs Integer. Number of principal components to retain if `pca = TRUE`. Default is 10.
-#' @param dist_method Character. Distance metric to use ("euclidean", "pearson", "spearman", etc.). Default is "euclidean".
-#' @param hc_method Character. Hierarchical clustering linkage method (e.g., "complete", "average", "ward.D"). Default is "complete".
+#' @param exp_data A `SummarizedExperiment` object containing the normalized expression data matrix.
+#' @param k An integer specifying the number of clusters to generate.
+#' @param genes A character vector of gene names to be used for clustering. If `NULL`, the top 2000 highly variable genes are selected automatically.
+#' @param pca Logical. If `TRUE`, principal component analysis (PCA) is performed to reduce dimensionality before clustering. Default is `TRUE`.
+#' @param n_pcs An integer specifying the number of principal components to retain if `pca = TRUE`. Default is 10.
+#' @param dist_method A character string specifying the distance metric to use. Can be one of `"euclidean"`, `"manhattan"`, `"pearson"`, or `"spearman"`. Default is `"euclidean"`.
+#' @param hc_method A character string specifying the agglomeration method for hierarchical clustering. Default is `"complete"`.
 #'
-#' @return A `SummarizedExperiment` object with an added `exp_cluster` column in `colData`.
+#' @return A `SummarizedExperiment` object with an updated column in `colData`, named `"exp_cluster"`, containing the cluster assignments as a factor.
+#'
+#' @details
+#' If no specific genes are provided, the function automatically selects the top 2000 highly variable genes for clustering.
+#' Optionally, PCA can be applied to reduce dimensionality, which can be useful for datasets with a large number of genes.
+#'
+#' @importFrom SummarizedExperiment assays colData
+#'
 #' @export
-#'
-#' @importFrom SummarizedExperiment colData
-#'
 cluster_exp <- function(exp_data, k, genes = NULL,
                         pca = TRUE,
                         n_pcs = 10,
@@ -28,7 +29,7 @@ cluster_exp <- function(exp_data, k, genes = NULL,
     genes <- highly_variable_genes(exp_data)
   }
 
-  gexp <- assays(exp_data)[["norm"]][genes, ]
+  gexp <- SummarizedExperiment::assays(exp_data)[["norm"]][genes, ]
 
   clust_res <- cluster_k_hc(gexp,
                             k = k,

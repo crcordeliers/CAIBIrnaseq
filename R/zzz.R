@@ -1,6 +1,6 @@
 utils::globalVariables(c(
   ".",                        # Utilisé dans les pipes (%>%)
-    "n",                      # utilisé dans dplyr::summarize
+  "n",                        # utilisé dans dplyr::summarize
   "gene_id",                  # Utilisé dans rebase_gexp
   "gene_length_kb",           # Utilisé dans rebase_gexp
   "gene_lenght_kb",           # (typo mais conservé de la variable définie par l'utilisateur)
@@ -17,9 +17,14 @@ utils::globalVariables(c(
   "collection",               # Utilisé dans get_annotation_collection
   "pathway",                  # Utilisé dans get_annotation_collection
   ".data" ,                   # Utilisé dans get_annotation_collection
-  "pathway_scores",            # Utilisé dans cluster_metadata
-  "metadata"
+  "pathway_scores",           # Utilisé dans cluster_metadata
+  "metadata",
+
+  "desc", "log2FoldChange", "PValue", "PAdj", "padj", "Significance",
+  "GeneRatio", "GeneRatioNum", "Pathway", "size", "logpadj", "Size",
+  "count"
 ))
+
 
 # .onLoad <- function(libname, pkgname) {
 #   github_pkgs <- list(

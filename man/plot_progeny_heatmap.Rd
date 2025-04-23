@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_progeny_heatmap.R
 \name{plot_progeny_heatmap}
 \alias{plot_progeny_heatmap}
-\title{Plot Heatmap of Progeny Scores with Optional Annotations}
+\title{Plot Progeny Heatmap}
 \usage{
 plot_progeny_heatmap(
   progeny_scores,
@@ -16,26 +16,31 @@ plot_progeny_heatmap(
 )
 }
 \arguments{
-\item{progeny_scores}{A `data.frame` or a `SummarizedExperiment` object. If a `data.frame`, it should contain progeny scores. If a `SummarizedExperiment`, it should have progeny scores stored in the metadata.}
+\item{progeny_scores}{A data frame of pathway scores or a `SummarizedExperiment` object containing pathway scores in its metadata.}
 
-\item{annotations}{Optional. A data frame or list of sample annotations to overlay on the heatmap. Default is `NA` (no annotations).}
+\item{annotations}{(Optional) Annotations for the samples to be displayed as tracks on the heatmap. Default is `NA`, meaning no annotations are used.}
 
-\item{annotation_prop}{Proportion of the heatmap's height to allocate to the annotation tracks. Default is 0.1.}
+\item{annotation_prop}{Proportion of the heatmap width allocated to annotations, if provided. Default is `0.1`.}
 
-\item{annotation_colors}{A vector of colors to use for the annotation tracks. Default is `NULL`.}
+\item{annotation_colors}{(Optional) A named list of colors for the annotation tracks. Names must match the annotation variables.}
 
-\item{fname}{Optional. The file name to save the heatmap plot to. Default is `NULL` (no file is saved).}
+\item{fname}{(Optional) File name to save the heatmap as an image. If `NULL`, the heatmap is displayed but not saved. Default is `NULL`.}
 
-\item{fwidth}{The width (in inches) of the saved heatmap. Default is 7 inches.}
+\item{fwidth}{Width of the saved heatmap image in inches. Default is `7`.}
 
-\item{fheight}{The height (in inches) of the saved heatmap. Default is 5 inches.}
+\item{fheight}{Height of the saved heatmap image in inches. Default is `5`.}
 
-\item{...}{Additional arguments to pass to the `plt_heatmap` function.}
+\item{...}{Additional arguments passed to the internal heatmap plotting function.}
 }
 \value{
-A `ggplot` object representing the heatmap.
+A heatmap object showing Progeny pathway scores.
 }
 \description{
-This function generates a heatmap of progeny scores from either a data frame or a `SummarizedExperiment`
-object containing progeny scores. Annotations can optionally be added to the heatmap for further customization.
+Generates a heatmap for Progeny pathway scores, with optional sample annotations and customization options.
+}
+\details{
+If `progeny_scores` is a data frame, it is assumed to contain pathway scores with row names as pathway names and column names as sample IDs.
+If it is a `SummarizedExperiment` object, pathway scores are extracted from the metadata under `progeny_scores`.
+
+Annotations can be added to the heatmap if provided, and their appearance can be customized using `annotation_colors`.
 }

@@ -1,25 +1,31 @@
-#' Score PROGENy Pathways for Gene Expression Data
+#' Score PROGENy Pathways
 #'
-#' This function calculates pathway scores for gene expression data using the PROGENy algorithm.
-#' PROGENy is an algorithm that predicts pathway activity based on gene expression data.
+#' Calculate PROGENy pathway activity scores based on normalized gene expression data.
 #'
 #' @param exp_data A `SummarizedExperiment` object containing normalized gene expression data.
-#' @param species The species for which to score the pathways. Defaults to "Homo sapiens" ("Human").
+#' @param species A character string specifying the species, either `"Homo sapiens"` (default) or `"Mus musculus"`.
 #'
-#' @returns A data frame containing the PROGENy pathway scores for each sample.
-#' @export
+#' @return A data frame containing PROGENy pathway activity scores for each sample.
 #'
+#' @details
+#' The function uses the normalized gene expression data from the specified assay of the `SummarizedExperiment` object to compute PROGENy scores.
+#' PROGENy scores represent pathway activity and are computed based on predefined pathway models for the specified species.
+#'
+#' @importFrom SummarizedExperiment assays
 #' @importFrom progeny progeny
+#' @importFrom dplyr if_else
+#'
+#' @export
 #'
 score_progeny <- function(exp_data, species = "Homo sapiens") {
   # Extract the normalized gene expression matrix
-  gexp <- assays(exp_data)[["norm"]]
+  gexp <- SummarizedExperiment::assays(exp_data)[["norm"]]
 
   # Determine the organism type based on species input
-  organism <- if_else(species == "Homo sapiens", "Human", "Mouse")
+  organism <- dplyr::if_else(species == "Homo sapiens", "Human", "Mouse")
 
   # Calculate PROGENy pathway scores
-  progeny_scores <- t(progeny(gexp, organism = organism))  # transposing for correct format
+  progeny_scores <- t(progeny::progeny(gexp, organism = organism))  # transposing for correct format
 
   # Convert the resulting scores into a data frame
   progeny_scores_df <- data.frame(progeny_scores)

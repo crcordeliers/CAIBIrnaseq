@@ -2,7 +2,7 @@
 % Please edit documentation in R/pca_gexp.R
 \name{pca_gexp}
 \alias{pca_gexp}
-\title{Principal Component Analysis (PCA) on Gene Expression Data}
+\title{Perform PCA on Gene Expression Data}
 \usage{
 pca_gexp(
   exp_data,
@@ -16,20 +16,24 @@ pca_gexp(
 \arguments{
 \item{exp_data}{A `SummarizedExperiment` object containing the gene expression data.}
 
-\item{assay}{A character string specifying the assay to use (default is `"norm"` for normalized data).}
+\item{assay}{A character string specifying the assay to use for PCA. Default is `"norm"`.}
 
-\item{filter}{Logical value, whether to filter for highly variable genes (default is `TRUE`).}
+\item{filter}{Logical. If `TRUE`, PCA is performed on the top `n_hvg` highly variable genes. If `FALSE`, PCA is performed on all genes. Default is `TRUE`.}
 
-\item{n_hvg}{The number of highly variable genes to select if `filter` is `TRUE` (default is 2000).}
+\item{n_hvg}{An integer specifying the number of highly variable genes to use if `filter = TRUE`. Default is 2000.}
 
-\item{center}{Logical value, whether to center the data before performing PCA (default is `TRUE`).}
+\item{center}{Logical. If `TRUE`, the variables are centered before PCA. Default is `TRUE`.}
 
-\item{scale}{Logical value, whether to scale the data before performing PCA (default is `TRUE`).}
+\item{scale}{Logical. If `TRUE`, the variables are scaled to unit variance before PCA. Default is `TRUE`.}
 }
 \value{
-A list containing the results of the PCA, including rotation, standard deviation, and scores.
+A `prcomp` object containing the PCA results.
 }
 \description{
-This function performs PCA (Principal Component Analysis) on the gene expression data.
-It can optionally filter for highly variable genes (HVGs) before performing PCA.
+This function performs principal component analysis (PCA) on gene expression data in a `SummarizedExperiment` object.
+}
+\details{
+If `filter = TRUE`, the function identifies the top `n_hvg` highly variable genes using a robust coefficient of variation and performs PCA on these genes. Otherwise, PCA is performed on all genes in the selected assay.
+
+The `prcomp` function is used for PCA, with options to center and scale the data before analysis.
 }

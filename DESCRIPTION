@@ -1,7 +1,7 @@
 Package: CAIBIrnaseq
 Type: Package
-Title: Supervised and Unsupervised RNAseq(bulk) Analysis 
-Version: 0.1.0
+Title: Supervised and Unsupervised RNAseq(bulk) Analysis
+Version: 0.1.1
 Authors@R: c(
     person("Nicolas", "Salaün", email = "nicolas.salaun@inserm.fr", role = "ctb"),
     person("Clarice", "Groeneveld", email = "clarice.groeneveld@inserm.fr", role = "cre"),
@@ -13,11 +13,11 @@ LazyData: true
 RoxygenNote: 7.3.2
 Depends: 
     R (>= 4.1.0),
-    kableExtra,
-    stringr,
-    lubridate
+    R.utils
 Imports:
-    R.utils,
+    data.table,
+    biomaRt,
+    mMCPcounter,
     tidyverse,
     dplyr,
     tibble,
@@ -34,15 +34,20 @@ Imports:
     patchwork,
     viridisLite,
     remotes,
-    DESeq2,
-    GSVA,
+    DESeq2, 
     progeny,
     MCPcounter,
-    mMCPcounter,
     SummarizedExperiment,
     ggheatmapper,
+    S4Vectors,
     ggtree,
-    S4Vectors
+    BiocGenerics,
+    fgsea,
+    stringr,
+    GSVA,
+    scales,
+    ggtree,
+    forcats
 Remotes:
     cit-bioinfo/mMCP-counter,
     csgroen/ggheatmapper,
@@ -51,4 +56,5 @@ Remotes:
     bioc::GSVA,
     bioc::DESeq2,
     bioc::progeny,
-    bioc::ggtree
+    bioc::ggtree,
+    bioc::biomaRt

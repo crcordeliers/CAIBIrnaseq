@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_microenv_heatmap.R
 \name{plot_microenv_heatmap}
 \alias{plot_microenv_heatmap}
-\title{Plot Heatmap of Microenvironment Population Scores with Optional Annotations}
+\title{Plot Microenvironment Heatmap}
 \usage{
 plot_microenv_heatmap(
   exp_data,
@@ -16,26 +16,25 @@ plot_microenv_heatmap(
 )
 }
 \arguments{
-\item{exp_data}{A `SummarizedExperiment` object containing microenvironment population scores stored in the metadata.}
+\item{exp_data}{A SummarizedExperiment object containing microenvironment population scores in its metadata.}
 
-\item{annotations}{Optional. A data frame or list of sample annotations to overlay on the heatmap. Default is `NA` (no annotations).}
+\item{annotations}{Optional. Sample annotations to include in the heatmap. Defaults to NA.}
 
-\item{annotation_prop}{Proportion of the heatmap's height to allocate to the annotation tracks. Default is 0.1.}
+\item{annotation_prop}{A numeric value specifying the proportion of the heatmap allocated to annotations. Defaults to 0.1.}
 
-\item{annotation_colors}{A vector of colors to use for the annotation tracks. Default is `NULL`.}
+\item{annotation_colors}{Optional. A list of colors for annotations. Defaults to NULL.}
 
-\item{fname}{Optional. The file name to save the heatmap plot to. Default is `NULL` (no file is saved).}
+\item{fname}{Optional. A character string specifying the file name to save the heatmap. Defaults to NULL.}
 
-\item{fwidth}{The width (in inches) of the saved heatmap. Default is 7 inches.}
+\item{fwidth}{Numeric. The width of the saved heatmap file. Defaults to 7.}
 
-\item{fheight}{The height (in inches) of the saved heatmap. Default is 5 inches.}
+\item{fheight}{Numeric. The height of the saved heatmap file. Defaults to 5.}
 
-\item{...}{Additional arguments to pass to the `plt_heatmap` function.}
+\item{...}{Additional parameters passed to the heatmap plotting function.}
 }
 \value{
-A `ggplot` object representing the heatmap.
+A heatmap plot object.
 }
 \description{
-This function generates a heatmap of microenvironment population scores from a `SummarizedExperiment`
-object, with optional annotations that can be added to the heatmap for additional customization.
+This function generates a heatmap of microenvironment population scores, with optional sample annotations.
 }

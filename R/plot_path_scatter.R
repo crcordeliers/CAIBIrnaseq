@@ -1,22 +1,29 @@
-#' Plot a scatter plot of two pathway scores
+#' Plot Pathway Scatter Plot
 #'
-#' This function generates a scatter plot of two selected pathway scores extracted from
-#' a `SummarizedExperiment` object. It uses the `pathway_scores` metadata and
-#' optionally colors the points based on a variable from the sample annotations.
+#' Creates a scatter plot comparing scores for two pathways from the pathway scores
+#' stored in the metadata of a given dataset. Optionally saves the plot to a file.
 #'
-#' @param exp_data A `SummarizedExperiment` object containing the pathway scores in its metadata.
-#' @param pathway1 A character string indicating the name of the first pathway to plot.
-#' @param pathway2 A character string indicating the name of the second pathway to plot.
-#' @param color_var A character string indicating the column in the metadata for coloring the points. Default is `NA` (no coloring).
-#' @param pt_size Numeric. The size of the points in the scatter plot. Default is 2.
-#' @param fname Optional. A file name to save the plot (e.g., `"scatterplot.png"`). If `NULL`, the plot will not be saved.
-#' @param fwidth Numeric. The width of the output figure in inches. Default is 5.
-#' @param fheight Numeric. The height of the output figure in inches. Default is 3.
+#' @param exp_data An object containing experimental data. Must include pathway scores in `metadata(exp_data)[["pathway_scores"]]`.
+#' @param pathway1 A string specifying the name of the first pathway for comparison.
+#' @param pathway2 A string specifying the name of the second pathway for comparison.
+#' @param color_var (Optional) A variable used to color points in the scatter plot. Default is `NA`.
+#' @param pt_size A numeric value specifying the size of points in the scatter plot. Default is `2`.
+#' @param fname (Optional) A string specifying the file name to save the plot. If `NULL`, the plot is not saved. Default is `NULL`.
+#' @param fwidth A numeric value specifying the width of the saved plot in inches. Default is `5`.
+#' @param fheight A numeric value specifying the height of the saved plot in inches. Default is `3`.
 #'
-#' @returns A `ggplot2` object containing the scatter plot.
-#' @export
+#' @details
+#' This function extracts pathway scores from the metadata of the provided experimental
+#' data object, then creates a scatter plot comparing the scores of the specified pathways.
+#' An optional variable can be used to color the points. If a file name is provided, the
+#' plot is saved to the specified location.
 #'
+#' @return A `ggplot` object representing the scatter plot.
+#'
+#' @importFrom S4Vectors metadata
 #' @importFrom ggplot2 ggsave
+#'
+#' @export
 #'
 plot_path_scatter <- function(exp_data, pathway1, pathway2,
                               color_var = NA, pt_size = 2,

@@ -1,22 +1,30 @@
-#' Save or return a scatter plot of two genes from a SummarizedExperiment
+#' Plot Expression Scatter Plot
 #'
-#' This function extracts expression values for two genes from a `SummarizedExperiment` object,
-#' generates a scatter plot, and optionally saves it to a file.
+#' Creates a scatter plot to visualize the expression relationship between two genes, with optional coloring by a variable.
 #'
-#' @param exp_data A `SummarizedExperiment` object containing expression data and sample metadata.
-#' @param gene1 A character string indicating the name of the gene for the x-axis.
-#' @param gene2 A character string indicating the name of the gene for the y-axis.
-#' @param color_var Optional character string indicating a column in metadata used for coloring points. Default is `NA`.
-#' @param pt_size Numeric. Size of the points in the scatter plot. Default is 2.
-#' @param fname Optional. A file name (with extension, e.g., `"scatterplot.png"`) to save the plot. If `NULL`, the plot is not saved.
-#' @param fwidth Numeric. Width of the output figure in inches. Default is 5.
-#' @param fheight Numeric. Height of the output figure in inches. Default is 3.
+#' @param exp_data A `SummarizedExperiment` object containing gene expression data in the assays slot.
+#' @param gene1 A character string specifying the first gene for the x-axis.
+#' @param gene2 A character string specifying the second gene for the y-axis.
+#' @param color_var A character string specifying a column in `colData(exp_data)` to use for coloring the points. Default is `NA` (no coloring).
+#' @param pt_size Numeric; size of the points in the scatter plot. Default is `2`.
+#' @param fname A character string specifying the file name to save the plot. Default is `NULL` (do not save).
+#' @param fwidth Numeric; width of the saved plot in inches. Default is `5`.
+#' @param fheight Numeric; height of the saved plot in inches. Default is `3`.
 #'
-#' @return A `ggplot2` object (the scatter plot).
-#' @export
+#' @details
+#' The function extracts expression values for the specified genes (`gene1` and `gene2`) from the `assays(exp_data)` slot and combines them with sample annotations from `colData(exp_data)`.
+#' It generates a scatter plot using a helper function `.plt_scatter`, with optional coloring based on a variable (`color_var`) from the sample annotations.
+#'
+#' The plot includes a correlation statistic computed with the `stat_cor()` function from the `ggpubr` package.
+#'
+#' If `fname` is provided, the plot will be saved as an image file.
+#'
+#' @return A ggplot object representing the scatter plot.
 #'
 #' @importFrom ggplot2 ggsave
-
+#'
+#' @export
+#'
 plot_exp_scatter <- function(exp_data, gene1, gene2,
                              color_var = NA, pt_size = 2,
                              fname = NULL,

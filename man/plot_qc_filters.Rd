@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_qc_filters.R
 \name{plot_qc_filters}
 \alias{plot_qc_filters}
-\title{Plot Quality Control (QC) Filters for Gene Expression Data}
+\title{Plot QC Filters for Gene Expression Data}
 \usage{
 plot_qc_filters(
   gexp,
@@ -13,20 +13,28 @@ plot_qc_filters(
 )
 }
 \arguments{
-\item{gexp}{A `SummarizedExperiment` object containing gene expression data.}
+\item{gexp}{A `SummarizedExperiment` object containing gene expression data. The `colData` must include `nfeats` (number of detected features) and `ncounts` (total counts per sample).}
 
-\item{fname}{The file name to save the plot (default is `"results/qc/plot_QC_filters.pdf"`).}
+\item{fname}{A character string specifying the file path to save the plot as a PDF. Default is `"results/qc/plot_QC_filters.pdf"`. Set to `NULL` to skip saving.}
 
-\item{min_nfeats}{Minimum number of features (genes) required to pass QC (default is 5000).}
+\item{min_nfeats}{An integer specifying the minimum number of features for a sample to pass QC. Default is `5000`.}
 
-\item{min_ncounts}{Minimum number of counts required to pass QC (default is 5e6).}
+\item{min_ncounts}{A numeric value specifying the minimum total counts for a sample to pass QC. Default is `5e6`.}
 
-\item{out}{Output format for the plot: `"plotly"` or `"ggplot"` (default is `"plotly"`).}
+\item{out}{A character string indicating the output type: `"plotly"` (interactive Plotly plot) or `"ggplot"` (static ggplot). Default is `"plotly"`.}
 }
 \value{
-A plotly or ggplot object based on the output format specified.
+A QC plot, either as a `plotly` interactive object or a `ggplot` static object, depending on the `out` parameter.
 }
 \description{
-This function creates a plot visualizing the quality control (QC) status of samples based on the number of genes
-and counts. It allows for filtering and visualizing samples that pass or fail QC thresholds.
+This function creates a quality control (QC) plot for a `SummarizedExperiment` object, highlighting samples that pass or fail specified QC thresholds.
+}
+\details{
+The function identifies samples that fail QC based on thresholds for the number of detected features (`min_nfeats`) and total counts (`min_ncounts`). It creates a scatter plot with:
+- The x-axis representing the number of features (`nfeats`).
+- The y-axis representing the total counts (`ncounts`).
+- Points color-coded based on QC status (`pass` or `fail`).
+- Dashed lines indicating the QC thresholds.
+
+If `out = "plotly"`, the plot is interactive, allowing for sample tooltips. If a file name (`fname`) is provided, the static ggplot is saved as a PDF.
 }

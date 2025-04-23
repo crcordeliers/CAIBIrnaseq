@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_exp_heatmap.R
 \name{plot_exp_heatmap}
 \alias{plot_exp_heatmap}
-\title{Plot Heatmap of Gene Expression with Optional Annotations}
+\title{Plot Expression Heatmap}
 \usage{
 plot_exp_heatmap(
   expData,
@@ -19,33 +19,35 @@ plot_exp_heatmap(
 )
 }
 \arguments{
-\item{expData}{A `SummarizedExperiment` object containing the expression data. The `norm` assay is used by default.}
+\item{expData}{A `SummarizedExperiment` object containing gene expression data.}
 
-\item{genes}{A character vector of gene names or IDs to include in the heatmap.}
+\item{genes}{A character vector of gene identifiers (e.g., `gene_name`) to include in the heatmap.}
 
-\item{annotations}{A data frame or list of annotations to overlay on the heatmap. Default is `NA` (no annotations).}
+\item{annotations}{A character vector of column names in the `colData` of `expData` to use for sample annotations in the heatmap. Default is `NA` (no annotations).}
 
-\item{assay}{The assay to use from the `expData` object. Default is `"norm"`.}
+\item{assay}{A character string specifying the assay to use from `expData`. Default is `"norm"`.}
 
-\item{gene_name}{The column name in `rowData(expData)` that contains the gene identifiers. Default is `"gene_name"`.}
+\item{gene_name}{A character string specifying the gene identifier column in `rowData(expData)`. Default is `"gene_name"`.}
 
-\item{annotation_prop}{The proportion of the heatmap's height to allocate to the annotation tracks. Default is 0.1.}
+\item{annotation_prop}{A numeric value specifying the proportion of the heatmap height/width allocated to the annotation tracks. Default is `0.1`.}
 
-\item{annotation_colors}{A vector of colors for the annotation tracks. Default is `NULL`.}
+\item{annotation_colors}{A named list of colors for the annotation tracks. Default is `NULL` (automatic coloring).}
 
-\item{fname}{Optional. The file name to save the heatmap plot to. Default is `NULL` (no file is saved).}
+\item{fname}{A character string specifying the file name for saving the heatmap. Default is `NULL` (no file saved).}
 
-\item{fwidth}{The width (in inches) of the saved heatmap. Default is 7 inches.}
+\item{fwidth}{Numeric, the width of the saved plot in inches. Default is `7`.}
 
-\item{fheight}{The height (in inches) of the saved heatmap. Default is 5 inches.}
+\item{fheight}{Numeric, the height of the saved plot in inches. Default is `5`.}
 
-\item{...}{Additional arguments to pass to the `plt_heatmap` function.}
+\item{...}{Additional arguments passed to the underlying heatmap plotting functions.}
 }
 \value{
 A `ggplot` object representing the heatmap.
 }
 \description{
-This function generates a heatmap of gene expression data from a `SummarizedExperiment` object,
-with the option to add annotations to the heatmap. The data is pre-processed before plotting,
-and the heatmap can be customized in terms of colors, font size, and file output.
+Generate a heatmap for gene expression data from a `SummarizedExperiment` object, with optional sample annotations and custom styling.
+}
+\details{
+The function extracts and scales the expression data for the specified genes, optionally adds sample annotations from the `colData` of the `SummarizedExperiment`, and plots a heatmap using hierarchical clustering.
+If a file name (`fname`) is provided, the heatmap is saved to the specified location.
 }

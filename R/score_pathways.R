@@ -1,15 +1,32 @@
-#' Score Pathways Using Gene Expression Data
+#' Score Pathways
 #'
-#' This function scores pathways based on gene expression data using various scoring methods such as GSVA, ssGSEA, plage, and zscore.
+#' Computes pathway scores for a given expression dataset using specified scoring methods.
 #'
-#' @param exp_data A `SummarizedExperiment` object containing normalized gene expression data.
-#' @param pathways A data frame containing pathways with columns `gene_id`, `gene_symbol`, and `pathway`.
-#' @param scoring_method The method used to score pathways. Options are `"gsva"`, `"ssgsea"`, `"plage"`, or `"zscore"`. Default is `"gsva"`.
-#' @param verbose Logical. If TRUE, progress messages will be printed. Default is TRUE.
+#' @param exp_data A `SummarizedExperiment` object containing normalized expression data in the `assays(exp_data)$norm` slot.
+#' @param pathways A data frame with pathway definitions, containing at least two columns: `pathway` (pathway name) and either `gene_id` (Ensembl IDs) or `gene_symbol` (gene symbols).
+#' @param scoring_method A character string specifying the scoring method to use. Options are `"gsva"`, `"ssgsea"`, `"plage"`, or `"zscore"`. Default is `"gsva"`.
+#' @param verbose Logical; if `TRUE`, prints progress messages during computation. Default is `TRUE`.
 #'
-#' @returns A data frame containing the scores for the pathways.
+#' @details
+#' The function identifies the gene annotation used in the expression matrix (`gene_id` or `gene_symbol`) by matching row names of `assays(exp_data)$norm` to the `pathways` data frame.
+#' It then splits the pathways into gene sets and scores them using the specified method from the `GSVA` package.
+#'
+#' The available scoring methods are:
+#' \describe{
+#'   \item{`gsva`}{Gene Set Variation Analysis.}
+#'   \item{`ssgsea`}{Single-sample Gene Set Enrichment Analysis.}
+#'   \item{`plage`}{Pathway Level Analysis of Gene Expression.}
+#'   \item{`zscore`}{Z-score normalization.}
+#' }
+#'
+#' Pathway scores are sorted by the sum of absolute scores across samples, prioritizing pathways with the highest variation.
+#'
+#' @return A data frame of pathway scores, with pathways as row names and samples as columns. Pathways are sorted by their total score variation.
+#'
+#' @importFrom SummarizedExperiment assays
+#' @importFrom GSVA gsvaParam ssgseaParam plageParam zscoreParam gsva
+#'
 #' @export
-#'
 score_pathways <- function(exp_data, pathways,
                            scoring_method = "gsva",
                            verbose = TRUE) {
@@ -22,7 +39,8 @@ score_pathways <- function(exp_data, pathways,
   } else if (any(rownames(mat) %in% pathways$gene_symbol)) {
     gene_annot <- "gene_symbol"
   } else {
-    stop("`exp_data` uses unknown gene annotation. Try either using ensembl_gene_id or gene_name/gene_symbol.")
+    stop("`exp_data` uses unknown gene annotation.
+         Try either using ensembl_gene_id or gene_name/gene_symbol.")
   }
 
   # Generate a list of gene sets based on the pathway annotations
