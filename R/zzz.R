@@ -22,7 +22,7 @@ utils::globalVariables(c(
 
   "desc", "log2FoldChange", "PValue", "PAdj", "padj", "Significance",
   "GeneRatio", "GeneRatioNum", "Pathway", "size", "logpadj", "Size",
-  "count"
+  "count", ":="
 ))
 
 

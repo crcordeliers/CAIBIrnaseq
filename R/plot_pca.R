@@ -27,6 +27,7 @@
 #' @importFrom plotly ggplotly
 #' @importFrom dplyr left_join
 #' @importFrom stringr str_c
+#' @importFrom glue glue
 #'
 #' @export
 #'

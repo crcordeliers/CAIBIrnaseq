@@ -6,7 +6,7 @@
 \usage{
 gexp_preprocess(
   gexp,
-  gene_annotation,
+  gene_annotation = NULL,
   keep_annot = "gene_name",
   og_annot = "gene_id",
   keep_stat = sum

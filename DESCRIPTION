@@ -13,9 +13,11 @@ LazyData: true
 RoxygenNote: 7.3.2
 Depends: 
     R (>= 4.1.0),
-    R.utils
+    R.utils,
+    shinydashboard
 Imports:
     data.table,
+    glue,
     biomaRt,
     mMCPcounter,
     tidyverse,
@@ -47,7 +49,8 @@ Imports:
     GSVA,
     scales,
     ggtree,
-    forcats
+    forcats,
+    apeglm
 Remotes:
     cit-bioinfo/mMCP-counter,
     csgroen/ggheatmapper,
@@ -57,4 +60,5 @@ Remotes:
     bioc::DESeq2,
     bioc::progeny,
     bioc::ggtree,
-    bioc::biomaRt
+    bioc::biomaRt,
+    bioc::apeglm

@@ -4,7 +4,14 @@
 \alias{diffExpAnalysis}
 \title{Differential Expression Analysis}
 \usage{
-diffExpAnalysis(countData, sampleInfo, method = "DESeq2", cutoff = 10)
+diffExpAnalysis(
+  countData,
+  sampleInfo,
+  method = "DESeq2",
+  cutoff = 10,
+  design,
+  coefname
+)
 }
 \arguments{
 \item{countData}{A matrix or data frame of raw count data. Rows represent genes, and columns represent samples.}
@@ -14,6 +21,10 @@ diffExpAnalysis(countData, sampleInfo, method = "DESeq2", cutoff = 10)
 \item{method}{A string specifying the method for differential expression analysis. Currently supports only `"DESeq2"`. Default is `"DESeq2"`.}
 
 \item{cutoff}{An integer specifying the minimum number of counts required across all samples for a gene to be included in the analysis. Default is `10`.}
+
+\item{design}{A}
+
+\item{coefname}{A}
 }
 \value{
 A data frame containing the results of the differential expression analysis, including adjusted p-values, log fold changes, and other statistics.

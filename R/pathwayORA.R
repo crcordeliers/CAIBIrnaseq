@@ -26,8 +26,8 @@
 #' @export
 #'
 pathwayORA <- function(diffexp_result, pathways,
-                        id_col = "gene_symbol",
-                        pcutoff = 0.05) {
+                       id_col = "gene_symbol",
+                       pcutoff = 0.05) {
 
   # Extract gene IDs from differential expression result
   gene_ids <- rownames(diffexp_result)
@@ -62,9 +62,18 @@ pathwayORA <- function(diffexp_result, pathways,
     c <- length(sig_genes) - a  # not in path and in sig
     d <- univ_size - a - b - c  # not in path and not in sig
 
-    # Avoid errors in Fisher test due to 0-counts
+    # Avoid errors in Fisher test due to 0-counts or invalid counts
+    if (any(c(a, b, c, d) < 0) || any(is.infinite(c(a, b, c, d)))) {
+      return(NULL)  # Skip this pathway if the contingency table is invalid
+    }
+
+    # Construct contingency table
     ctg <- matrix(c(a, b, c, d), nrow = 2)
-    pfish <- fisher.test(ctg, alternative = "greater")$p.value
+    pfish <- tryCatch({
+      fisher.test(ctg, alternative = "greater")$p.value
+    }, error = function(e) {
+      return(NA)  # Return NA if fisher.test fails
+    })
 
     data.frame(
       Pathway = id,
@@ -73,13 +82,13 @@ pathwayORA <- function(diffexp_result, pathways,
       BgRatio = paste0(b, "/", univ_size - length(path_genes)),
       Genes = paste(sig_genes[sig_genes %in% path_genes], collapse = ", ")
     )
-  }) |> dplyr::bind_rows()
+  }) %>% dplyr::bind_rows()
 
   # Adjust p-values, sort, and filter by cutoff
   if (nrow(enrich_res) > 0) {
-    enrich_res <- enrich_res |>
-      dplyr::mutate(PAdj = p.adjust(PValue, method = "BH")) |>
-      dplyr::arrange(PAdj) |>
+    enrich_res <- enrich_res %>%
+      dplyr::mutate(PAdj = p.adjust(PValue, method = "BH")) %>%
+      dplyr::arrange(PAdj) %>%
       dplyr::filter(PAdj < pcutoff)
   } else {
     enrich_res <- data.frame()  # return empty data frame if no results
