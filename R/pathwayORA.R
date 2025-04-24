@@ -70,7 +70,7 @@ pathwayORA <- function(diffexp_result, pathways,
     # Construct contingency table
     ctg <- matrix(c(a, b, c, d), nrow = 2)
     pfish <- tryCatch({
-      fisher.test(ctg, alternative = "greater")$p.value
+      fisher.test(ctg, alternative = "greater")$p.valuess
     }, error = function(e) {
       return(NA)  # Return NA if fisher.test fails
     })

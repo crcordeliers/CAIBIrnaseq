@@ -24,13 +24,44 @@ cluster_exp <- function(exp_data, k, genes = NULL,
                         n_pcs = 10,
                         dist_method = "euclidean",
                         hc_method = "complete") {
+
+  # Check if exp_data is a SummarizedExperiment object
+  if (!inherits(exp_data, "SummarizedExperiment")) {
+    stop("The 'exp_data' must be a 'SummarizedExperiment' object.")
+  }
+
+  # Check if k is a positive integer
+  if (!is.numeric(k) || length(k) != 1 || k <= 0 || k != round(k)) {
+    stop("The 'k' parameter must be a positive integer.")
+  }
+
+  # Check if dist_method is valid
+  valid_dist_methods <- c("euclidean", "manhattan", "pearson", "spearman")
+  if (!(dist_method %in% valid_dist_methods)) {
+    stop(paste("The distance method must be one of the following:", paste(valid_dist_methods, collapse = ", ")))
+  }
+
+  # Check if hc_method is valid
+  valid_hc_methods <- c("complete", "single", "average", "ward.D", "ward.D2", "mcquitty", "median", "centroid")
+  if (!(hc_method %in% valid_hc_methods)) {
+    stop(paste("The hierarchical clustering method must be one of the following:", paste(valid_hc_methods, collapse = ", ")))
+  }
+
+  # If genes is NULL, select top 2000 highly variable genes
   if (is.null(genes)) {
-    message("Clustering based on top 2000 highly variable genes")
+    message("Clustering based on the top 2000 highly variable genes.")
     genes <- highly_variable_genes(exp_data)
   }
 
+  # Check if the genes are valid (present in the data)
+  if (!all(genes %in% rownames(exp_data))) {
+    stop("Some specified genes are not present in the expression data.")
+  }
+
+  # Extract normalized expression data for the selected genes
   gexp <- SummarizedExperiment::assays(exp_data)[["norm"]][genes, ]
 
+  # Perform hierarchical clustering based on the expression data
   clust_res <- cluster_k_hc(gexp,
                             k = k,
                             pca = pca,
@@ -38,6 +69,7 @@ cluster_exp <- function(exp_data, k, genes = NULL,
                             dist_method = dist_method,
                             hc_method = hc_method)
 
+  # Add clustering results to colData
   sample_annot <- SummarizedExperiment::colData(exp_data)
   sample_annot[["exp_cluster"]] <- factor(clust_res)
   SummarizedExperiment::colData(exp_data) <- sample_annot
