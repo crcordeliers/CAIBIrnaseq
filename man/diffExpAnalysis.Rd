@@ -22,9 +22,9 @@ diffExpAnalysis(
 
 \item{cutoff}{An integer specifying the minimum number of counts required across all samples for a gene to be included in the analysis. Default is `10`.}
 
-\item{design}{A}
+\item{design}{A formula specifying the experimental design (e.g., ~ condition).}
 
-\item{coefname}{A}
+\item{coefname}{A string specifying the coefficient name to shrink. Must match one of the results names in the model.}
 }
 \value{
 A data frame containing the results of the differential expression analysis, including adjusted p-values, log fold changes, and other statistics.

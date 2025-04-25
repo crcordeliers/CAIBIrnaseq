@@ -7,7 +7,7 @@
 get_annotation_collection(collections, species = "Homo sapiens")
 }
 \arguments{
-\item{collections}{A character vector specifying the names of the collections to retrieve. Collections can include MSigDB subcategories or "HALLMARKS".}
+\item{collections}{A character vector specifying the names of the collections to retrieve. Collections can include MSigDB subcategories or "HALLMARK".}
 
 \item{species}{A character string specifying the species for which the gene sets should be retrieved. Default is `"Homo sapiens"`.}
 }
@@ -27,8 +27,4 @@ Retrieves gene sets from specified collections for a given species using the MSi
 \details{
 The function queries the MSigDB database via the `msigdbr` package to collect gene sets for the specified collections and species.
 If a collection is not found in the MSigDB subcategories, a warning message is displayed, and that collection is skipped.
-
-For the "HALLMARKS" collection, the function maps the "H" category to "HALLMARKS" for consistency.
-
-The output contains unique gene sets, including the collection name, pathway name, Ensembl gene IDs, and gene symbols.
 }

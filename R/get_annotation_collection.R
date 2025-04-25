@@ -2,16 +2,12 @@
 #'
 #' Retrieves gene sets from specified collections for a given species using the MSigDB database.
 #'
-#' @param collections A character vector specifying the names of the collections to retrieve. Collections can include MSigDB subcategories or "HALLMARKS".
+#' @param collections A character vector specifying the names of the collections to retrieve. Collections can include MSigDB subcategories or "HALLMARK".
 #' @param species A character string specifying the species for which the gene sets should be retrieved. Default is `"Homo sapiens"`.
 #'
 #' @details
 #' The function queries the MSigDB database via the `msigdbr` package to collect gene sets for the specified collections and species.
 #' If a collection is not found in the MSigDB subcategories, a warning message is displayed, and that collection is skipped.
-#'
-#' For the "HALLMARKS" collection, the function maps the "H" category to "HALLMARKS" for consistency.
-#'
-#' The output contains unique gene sets, including the collection name, pathway name, Ensembl gene IDs, and gene symbols.
 #'
 #' @return A data frame with the following columns:
 #'   \describe{
@@ -26,26 +22,48 @@
 #' @importFrom dplyr mutate filter rename select distinct if_else bind_rows
 #'
 #' @export
-#'
 get_annotation_collection <- function(collections, species = "Homo sapiens") {
-  collection_sets <- lapply(collections, function(collection) {
+  # --- INPUT CHECKS ---
+  if (missing(collections) || !is.character(collections)) {
+    stop("`collections` must be a character vector.")
+  }
 
-    if(collection %in% msigdbr::msigdbr_collections()$gs_subcollection | collection == "Hallmark") {
+  if (!is.character(species) || length(species) != 1) {
+    stop("`species` must be a single character string.")
+  }
+
+  # --- Get available collections from MSigDB ---
+  available_subcollections <- msigdbr::msigdbr_collections()$gs_subcollection
+  all_collections <- unique(c(available_subcollections, "Hallmark", "HALLMARK", "hallmark"))
+
+  results <- lapply(collections, function(collection) {
+    if (collection %in% all_collections) {
       message("-- Collecting ", collection, " from MSigDB...")
 
       msigdb <- msigdbr::msigdbr(species = species) |>
-        dplyr::mutate(gs_subcollection = dplyr::if_else(gs_collection == "H", "Hallmark", gs_subcollection))
+        dplyr::mutate(
+          gs_subcollection = dplyr::if_else(gs_collection == "H", "Hallmark", gs_subcollection)
+        )
 
       gene_sets <- msigdb |>
         dplyr::filter(gs_subcollection %in% collection) |>
         dplyr::mutate(collection = collection) |>
         dplyr::rename(pathway = gs_name) |>
         dplyr::select(collection, pathway, gene_id = ensembl_gene, gene_symbol)
+
       return(gene_sets)
     } else {
-      message("Collection `", collection, "` not found.")
+      warning("Collection `", collection, "` not found in MSigDB. Skipping.")
       return(NULL)
     }
-  }) |> dplyr::bind_rows() |> dplyr::distinct()
-  return(collection_sets)
+  })
+
+  # --- Bind and deduplicate ---
+  collection_sets <- dplyr::bind_rows(results)
+  if (nrow(collection_sets) == 0) {
+    message("No valid gene sets found. Returning NULL.")
+    return(NULL)
+  }
+
+  return(dplyr::distinct(collection_sets))
 }

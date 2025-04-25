@@ -19,11 +19,11 @@ prep_exp_hm(expData, genes, assay = "norm", gene_name = "gene_name")
 A list containing:
 \describe{
   \item{table}{A data frame with expression values and sample annotations.}
-  \item{colv}{Column variable to use as x-axis (typically sample IDs).}
+  \item{colv}{Column variable to use as the x-axis (typically sample IDs).}
   \item{rowv}{Row variable(s) corresponding to the genes.}
 }
 }
 \description{
 This function extracts and formats gene expression data from a `SummarizedExperiment`
-object for heatmap plotting, returning a long-format data frame along with sample and feature axes.
+object for heatmap plotting. It returns a long-format data frame along with identifiers for samples and features.
 }

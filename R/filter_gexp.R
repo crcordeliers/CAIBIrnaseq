@@ -16,28 +16,41 @@
 #' The filtering criteria are:
 #' - A gene must have expression greater than or equal to `min_counts` in at least `min_nsamp` samples.
 #'
-#'
 #' @export
 #'
 #' @importFrom SummarizedExperiment assays colData
-#'
-#'
 filter_gexp <- function(exp_data, min_nsamp = 1, min_counts = 10) {
-  # Extract counts matrix from the SummarizedExperiment object
-  counts <- SummarizedExperiment::assays(exp_data)[["counts"]]
+  # --- VALIDATION CHECKS ---
+  if (!inherits(exp_data, "SummarizedExperiment")) {
+    stop("Error: `exp_data` must be a SummarizedExperiment object.")
+  }
 
-  # Calculate the total counts per sample and the number of non-zero features
+  counts <- SummarizedExperiment::assays(exp_data)[["counts"]]
+  if (is.null(counts)) {
+    stop("Error: `counts` assay not found in the SummarizedExperiment object.")
+  }
+
+  if (!is.numeric(counts)) {
+    stop("Error: `counts` must be a numeric matrix.")
+  }
+
+  if (!is.numeric(min_nsamp) || min_nsamp < 1) {
+    stop("Error: `min_nsamp` must be a positive integer.")
+  }
+
+  if (!is.numeric(min_counts) || min_counts < 0) {
+    stop("Error: `min_counts` must be a non-negative integer.")
+  }
+
+  # --- FILTERING LOGIC ---
   SummarizedExperiment::colData(exp_data)[["ncounts"]] <- base::colSums(counts)
   SummarizedExperiment::colData(exp_data)[["nfeats"]] <- base::colSums(counts > 0)
 
-  # Identify genes to keep based on the filter criteria
   keep_genes <- base::rowSums(counts >= min_counts) >= min_nsamp
 
-  # Print a message showing how many genes are kept
   message("- Keeping ", sum(keep_genes), "/", nrow(counts),
           " genes found in at least ", min_nsamp, " sample(s) with at least ",
           min_counts, " counts")
 
-  # Return the filtered SummarizedExperiment object with the selected genes
   return(exp_data[keep_genes, ])
 }

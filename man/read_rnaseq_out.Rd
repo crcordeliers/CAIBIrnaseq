@@ -2,7 +2,7 @@
 % Please edit documentation in R/read_rnaseq_out.R
 \name{read_rnaseq_out}
 \alias{read_rnaseq_out}
-\title{Read RNA-seq output from nf-core/rnaseq}
+\title{Read RNA-seq Output from nf-core/rnaseq}
 \usage{
 read_rnaseq_out(DATA_PATH)
 }

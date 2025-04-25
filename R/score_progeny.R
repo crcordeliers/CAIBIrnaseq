@@ -2,7 +2,7 @@
 #'
 #' Calculate PROGENy pathway activity scores based on normalized gene expression data.
 #'
-#' @param exp_data A `SummarizedExperiment` object containing normalized gene expression data.
+#' @param exp_data A `SummarizedExperiment` object containing normalized gene expression data in the `assays(exp_data)$norm` slot.
 #' @param species A character string specifying the species, either `"Homo sapiens"` (default) or `"Mus musculus"`.
 #'
 #' @return A data frame containing PROGENy pathway activity scores for each sample.
@@ -16,16 +16,27 @@
 #' @importFrom dplyr if_else
 #'
 #' @export
-#'
 score_progeny <- function(exp_data, species = "Homo sapiens") {
+  # Check if the input is a SummarizedExperiment object
+  if (!inherits(exp_data, "SummarizedExperiment")) {
+    stop("`exp_data` must be a SummarizedExperiment object.")
+  }
+
+  # Check if the 'norm' assay exists in the exp_data
+  if (!"norm" %in% names(SummarizedExperiment::assays(exp_data))) {
+    stop("`exp_data` does not contain the 'norm' assay with normalized expression data.")
+  }
+
   # Extract the normalized gene expression matrix
   gexp <- SummarizedExperiment::assays(exp_data)[["norm"]]
 
-  # Determine the organism type based on species input
-  organism <- dplyr::if_else(species == "Homo sapiens", "Human", "Mouse")
+  # Validate species input and determine organism type
+  organism <- dplyr::if_else(species == "Homo sapiens", "Human",
+                             if_else(species == "Mus musculus", "Mouse",
+                                     stop("Invalid species. Choose either 'Homo sapiens' or 'Mus musculus'.")))
 
   # Calculate PROGENy pathway scores
-  progeny_scores <- t(progeny::progeny(gexp, organism = organism))  # transposing for correct format
+  progeny_scores <- t(progeny::progeny(gexp, organism = organism))  # Transpose for correct format
 
   # Convert the resulting scores into a data frame
   progeny_scores_df <- data.frame(progeny_scores)

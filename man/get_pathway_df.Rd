@@ -17,9 +17,6 @@ get_pathway_df(exp_data, pathway_scores, pathways)
 A data frame containing the selected pathway scores and sample annotations.
 }
 \description{
-Extract pathway activity scores and sample annotations
-}
-\details{
-This function extracts pathway scores for specified pathways and merges them
+This function extracts pathway activity scores for specified pathways and merges them
 with the sample annotations from a SummarizedExperiment object.
 }

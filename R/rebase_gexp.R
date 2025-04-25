@@ -24,13 +24,35 @@
 #' @importFrom magrittr %>%
 #'
 rebase_gexp <- function(exp_data, annotation = "gene_name") {
-  message("-- Rebasing the gene expression matrix using `", annotation, "` as main annotation")
+  # Check input class
+  if (!inherits(exp_data, "SummarizedExperiment")) {
+    stop("`exp_data` must be a SummarizedExperiment object.")
+  }
 
-  # Extract the gene annotations and sample annotations
+  # Extract gene and sample annotations
   gene_annot <- as.data.frame(SummarizedExperiment::rowData(exp_data))
   sample_annot <- SummarizedExperiment::colData(exp_data)
 
-  # Preprocess the gene expression data (assuming 'gexp_preprocess' is defined elsewhere)
+  # Check if the annotation column exists
+  if (!annotation %in% colnames(gene_annot)) {
+    stop("The specified annotation column '", annotation, "' was not found in rowData.")
+  }
+
+  # Check for required columns
+  required_cols <- c("gene_id", "gene_length_kb", "gene_description", "gene_biotype")
+  missing_cols <- setdiff(required_cols, colnames(gene_annot))
+  if (length(missing_cols) > 0) {
+    stop("Missing required column(s) in rowData: ", paste(missing_cols, collapse = ", "))
+  }
+
+  # Check that counts assay exists
+  if (!"counts" %in% names(SummarizedExperiment::assays(exp_data))) {
+    stop("Assay 'counts' not found in the SummarizedExperiment object.")
+  }
+
+  message("-- Rebasing the gene expression matrix using `", annotation, "` as main annotation")
+
+  # Preprocess gene expression matrix
   gexp_new <- gexp_preprocess(
     gexp = SummarizedExperiment::assays(exp_data)[["counts"]],
     gene_annotation = gene_annot,
@@ -38,29 +60,29 @@ rebase_gexp <- function(exp_data, annotation = "gene_name") {
     keep_annot = annotation,
     keep_stat = "sum"
   )
-
   gexp_new <- as.matrix(gexp_new)
 
-  # Aggregate annotations based on the specified annotation (e.g., gene_name)
+  # Aggregate annotations
   new_gene_annot <- gene_annot %>%
     dplyr::group_by(!!sym(annotation)) %>%
-    dplyr::summarize(gene_id = paste(gene_id, collapse = ", "),
-                     gene_length_kb = mean(gene_length_kb),
-                     gene_description = paste(gene_description, collapse = ", "),
-                     gene_biotype = gene_biotype[1])
+    dplyr::summarize(
+      gene_id = paste(unique(gene_id), collapse = ", "),
+      gene_length_kb = mean(gene_length_kb, na.rm = TRUE),
+      gene_description = paste(unique(gene_description), collapse = ", "),
+      gene_biotype = gene_biotype[1],
+      .groups = "drop"
+    )
 
-  # Calculate TPM (Transcripts Per Million)
-  tpm <- transcripts_per_million(gexp_new,
-                                 pull(new_gene_annot, gene_length_kb, !!sym(annotation)))
+  # Calculate TPM
+  lengths_kb <- dplyr::pull(new_gene_annot, gene_length_kb)
+  names(lengths_kb) <- dplyr::pull(new_gene_annot, !!sym(annotation))
+  tpm <- transcripts_per_million(gexp_new, lengths_kb)
 
-  # Create the new gene annotation dataframe
-  gene_annot_df <- tibble::as_tibble(new_gene_annot)
-
-  # Create a new SummarizedExperiment object with the updated data
+  # Final assembly
   new_exp_data <- SummarizedExperiment::SummarizedExperiment(
     assays = list(counts = gexp_new, tpm = tpm),
     colData = sample_annot,
-    rowData = new_gene_annot
+    rowData = tibble::as_tibble(new_gene_annot)
   )
 
   return(new_exp_data)

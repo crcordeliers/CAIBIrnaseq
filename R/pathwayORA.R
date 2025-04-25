@@ -25,74 +25,49 @@
 #' @importFrom stats fisher.test p.adjust
 #' @export
 #'
+
 pathwayORA <- function(diffexp_result, pathways,
                        id_col = "gene_symbol",
                        pcutoff = 0.05) {
 
-  # Extract gene IDs from differential expression result
   gene_ids <- rownames(diffexp_result)
 
-  # Sanity check: ensure overlap between DE genes and pathway genes
   if (!any(gene_ids %in% pathways[[id_col]])) {
-    stop("`diffexp_result` uses unknown gene annotation. ",
-         "Try either using ensembl_gene_id or gene_name/gene_symbol.")
+    stop("`exp_data` uses unknown gene annotation.
+         Try either using ensembl_gene_id or gene_name/gene_symbol.")
   }
 
-  # Create list of genes per pathway
+  # Generate gene set lists
   gene_sets <- split(pathways[[id_col]], pathways$pathway)
 
-  # Define the universe: all unique genes in all pathways
-  univ_genes <- unique(unlist(gene_sets))
-  univ_size <- length(univ_genes)
+  # Universe size
+  univ <- length(unique(unlist(gene_sets)))
 
-  # Perform Over-representation Analysis using Fisher's exact test
+  # Perform Over-representation Analysis
   enrich_res <- lapply(names(gene_sets), function(id) {
-    path_genes <- unique(gene_sets[[id]])
-    sig_genes <- gene_ids
-
-    # Overlap between input genes and pathway
-    overlap <- sum(sig_genes %in% path_genes)
-    if (overlap == 0) {
-      return(NULL)  # Skip pathways with no overlap
-    }
-
-    # Construct contingency table
-    a <- overlap  # in path and in sig
-    b <- length(path_genes) - a  # in path and not in sig
-    c <- length(sig_genes) - a  # not in path and in sig
-    d <- univ_size - a - b - c  # not in path and not in sig
-
-    # Avoid errors in Fisher test due to 0-counts or invalid counts
-    if (any(c(a, b, c, d) < 0) || any(is.infinite(c(a, b, c, d)))) {
-      return(NULL)  # Skip this pathway if the contingency table is invalid
-    }
-
-    # Construct contingency table
-    ctg <- matrix(c(a, b, c, d), nrow = 2)
-    pfish <- tryCatch({
-      fisher.test(ctg, alternative = "greater")$p.valuess
-    }, error = function(e) {
-      return(NA)  # Return NA if fisher.test fails
-    })
+    path <- gene_sets[[id]]
+    genes <- rownames(diffexp_result)
+    ginpath <- sum(genes %in% path)
+    gopath <- length(genes) - ginpath
+    opath <- length(path) - ginpath
+    rest <- univ - ginpath - gopath - opath
+    ctg <- matrix(c(ginpath, opath, gopath, rest), nrow = 2)
+    pfish <- fisher.test(ctg, alternative = "greater")$p.value
 
     data.frame(
       Pathway = id,
       PValue = pfish,
-      GeneRatio = paste0(a, "/", length(sig_genes)),
-      BgRatio = paste0(b, "/", univ_size - length(path_genes)),
-      Genes = paste(sig_genes[sig_genes %in% path_genes], collapse = ", ")
+      GeneRatio = paste0(ginpath, '/', length(genes)),
+      BgRatio = paste0(opath, '/', univ - length(path)),
+      Genes = paste(genes[genes %in% path], collapse = ", ")
     )
-  }) %>% dplyr::bind_rows()
+  }) %>% bind_rows()
 
-  # Adjust p-values, sort, and filter by cutoff
-  if (nrow(enrich_res) > 0) {
-    enrich_res <- enrich_res %>%
-      dplyr::mutate(PAdj = p.adjust(PValue, method = "BH")) %>%
-      dplyr::arrange(PAdj) %>%
-      dplyr::filter(PAdj < pcutoff)
-  } else {
-    enrich_res <- data.frame()  # return empty data frame if no results
-  }
+  # Adjust p-values and filter
+  enrich_res <- enrich_res %>%
+    mutate(PAdj = p.adjust(PValue, method = "BH")) %>%
+    arrange(PAdj) %>%
+    filter(PAdj < pcutoff)
 
   return(enrich_res)
 }

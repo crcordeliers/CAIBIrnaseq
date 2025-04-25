@@ -14,9 +14,11 @@
 #' @export
 #'
 #' @importFrom SummarizedExperiment assays
-#' @importFrom stats na.omit
+#' @importFrom stats na.omit sd
 #' @importFrom magrittr %>%
+#' @importFrom dplyr arrange
 #'
+
 highly_variable_genes <- function(gexp, n_hvg = 2000) {
   # Check if input is a SummarizedExperiment and extract normalized expression if so
   if("SummarizedExperiment" %in% class(gexp)) {
@@ -29,12 +31,17 @@ highly_variable_genes <- function(gexp, n_hvg = 2000) {
   # Calculate the robust coefficient of variation (CV) for each gene
   gcvs <- apply(gexp, 1, robust_cv)
 
+  # Remove genes with NA CV values (these are likely genes with very low variance)
+  gcvs <- na.omit(gcvs)
+
   # Get the top n highly variable genes based on the CV
-  gkeep <- gcvs %>%
-    sort(decreasing = TRUE) %>%
-    .[1:n_hvg] %>%
-    names() %>%
-    na.omit()  # Remove NA values
+  gkeep <- sort(gcvs, decreasing = TRUE)[1:n_hvg]
+  gkeep <- names(gkeep)  # Extract gene names
+
+  # Check if there are enough highly variable genes
+  if (length(gkeep) < n_hvg) {
+    message("Warning: Less than ", n_hvg, " highly variable genes were found. Returning ", length(gkeep), " genes.")
+  }
 
   return(gkeep)
 }

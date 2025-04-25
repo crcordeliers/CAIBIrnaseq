@@ -30,6 +30,18 @@
 score_pathways <- function(exp_data, pathways,
                            scoring_method = "gsva",
                            verbose = TRUE) {
+
+
+  # Check if the input data is of the correct class
+  if (!inherits(exp_data, "SummarizedExperiment")) {
+    stop("`exp_data` must be a SummarizedExperiment object.")
+  }
+
+  # Check if the necessary assay exists
+  if (!"norm" %in% names(assays(exp_data))) {
+    stop("`exp_data` does not contain the normalized expression data in `assays(exp_data)$norm`.")
+  }
+
   # Extract normalized expression matrix from the SummarizedExperiment object
   mat <- assays(exp_data)$norm
 

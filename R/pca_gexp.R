@@ -23,18 +23,55 @@
 #'
 pca_gexp <- function(exp_data, assay = "norm", filter = TRUE, n_hvg = 2000, center = TRUE,
                      scale = TRUE) {
-  # Extract the gene expression data from the specified assay
+  # Basic checks
+  if (!inherits(exp_data, "SummarizedExperiment")) {
+    stop("`exp_data` must be a 'SummarizedExperiment' object.")
+  }
+
+  if (!is.character(assay) || length(assay) != 1) {
+    stop("`assay` must be a character string of length 1.")
+  }
+
+  if (!(assay %in% names(SummarizedExperiment::assays(exp_data)))) {
+    stop(paste0("Assay '", assay, "' not found in `exp_data`."))
+  }
+
+  if (!is.logical(filter) || length(filter) != 1) {
+    stop("`filter` must be a logical value.")
+  }
+
+  if (!is.numeric(n_hvg) || length(n_hvg) != 1 || n_hvg <= 0 || n_hvg != as.integer(n_hvg)) {
+    stop("`n_hvg` must be a strictly positive integer.")
+  }
+
+  if (!is.logical(center) || length(center) != 1) {
+    stop("`center` must be a logical value.")
+  }
+
+  if (!is.logical(scale) || length(scale) != 1) {
+    stop("`scale` must be a logical value.")
+  }
+
+  # Extract gene expression matrix
   gexp <- SummarizedExperiment::assays(exp_data)[[assay]]
 
-  # Filter for highly variable genes if specified
+  if (!is.matrix(gexp)) {
+    stop("The extracted assay data must be a matrix.")
+  }
+
+  # Gene filtering
   if (filter) {
     gkeep <- highly_variable_genes(gexp, n_hvg)
   } else {
     gkeep <- rownames(gexp)
   }
 
-  # Perform PCA on the filtered gene expression data (centered and scaled)
-  pca_res <- stats::prcomp(t(gexp[gkeep,]), center = center, scale = scale)
+  if (length(gkeep) == 0) {
+    stop("No genes were retained for PCA analysis.")
+  }
+
+  # PCA
+  pca_res <- stats::prcomp(t(gexp[gkeep,]), center = center, scale. = scale)
 
   return(pca_res)
 }

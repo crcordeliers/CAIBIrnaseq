@@ -16,15 +16,15 @@ cluster_k_hc(
 \arguments{
 \item{data}{A numeric matrix or data frame (features x samples). Rows are features (e.g., genes), columns are samples.}
 
-\item{k}{Integer. The number of clusters to cut the hierarchical tree into.}
+\item{k}{Integer. The number of clusters to cut the hierarchical tree into. Must be a positive integer.}
 
 \item{pca}{Logical. If TRUE (default), perform PCA before clustering.}
 
-\item{n_pcs}{Integer. Number of principal components to use if `pca = TRUE`. Default is 10.}
+\item{n_pcs}{Integer. Number of principal components to use if `pca = TRUE`. Default is 10. Must be a positive integer.}
 
-\item{dist_method}{Distance method to use: "euclidean" (default), "pearson", "spearman", etc.}
+\item{dist_method}{Distance method to use: "euclidean" (default), "pearson", "spearman", etc. Should be one of the supported methods.}
 
-\item{hc_method}{Linkage method for hierarchical clustering. Default is "complete".}
+\item{hc_method}{Linkage method for hierarchical clustering. Default is "complete". Should be one of the supported methods.}
 }
 \value{
 A named integer vector with cluster assignments for each sample.

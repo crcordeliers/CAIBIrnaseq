@@ -7,7 +7,7 @@
 score_progeny(exp_data, species = "Homo sapiens")
 }
 \arguments{
-\item{exp_data}{A `SummarizedExperiment` object containing normalized gene expression data.}
+\item{exp_data}{A `SummarizedExperiment` object containing normalized gene expression data in the `assays(exp_data)$norm` slot.}
 
 \item{species}{A character string specifying the species, either `"Homo sapiens"` (default) or `"Mus musculus"`.}
 }

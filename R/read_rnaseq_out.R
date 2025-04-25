@@ -1,4 +1,4 @@
-#' Read RNA-seq output from nf-core/rnaseq
+#' Read RNA-seq Output from nf-core/rnaseq
 #'
 #' This function loads and formats a `SummarizedExperiment` object
 #' from the nf-core/rnaseq output directory (e.g., generated using STAR + Salmon).
@@ -14,31 +14,52 @@
 #' @importFrom SummarizedExperiment assays colData rowData
 #'
 read_rnaseq_out <- function(DATA_PATH) {
-  # Load the rds file from nf-core/rnaseq
-  exp_data <- readr::read_rds(file.path(DATA_PATH, "star_salmon/salmon.merged.gene_counts_length_scaled.rds"))
+  if (!is.character(DATA_PATH) || length(DATA_PATH) != 1) {
+    stop("`DATA_PATH` must be a single character string.")
+  }
 
-  # Rename second assay to 'tpm'
-  names(SummarizedExperiment::assays(exp_data))[2] <- "tpm"
+  rds_path <- file.path(DATA_PATH, "star_salmon/salmon.merged.gene_counts_length_scaled.rds")
+  if (!file.exists(rds_path)) {
+    stop("The RDS file was not found at the expected path: ", rds_path)
+  }
+
+  # Load SummarizedExperiment
+  exp_data <- readr::read_rds(rds_path)
+
+  if (!inherits(exp_data, "SummarizedExperiment")) {
+    stop("The loaded object is not a `SummarizedExperiment`.")
+  }
 
   # Add log-transformed TPM
-  SummarizedExperiment::assays(exp_data)$log_tpm <- log2(SummarizedExperiment::assays(exp_data)$tpm + 1)
+  tpm <- SummarizedExperiment::assays(exp_data)[["tpm"]]
+  SummarizedExperiment::assays(exp_data)[["log_tpm"]] <- log2(tpm + 1)
 
-  # Clean up colData
-  if ("files" %in% colnames(colData(exp_data))) {
-    SummarizedExperiment::colData(exp_data)$files <- NULL
+  # Clean up colData: remove 'files' column if present and rename all columns to 'sample_id' if appropriate
+  cd <- SummarizedExperiment::colData(exp_data)
+
+  if ("files" %in% colnames(cd)) {
+    cd$files <- NULL
   }
-  colnames(SummarizedExperiment::colData(exp_data)) <- "sample_id"
+
+  # Rename only if there's a single column — avoid overwriting existing metadata
+  if (ncol(cd) == 1) {
+    colnames(cd) <- "sample_id"
+  }
+
+  SummarizedExperiment::colData(exp_data) <- cd
 
   # Round counts to integers
-  SummarizedExperiment::assays(exp_data)[["counts"]] <- as.matrix(
-    round(SummarizedExperiment::assays(exp_data)[["counts"]])
-  )
+  counts <- SummarizedExperiment::assays(exp_data)[["counts"]]
+  if (!is.null(counts)) {
+    SummarizedExperiment::assays(exp_data)[["counts"]] <- as.matrix(round(counts))
+  } else {
+    stop("`counts` assay is missing from the object.")
+  }
 
   # Add QC metadata
-  counts <- SummarizedExperiment::assays(exp_data)[["counts"]]
-  SummarizedExperiment::rowData(exp_data)$ncounts <- base::rowSums(counts)
-  SummarizedExperiment::colData(exp_data)$nfeats <- apply(counts, 2, function(x) sum(x > 0))
-  SummarizedExperiment::colData(exp_data)$ncounts <- base::colSums(counts)
+  SummarizedExperiment::rowData(exp_data)$ncounts <- rowSums(counts)
+  SummarizedExperiment::colData(exp_data)$nfeats <- colSums(counts > 0)
+  SummarizedExperiment::colData(exp_data)$ncounts <- colSums(counts)
 
   return(exp_data)
 }

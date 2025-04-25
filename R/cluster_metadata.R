@@ -29,18 +29,67 @@ cluster_metadata <- function(exp_data, k,
                              features = NULL,
                              dist_method = "euclidean",
                              hc_method = "complete") {
+
+  # ---- VALIDATION CHECKS ----
+
+  # Check that exp_data is a SummarizedExperiment
+  if (!is(exp_data, "SummarizedExperiment")) {
+    stop("Error: `exp_data` must be a SummarizedExperiment object.")
+  }
+
+  # Check that metadata_name exists in metadata
   scores <- S4Vectors::metadata(exp_data)[[metadata_name]]
-
   if (is.null(scores)) {
-    stop(paste0("No scores found in metadata(exp_data)[['", metadata_name, "']]"))
+    stop(paste0("Error: No scores found in metadata(exp_data)[['", metadata_name, "']]"))
   }
 
-  if (is.null(features)) {
-    message("Clustering ", metadata_name, " based on all ", nrow(scores), " scores")
-    features <- rownames(scores)
-  } else {
-    message("Clustering ", metadata_name, " based on provided features")
+  # Check that k is a positive integer
+  if (!is.numeric(k) || length(k) != 1 || k <= 0 || k != floor(k)) {
+    stop("Error: `k` must be a positive integer.")
   }
+
+  # Check that scores is a matrix or data.frame
+  if (!is.matrix(scores) && !is.data.frame(scores)) {
+    stop("Error: The metadata `", metadata_name, "` must be a matrix or data frame.")
+  }
+
+  # If features are specified, check that they exist in scores
+  if (!is.null(features)) {
+    missing_features <- setdiff(features, rownames(scores))
+    if (length(missing_features) > 0) {
+      stop("Error: The following features are not found in metadata rows: ",
+           paste(missing_features, collapse = ", "))
+    }
+    message("Clustering ", metadata_name, " based on provided features (", length(features), ")")
+  } else {
+    features <- rownames(scores)
+    message("Clustering ", metadata_name, " based on all ", length(features), " features")
+  }
+
+  # Check n_pcs if PCA is TRUE
+  if (pca) {
+    if (!is.numeric(n_pcs) || length(n_pcs) != 1 || n_pcs <= 0 || n_pcs != floor(n_pcs)) {
+      stop("Error: `n_pcs` must be a positive integer.")
+    }
+    if (n_pcs > length(features)) {
+      warning("Warning: `n_pcs` is greater than the number of selected features. Using all available features.")
+      n_pcs <- length(features)
+    }
+  }
+
+  # Validate dist_method
+  valid_dist_methods <- c("euclidean", "pearson", "spearman")
+  if (!(dist_method %in% valid_dist_methods)) {
+    stop("Error: `dist_method` must be one of: ", paste(valid_dist_methods, collapse = ", "))
+  }
+
+  # Validate hc_method
+  valid_hc_methods <- c("complete", "single", "average", "ward.D", "ward.D2")
+  if (!(hc_method %in% valid_hc_methods)) {
+    stop("Error: `hc_method` must be one of: ", paste(valid_hc_methods, collapse = ", "))
+  }
+
+  # ---- CLUSTERING ----
 
   clust_res <- cluster_k_hc(scores[features, ], k = k, pca = pca, n_pcs = n_pcs,
                             dist_method = dist_method, hc_method = hc_method)
