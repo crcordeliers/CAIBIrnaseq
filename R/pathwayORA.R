@@ -51,7 +51,16 @@ pathwayORA <- function(diffexp_result, pathways,
     gopath <- length(genes) - ginpath
     opath <- length(path) - ginpath
     rest <- univ - ginpath - gopath - opath
+
+
     ctg <- matrix(c(ginpath, opath, gopath, rest), nrow = 2)
+    print(ctg)  # Afficher la matrice pour vérifier les valeurs
+    if (any(!is.finite(ctg)) || any(ctg < 0)) {
+      stop("La matrice ctg contient des valeurs non valides.")
+    }
+
+
+
     pfish <- fisher.test(ctg, alternative = "greater")$p.value
 
     data.frame(
