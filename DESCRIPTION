@@ -47,7 +47,6 @@ Imports:
     stringr,
     GSVA,
     scales,
-    ggtree,
     forcats,
     apeglm
 Remotes:
