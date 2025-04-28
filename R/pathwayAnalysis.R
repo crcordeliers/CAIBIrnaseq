@@ -23,7 +23,6 @@
 #' @return A data frame containing pathway enrichment results, including pathway names, p-values, adjusted p-values, and other relevant statistics.
 #'
 #' @export
-#'
 pathwayAnalysis <- function(gene_set, pathways,
                             method = "ORA",
                             species = "Homo sapiens",
