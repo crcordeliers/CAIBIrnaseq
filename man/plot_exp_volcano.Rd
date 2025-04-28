@@ -17,14 +17,3 @@ A `plotly` object representing the interactive volcano plot.
 \description{
 Generates an interactive volcano plot based on the results of differential expression analysis, highlighting upregulated and downregulated genes.
 }
-\details{
-This function creates a volcano plot that visualizes the significance and fold change of genes from differential expression analysis. Genes are categorized as:
-- "Upregulated": padj < 0.05 and log2FoldChange > 1
-- "Downregulated": padj < 0.05 and log2FoldChange < -1
-
-The plot includes:
-- Horizontal and vertical dashed lines indicating thresholds for significance (padj < 0.05) and fold change (log2FoldChange of ±1).
-- Top 20 significant genes based on padj are labeled interactively.
-
-The output is an interactive plot created with `plotly`, allowing for tooltips that display gene-specific information.
-}

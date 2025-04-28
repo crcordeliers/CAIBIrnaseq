@@ -16,14 +16,8 @@
 #'
 #' @return A `ggplot` object representing the heatmap.
 #'
-#' @details
-#' The function extracts and scales the expression data for the specified genes, optionally adds sample annotations from the `colData` of the `SummarizedExperiment`, and plots a heatmap using hierarchical clustering.
-#' If a file name (`fname`) is provided, the heatmap is saved to the specified location.
-#'
 #' @importFrom SummarizedExperiment colData rowData
 #' @importFrom ggplot2 ggplot
-
-#'
 #' @export
 #'
 plot_exp_heatmap <- function(expData,
@@ -37,6 +31,47 @@ plot_exp_heatmap <- function(expData,
                              fwidth = 7,
                              fheight = 5,
                              ...) {
+  ## --------------------------- ##
+  ## Verifications / Validation  ##
+  ## --------------------------- ##
+  if (!inherits(expData, "SummarizedExperiment")) {
+    stop("expData must be a SummarizedExperiment object.")
+  }
+  if (missing(genes) || !is.character(genes) || length(genes) == 0) {
+    stop("You must provide a non-empty character vector for genes.")
+  }
+  if (!is.character(assay) || length(assay) != 1) {
+    stop("assay must be a single character string.")
+  }
+  if (!assay %in% SummarizedExperiment::assayNames(expData)) {
+    stop(paste0("Assay '", assay, "' not found in expData. Available assays are: ",
+                paste(SummarizedExperiment::assayNames(expData), collapse = ", ")))
+  }
+  if (!is.character(gene_name) || length(gene_name) != 1) {
+    stop("gene_name must be a single character string.")
+  }
+  if (!gene_name %in% colnames(SummarizedExperiment::rowData(expData))) {
+    stop(paste0("gene_name '", gene_name, "' not found in rowData(expData)."))
+  }
+  if (!is.numeric(annotation_prop) || annotation_prop < 0 || annotation_prop > 1) {
+    stop("annotation_prop must be a numeric value between 0 and 1.")
+  }
+  if (!is.null(fname) && !is.character(fname)) {
+    stop("fname must be NULL or a character string (path to save the figure).")
+  }
+
+  ## Optional: validate annotations if provided
+  if (!is.na(annotations[1])) {
+    if (!all(annotations %in% colnames(SummarizedExperiment::colData(expData)))) {
+      missing_annots <- annotations[!annotations %in% colnames(SummarizedExperiment::colData(expData))]
+      stop(paste0("Some annotations not found in expData: ", paste(missing_annots, collapse = ", ")))
+    }
+  }
+
+  ## --------------------------- ##
+  ##         Main Function        ##
+  ## --------------------------- ##
+
   # Prepare the heatmap data (gene expression values)
   hm_data <- prep_exp_hm(expData, genes, assay, gene_name)
 
@@ -56,6 +91,5 @@ plot_exp_heatmap <- function(expData,
                     fheight = fheight,
                     ...)
 
-  # Return the heatmap object
   return(hm)
 }

@@ -1,4 +1,4 @@
-#' Plot Expression Boxplot
+#' Plot Expression Boxplot (with validation)
 #'
 #' This function generates a boxplot for the expression of a specified gene, grouped by a given annotation.
 #'
@@ -17,8 +17,6 @@
 #'
 #' @return A ggplot object representing the boxplot.
 #'
-#' @importFrom ggplot2 ggsave
-#'
 #' @export
 #'
 plot_exp_boxplot <- function(exp_data, gene, annotation,
@@ -30,11 +28,27 @@ plot_exp_boxplot <- function(exp_data, gene, annotation,
                              fname = NULL,
                              fwidth = 5,
                              fheight = 3) {
+  # Basic validations
+  if (missing(exp_data) || is.null(exp_data)) stop("Argument 'exp_data' is missing or NULL.")
+  if (missing(gene) || is.null(gene) || !is.character(gene)) stop("Argument 'gene' must be a non-null character string.")
+  if (missing(annotation) || is.null(annotation)) stop("Argument 'annotation' is missing or NULL.")
+
+  if (!is.numeric(pt_size) || pt_size <= 0) stop("Argument 'pt_size' must be a positive number.")
+  if (!summary_type %in% c("choose", "line", "box")) stop("Argument 'summary_type' must be one of 'choose', 'line', or 'box'.")
+  if (!is.null(fname) && !is.character(fname)) stop("Argument 'fname' must be a character string if provided.")
+  if (!is.numeric(fwidth) || fwidth <= 0) stop("Argument 'fwidth' must be a positive number.")
+  if (!is.numeric(fheight) || fheight <= 0) stop("Argument 'fheight' must be a positive number.")
+
   exp_df <- get_exp_df(exp_data, gene)
 
-  # Ensure annotation rownames match exp_df sample IDs
+  # Check if exp_df was successfully retrieved
+  if (nrow(exp_df) == 0) {
+    stop("No expression data retrieved for the specified gene: ", gene)
+  }
+
+  # Check if sample IDs match between expression and annotation
   if (!is.null(rownames(annotation)) && any(!exp_df$sample %in% rownames(annotation))) {
-    stop("Some samples in expression data are missing in annotation data.")
+    stop("Some samples in expression data are missing in the annotation data.")
   }
 
   plt <- plt_boxplot(
@@ -62,4 +76,3 @@ plot_exp_boxplot <- function(exp_data, gene, annotation,
 
   return(plt)
 }
-

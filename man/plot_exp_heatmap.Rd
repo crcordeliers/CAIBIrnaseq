@@ -47,7 +47,3 @@ A `ggplot` object representing the heatmap.
 \description{
 Generate a heatmap for gene expression data from a `SummarizedExperiment` object, with optional sample annotations and custom styling.
 }
-\details{
-The function extracts and scales the expression data for the specified genes, optionally adds sample annotations from the `colData` of the `SummarizedExperiment`, and plots a heatmap using hierarchical clustering.
-If a file name (`fname`) is provided, the heatmap is saved to the specified location.
-}

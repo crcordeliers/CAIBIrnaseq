@@ -38,11 +38,3 @@ A ggplot object representing the scatter plot.
 \description{
 Creates a scatter plot to visualize the expression relationship between two genes, with optional coloring by a variable.
 }
-\details{
-The function extracts expression values for the specified genes (`gene1` and `gene2`) from the `assays(exp_data)` slot and combines them with sample annotations from `colData(exp_data)`.
-It generates a scatter plot using a helper function `.plt_scatter`, with optional coloring based on a variable (`color_var`) from the sample annotations.
-
-The plot includes a correlation statistic computed with the `stat_cor()` function from the `ggpubr` package.
-
-If `fname` is provided, the plot will be saved as an image file.
-}

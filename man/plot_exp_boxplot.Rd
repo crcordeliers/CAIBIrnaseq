@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_exp_boxplot.R
 \name{plot_exp_boxplot}
 \alias{plot_exp_boxplot}
-\title{Plot Expression Boxplot}
+\title{Plot Expression Boxplot (with validation)}
 \usage{
 plot_exp_boxplot(
   exp_data,
