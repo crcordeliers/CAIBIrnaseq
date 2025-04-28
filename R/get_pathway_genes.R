@@ -1,6 +1,5 @@
 #' Get Pathway Genes
 #'
-#'
 #' Extracts genes associated with specific pathways from an annotation collection.
 #'
 #' @param annotation_collection A data frame containing pathway annotations. It should have at least two columns: `pathway` and a gene annotation column (e.g., `gene_symbol` or `gene_id`).
