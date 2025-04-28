@@ -1,7 +1,5 @@
 #' Cluster Samples Based on Gene Expression
 #'
-#'
-#'
 #' This function performs hierarchical clustering on samples using normalized gene expression data.
 #'
 #' @param exp_data A `SummarizedExperiment` object containing the normalized expression data matrix.
