@@ -50,9 +50,9 @@ Imports:
     forcats,
     apeglm
 Remotes:
-    cit-bioinfo/mMCP-counter,
-    csgroen/ggheatmapper,
-    ebecht/MCPcounter/Source,
+    github::cit-bioinfo/mMCP-counter,
+    github::csgroen/ggheatmapper,
+    github::ebecht/MCPcounter/Source,
     bioc::3.21/SummarizedExperiment,
     bioc::3.21/GSVA,
     bioc::3.21/DESeq2,
