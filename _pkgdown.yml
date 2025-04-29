@@ -1,0 +1,128 @@
+url: https://CAIBIrnaseq-package.com
+
+name: CAIBIrnaseq
+title: "CAIBIrnaseq"
+output_dir: "docs"
+
+logo: man/figures/CRC.png
+favicon: man/figures/CRC.png
+
+navbar:
+  structure:
+    left:
+    - intro
+    - reference
+    - articles
+    - tutorials
+    - news
+    right:
+    - search
+    - github
+    - lightswitch
+  components:
+    reference:
+      text: Reference
+      href: reference/index.html
+    intro:
+      text: Installation
+      href: installation/index.html
+    search:
+      search: []
+    lightswitch:
+      icon: fa-sun
+      aria-label: Light switch
+      id: lightswitch
+      menu:
+      - text: Light
+        theme: light
+        icon: fa-sun
+      - text: Dark
+        theme: dark
+        icon: fa-moon
+      - text: Auto
+        theme: auto
+        icon: fa-adjust
+
+template:
+  bootstrap: 5
+  bootswatch: materia
+  math-rendering: mathjax
+  light-switch: true
+  bslib:
+    primary: "#0054AD"
+    danger: "#A6081A"
+    border-radius: 0.5rem
+    btn-border-radius: 0.25rem
+    base_font: {google: "Roboto"}
+    heading_font: {google: "Roboto Slab"}
+    code_font: {google: "JetBrains Mono"}
+
+development:
+  mode: auto
+
+intro:
+  - title: "Installation Guide"
+
+reference:
+  - title: "Preprocessing"
+    contents:
+      - filter_gexp
+      - normalize_gexp
+      - gexp_preprocess
+      - rebase_gexp
+      - fixMarsExcel
+      - robust_cv
+      - highly_variable_genes
+      - estimateTPM
+      - readsPerMillion
+      - transcripts_per_million
+
+  - title: "Exploratory Analysis"
+    contents:
+      - pca_gexp
+      - plot_pca
+      - cluster_exp
+      - cluster_k_hc
+      - cluster_metadata
+
+  - title: "Differential Expression Analysis"
+    contents:
+      - diffExpAnalysis
+      - plot_exp_volcano
+      - plot_exp_boxplot
+      - plot_exp_heatmap
+      - plot_exp_scatter
+      - plot_qc_filters
+
+  - title: "Pathway Analysis"
+    contents:
+      - pathwayAnalysis
+      - pathwayFGSEA
+      - pathwayORA
+      - score_pathways
+      - score_progeny
+      - get_pathway_df
+      - get_pathway_genes
+      - plot_pathway_dotplot
+      - plot_pathway_heatmap
+      - plot_path_boxplot
+      - plot_path_scatter
+
+  - title: "Microenvironment & Cell-type Scores"
+    contents:
+      - mcp_counter
+      - plot_microenv_heatmap
+      - plot_progeny_heatmap
+
+  - title: "Utilities and Helpers"
+    contents:
+      - get_exp_df
+      - get_annotation_collection
+      - getEmptyRows
+      - plt_boxplot
+      - plt_heatmap
+      - plt_scatter
+      - prep_exp_hm
+      - prep_scoredf_hm
+      - prep_scores_hm
+      - read_rnaseq_out
