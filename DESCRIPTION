@@ -59,4 +59,5 @@ Remotes:
     bioc::3.21/progeny,
     bioc::3.21/ggtree,
     bioc::3.21/biomaRt,
-    bioc::3.21/apeglm
+    bioc::3.21/apeglm,
+    bioc::3.21/fgsea
