@@ -56,7 +56,7 @@ Remotes:
     bioc::3.21/SummarizedExperiment,
     bioc::3.21/GSVA,
     bioc::3.21/DESeq2,
-    bioc::3.21/rogeny,
+    bioc::3.21/progeny,
     bioc::3.21/ggtree,
     bioc::3.21/biomaRt,
     bioc::3.21/apeglm
