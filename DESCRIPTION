@@ -1,7 +1,7 @@
 Package: CAIBIrnaseq
 Type: Package
 Title: Supervised and Unsupervised RNAseq(bulk) Analysis
-Version: 0.1.1
+Version: 1.0.0
 Authors@R: c(
     person("Nicolas", "Salaün", email = "nicolas.salaun@inserm.fr", role = "ctb"),
     person("Clarice", "Groeneveld", email = "clarice.groeneveld@inserm.fr", role = "cre"),

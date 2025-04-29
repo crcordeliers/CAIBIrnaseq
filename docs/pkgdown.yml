@@ -1,0 +1,37 @@
+name: CAIBIrnaseq
+title: "CAIBBI RNA-seq (bulk)"
+output_dir: "docs"
+
+navbar:
+  structure:
+    left:
+      - home
+      - reference
+      - articles
+      - news
+    right:
+      - github
+
+template:
+  bootstrap: 5
+  bootswatch: flatly
+  params:
+    docsearch:
+      api_key: YOUR_API_KEY
+      index_name: monpackage
+
+authors:
+  footer: "Developped by "
+
+# Articles (vignettes)
+articles:
+  - title: "Introduction"
+    contents:
+      - monpackage-intro
+
+# Options diverses
+reference:
+  - title: "Fonctions principales"
+    contents:
+      - ma_fonction1
+      - ma_fonction2
