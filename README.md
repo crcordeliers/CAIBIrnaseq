@@ -8,6 +8,6 @@
 - **Functional and pathway analysis** (FGSEA, ORA, PROGENy scoring)
 - **Tumor microenvironment investigation** (MCPcounter, cell-type signatures)
 
-Whether you are a **biologist**, **bioinformatician**, or **data scientist**, **CAIBIrnaseq** provides a **turnkey solution** for interpreting your transcriptomic datasets in a reproducible and insightful way.
+Whether you are performing supervised or unsupervised RNA-seq analysis, this package provides robust methods for interpreting gene expression data
 
 **We hope this will help you in your projects !**
