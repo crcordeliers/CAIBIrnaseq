@@ -11,6 +11,9 @@ vignette: >
 
 This guide explains how to install the **CAIBIrnaseq** package from GitHub, including required dependencies and system setup.
 
+You can view the source of this guide on [GitHub](https://github.com/crcordeliers/CAIBIrnaseq/blob/dev/vignettes/installation.Rmd).
+
+
 # System setup
 
 ## R version
