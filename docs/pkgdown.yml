@@ -3,7 +3,7 @@ pkgdown: 2.1.2
 pkgdown_sha: ~
 articles:
   installation: installation.html
-last_built: 2025-04-30T11:41Z
+last_built: 2025-04-30T11:44Z
 urls:
   reference: https://CAIBIrnaseq-package.com/reference
   article: https://CAIBIrnaseq-package.com/articles
