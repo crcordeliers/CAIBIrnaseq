@@ -17,7 +17,7 @@
 #'
 plot_exp_volcano <- function(diffexp) {
   # Vérification des colonnes
-  required_cols <- c("log2FoldChange", "padj", "gene")
+  required_cols <- c("log2FoldChange", "padj")
   if (!all(required_cols %in% colnames(diffexp))) {
     stop("Le data.frame diffexp doit contenir les colonnes : log2FoldChange, padj, gene")
   }
@@ -33,7 +33,7 @@ plot_exp_volcano <- function(diffexp) {
   top_genes <- dplyr::slice_head(top_genes, n = 10)
 
   # Ajouter les labels pour annotation
-  diffexp$label <- ifelse(diffexp$gene %in% top_genes$gene, diffexp$gene, NA)
+  diffexp$label <- ifelse(rownames(diffexp) %in% rownames(top_genes), rownames(diffexp), NA)
 
   # Création du volcano plot
   plot <- ggplot2::ggplot(diffexp, ggplot2::aes(
