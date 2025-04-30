@@ -27,7 +27,7 @@ plot_exp_volcano <- function(diffexp) {
     dplyr::slice_head(n = 10)
 
   # Ajoute une colonne 'label' pour les gènes à annoter
-  diffexp$label <- ifelse(rownames(diffexp) %in% rownames(top_genes), rownames(diffexp), NA)
+  diffexp$label <- ifelse(diffexp$gene %in% top_genes$gene, diffexp$gene, NA)
 
   # Création du volcano plot
   volcanoPlot <- ggplot2::ggplot(diffexp, ggplot2::aes(
