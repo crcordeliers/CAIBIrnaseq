@@ -7,13 +7,14 @@
 plot_exp_volcano(diffexp)
 }
 \arguments{
-\item{diffexp}{A data frame containing differential expression results. Must include the following columns:
+\item{diffexp}{A data frame containing differential expression results. Must include:
 - `log2FoldChange`: The log2 fold change values for each gene.
 - `padj`: The adjusted p-value for each gene.}
 }
 \value{
-A `plotly` object representing the interactive volcano plot.
+A `ggplot` object representing the volcano plot.
 }
 \description{
-Generates an interactive volcano plot based on the results of differential expression analysis, highlighting upregulated and downregulated genes.
+Generates a volcano plot based on the results of differential expression analysis,
+highlighting upregulated and downregulated genes, with labels for top significant genes.
 }
