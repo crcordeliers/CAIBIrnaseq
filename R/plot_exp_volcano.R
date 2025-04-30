@@ -81,7 +81,7 @@ plot_exp_volcano <- function(diffexp) {
       plot.title = ggplot2::element_text(face = "bold", hjust = 0.5)
     )
 
-  interactivePlot <- plotly::ggplotly(volcanoPlot, tooltip = "text")
+  # interactivePlot <- plotly::ggplotly(volcanoPlot, tooltip = "text")
 
-  return(interactivePlot)
+  return(volcanoPlot)
 }
