@@ -30,19 +30,27 @@ plot_exp_volcano <- function(diffexp) {
   diffexp$label <- ifelse(diffexp$gene %in% top_genes$gene, diffexp$gene, NA)
 
   # Création du volcano plot
-  volcanoPlot <- ggplot2::ggplot(data2plot, ggplot2::aes(log2FoldChange, lpval)) +
-    ggplot2::geom_point(ggplot2::aes(color = signif), alpha = 0.7) +
-    ggrepel::geom_text_repel(ggplot2::aes(label = label), size = 3) +
-    ggplot2::annotate("text", x = annot_pos[1], y = annot_pos[2],
-                      vjust = vjust_value, hjust = hjust_value,
-                      label = deg_annot, size = 3.5, parse = TRUE) +
-    ggplot2::scale_color_manual(values = c("up" = "#ef8a62",
-                                           "down" = "#67a9cf",
-                                           "signif" = "grey60",
-                                           "ns" = "grey90")) +
-    ggplot2::labs(x = bquote("log"[2]*.(fc_leg)), y = expression(-"log"[10]*"adj. p-value")) +
-    ggplot2::guides(color = "none") +
-    ggplot2::theme_minimal()
+  volcanoPlot <- ggplot2::ggplot(diffexp, ggplot2::aes(
+    x = log2FoldChange,
+    y = -log10(padj),
+    color = forcats::fct_rev(Significance)
+  )) +
+    ggplot2::geom_point(alpha = 0.6, size = 2) +
+    ggrepel::geom_text_repel(ggplot2::aes(label = label), max.overlaps = 100) +
+    ggplot2::geom_hline(yintercept = -log10(0.05), linetype = "dotted", color = "darkgray") +
+    ggplot2::geom_vline(xintercept = c(-1, 1), linetype = "dotted", color = "darkgray") +
+    ggplot2::labs(
+      title = "Volcano Plot of Differential Expression",
+      x = "Log2 Fold Change",
+      y = "-Log10 Adjusted p-value",
+      color = "Significance"
+    ) +
+    ggplot2::theme_minimal(base_size = 14) +
+    ggplot2::theme(
+      legend.position = "right",
+      legend.title = ggplot2::element_text(face = "bold"),
+      plot.title = ggplot2::element_text(face = "bold", hjust = 0.5)
+    )
 
   return(volcanoPlot)
 }
