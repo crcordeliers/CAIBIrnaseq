@@ -2,36 +2,18 @@
 % Please edit documentation in R/plot_exp_volcano.R
 \name{plot_exp_volcano}
 \alias{plot_exp_volcano}
-\title{Volcano Plot for DESeq2 Results}
+\title{Plot Volcano Plot of Differential Expression Results}
 \usage{
-plot_exp_volcano(
-  resLFC,
-  contrast_name = "",
-  lfc_tresh = 2.5,
-  padj_tresh = 0.05,
-  ngenes_show = 10,
-  gene_col = "external_gene_name",
-  annot_pos = c(Inf, Inf)
-)
+plot_exp_volcano(diffexp)
 }
 \arguments{
-\item{resLFC}{A data.frame or tibble containing the DESeq2 results with `log2FoldChange`, `padj`, and gene annotations.}
-
-\item{contrast_name}{Character. Name of the contrast shown on the x-axis label.}
-
-\item{lfc_tresh}{Numeric. Log2 fold-change threshold to define up/down-regulated genes. Default is 2.5.}
-
-\item{padj_tresh}{Numeric. Adjusted p-value threshold for significance. Default is 0.05.}
-
-\item{ngenes_show}{Integer. Number of top significant genes to label (split equally up/down). Default is 10.}
-
-\item{gene_col}{Character. Column name in `resLFC` containing gene names. Default is "external_gene_name".}
-
-\item{annot_pos}{Numeric vector of length 2. Position to place DEG annotation text (x, y). Use `Inf` or `-Inf` for corners.}
+\item{diffexp}{A data frame containing differential expression results. Must include the following columns:
+- `log2FoldChange`: The log2 fold change values for each gene.
+- `padj`: The adjusted p-value for each gene.}
 }
 \value{
-A `ggplot2` object displaying the volcano plot.
+A `plotly` object representing the interactive volcano plot.
 }
 \description{
-Creates a volcano plot from DESeq2 differential expression results.
+Generates an interactive volcano plot based on the results of differential expression analysis, highlighting upregulated and downregulated genes.
 }
