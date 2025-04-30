@@ -11,7 +11,7 @@ License: MIT
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.2
-URL: https://CAIBIrnaseq-package.com
+URL: https://CAIBIrnaseq-package.com, https://github.com/crcordeliers/CAIBIrnaseq.git
 Depends: 
     R (>= 4.1.0),
     R.utils
@@ -62,3 +62,6 @@ Remotes:
     bioc::3.21/biomaRt,
     bioc::3.21/apeglm,
     bioc::3.21/fgsea
+VignetteBuilder:
+    knitr,
+    quarto

@@ -1,0 +1,110 @@
+---
+title: "Installation of CAIBIrnaseq"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Installation of CAIBIrnaseq}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+<img src="../man/figures/CAIBI.png" align="right" alt="" width="120" />
+
+This guide explains how to install the **CAIBIrnaseq** package from GitHub, including required dependencies and system setup.
+
+# System setup
+
+## R version
+
+This package is available for R version above the 4.1.0.
+Verify your version with :
+
+```{r, eval = FALSE}
+version
+```
+
+## System dependencies
+
+For some systems, there are command lines to run in the **Terminal** so that the system has all the dependencies to install correctly the package.
+
+### Linux Ubuntu/Debian
+
+```{bash, eval = FALSE}
+# Upgrade of the system
+sudo apt update && sudo apt upgrade -y
+
+# System dependencies
+sudo apt install -y r-base r-base-dev libcurl4-openssl-dev libssl-dev libxml2-dev libgit2-dev libharfbuzz-dev libfribidi-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev build-essential zlib1g-dev pandoc git
+```
+
+### MacOS
+
+```{bash, eval = FALSE}
+# If not already done, install Homebrew
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# System dependencies 
+brew install libgit2 pkg-config freetype harfbuzz fribidi libpng libtiff jpeg pandoc git
+```
+
+### Windows 
+
+For Windows, you must only install `Rtools` (https://cran.r-project.org/bin/windows/Rtools/).
+Then, restart Rstudio and verify `Rtools` is installed :
+
+```{r, eval = FALSE}
+# In R Console
+pkgbuild::has_build_tools(debug = TRUE)
+```
+
+
+# Packages to install before CAIBIrnaseq
+
+To install the **CAIBIrnaseq** package from GitHub, you have to install 2 basic packages:
+
+```{r, eval = FALSE}
+# If not already installed
+install.packages("devtools")
+install.packages("BiocManager")
+```
+
+`devtools` will allows us to install the package from Github 
+`BiocManager` to install the **Bioconductor** dependencies. 
+
+
+# Installation of CAIBIrnaseq
+
+Now, you are ready to install the package !
+Just run this line : 
+
+```{r,eval=FALSE}
+# Installation from Github : 
+devtools::install_github("crcordeliers/CAIBIrnaseq", dependencies = TRUE)
+```
+
+There is a lot of packages, so the installation might take a bit of time...
+
+When you are done, verify that the package is installed correctly : 
+
+```{r, eval = FALSE}
+library(CAIBIrnaseq)
+```
+
+If you do not encounter any errors, you're DONE !
+
+Hope this package will help you in your projects !!!
+
+
+# Issues
+
+As there is a lot of packages, you could encounter some difficulties to install the package. Normally, the installation of `devtools` and `BiocManager` should be enough, but if you have missing packages, do not hesitate to install manually the missing ones. 
+
+You might have difficulties with `DESeq2` and `SummarizedExperiment` packages. Just try running these command lines :
+
+```{r, eval = FALSE}
+# Manual installation
+BiocManager::install("DESeq2")
+BiocManager::install("SummarizedExperiment")
+```
+
+If the errors persist, check that you have all system dependencies and write permissions in the folder where the libraries are installed.
+

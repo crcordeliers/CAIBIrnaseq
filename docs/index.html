@@ -40,8 +40,8 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="nav-item"><a class="nav-link" href="installation/index.html">Installation</a></li>
-<li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
+<li class="nav-item"><a class="nav-link" href="articles/installation.html">Installation Guide</a></li>
+<li class="nav-item"><a class="nav-link" href="reference/index.html">References</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -62,18 +62,27 @@
   </div>
 </nav><div class="container template-home">
 <div class="row">
-  <main id="main" class="col-md-9"><div class="section level1">
-<div class="page-header"><h1 id="introduction-to-caibirnaseq-">Introduction to CAIBIrnaseq <img src="reference/figures/CAIBI.png" align="right" alt="" width="120"><a class="anchor" aria-label="anchor" href="#introduction-to-caibirnaseq-"></a>
-</h1></div>
-<p><strong>CAIBIrnaseq</strong> is an R package developed by the CAIBI platform for the supervised and unsupervised analysis of bulk RNA sequencing (RNA-seq) data.</p>
-<p>It provides a complete pipeline for preprocessing, quality control, normalization, dimensionality reduction, clustering, pathway analysis, and data visualization. This package is designed to be flexible and integrates seamlessly with popular bioinformatics tools like <code>DESeq2</code>, <code>GSVA</code>, and <code>MCPcounter</code>.</p>
-<div class="section level2">
-<h2 id="id_️-functions">⚙️ Functions<a class="anchor" aria-label="anchor" href="#id_%EF%B8%8F-functions"></a>
+  <main id="main" class="col-md-9"><div class="section level2">
+<h2 id="id_-welcome-to-caibirnaseq-">🎯 Welcome to CAIBIrnaseq <img src="reference/figures/CAIBI.png" align="right" alt="CAIBIrnaseq logo" width="120"><a class="anchor" aria-label="anchor" href="#id_-welcome-to-caibirnaseq-"></a>
 </h2>
-<p>Below is a summary of the available functions, grouped by their purpose in the RNA-seq analysis workflow.</p>
+<p><strong>CAIBIrnaseq</strong> is an R package designed to streamline, standardize, and reproduce key steps of gene expression analysis from RNA-seq data. Developed by the <strong>CRCL / CRCLordeliers</strong> team, it integrates powerful tools for:</p>
+<ul>
+<li>🧬 <strong>Preprocessing</strong> raw expression data (TPM calculation, filtering, normalization, etc.)</li>
+<li>🔍 <strong>Exploratory data analysis</strong> (PCA, clustering, heatmaps)</li>
+<li>📊 <strong>Differential expression analysis</strong> (DESeq2 and visualization of DE genes)</li>
+<li>🔬 <strong>Functional and pathway analysis</strong> (FGSEA, ORA, PROGENy scoring)</li>
+<li>🧫 <strong>Tumor microenvironment investigation</strong> (MCPcounter, cell-type signatures)</li>
+</ul>
+<p>🎓 Whether you are a <strong>biologist</strong>, <strong>bioinformatician</strong>, or <strong>data scientist</strong>, <strong>CAIBIrnaseq</strong> provides a <strong>turnkey solution</strong> for interpreting your transcriptomic datasets in a reproducible and insightful way.</p>
 </div>
+  </main><aside class="col-md-3"><div class="links">
+<h2 data-toc-skip>Links</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/crcordeliers/CAIBIrnaseq.git/" class="external-link">Browse source code</a></li>
+</ul>
 </div>
-  </main><aside class="col-md-3"><div class="license">
+
+<div class="license">
 <h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li><a href="https://opensource.org/licenses/mit-license.php" class="external-link">MIT</a></li>

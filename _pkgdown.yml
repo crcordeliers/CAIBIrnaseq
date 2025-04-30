@@ -3,49 +3,52 @@ url: https://CAIBIrnaseq-package.com
 name: CAIBIrnaseq
 title: "CAIBIrnaseq"
 output_dir: "docs"
-
-logo: man/figures/CRC.png
-favicon: man/figures/CRC.png
+favicon: vignettes/CRC.png
 
 navbar:
   structure:
     left:
-    - intro
-    - reference
-    - articles
-    - tutorials
-    - news
+      - installation
+      - reference
     right:
-    - search
-    - github
-    - lightswitch
+      - search
+      - github
+      - lightswitch
+    logo:
+      image: "man/figures/CAIBI.png"
+      width: 120
+      align: right
   components:
+    installation:
+      text: Installation Guide
+      href: articles/installation.html
     reference:
-      text: Reference
+      text: References
       href: reference/index.html
-    intro:
-      text: Installation
-      href: installation/index.html
+    articles:
+      text: Articles
+      href: articles/index.html
     search:
       search: []
+    github: ~
     lightswitch:
       icon: fa-sun
       aria-label: Light switch
       id: lightswitch
       menu:
-      - text: Light
-        theme: light
-        icon: fa-sun
-      - text: Dark
-        theme: dark
-        icon: fa-moon
-      - text: Auto
-        theme: auto
-        icon: fa-adjust
+        - text: Light
+          theme: light
+          icon: fa-sun
+        - text: Dark
+          theme: dark
+          icon: fa-moon
+        - text: Auto
+          theme: auto
+          icon: fa-adjust
 
 template:
   bootstrap: 5
-  bootswatch: materia
+  bootswatch: spacelab
   math-rendering: mathjax
   light-switch: true
   bslib:
@@ -60,8 +63,10 @@ template:
 development:
   mode: auto
 
-intro:
+articles:
   - title: "Installation Guide"
+    contents:
+      - installation
 
 reference:
   - title: "Preprocessing"

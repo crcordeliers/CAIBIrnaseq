@@ -1,9 +1,11 @@
-# Introduction to CAIBIrnaseq <img src="man/figures/CAIBI.png" align="right" alt="" width="120" />
+## 🎯 Welcome to CAIBIrnaseq <img src="man/figures/CAIBI.png" align="right" alt="CAIBIrnaseq logo" width="120" />
 
-**CAIBIrnaseq** is an R package developed by the CAIBI platform for the supervised and unsupervised analysis of bulk RNA sequencing (RNA-seq) data.
+**CAIBIrnaseq** is an R package designed to streamline, standardize, and reproduce key steps of gene expression analysis from RNA-seq data. Developed by the **CRCL / CRCLordeliers** team, it integrates powerful tools for:
 
-It provides a complete pipeline for preprocessing, quality control, normalization, dimensionality reduction, clustering, pathway analysis, and data visualization. This package is designed to be flexible and integrates seamlessly with popular bioinformatics tools like `DESeq2`, `GSVA`, and `MCPcounter`.
+- 🧬 **Preprocessing** raw expression data (TPM calculation, filtering, normalization, etc.)
+- 🔍 **Exploratory data analysis** (PCA, clustering, heatmaps)
+- 📊 **Differential expression analysis** (DESeq2 and visualization of DE genes)
+- 🔬 **Functional and pathway analysis** (FGSEA, ORA, PROGENy scoring)
+- 🧫 **Tumor microenvironment investigation** (MCPcounter, cell-type signatures)
 
-## ⚙️ Functions
-
-Below is a summary of the available functions, grouped by their purpose in the RNA-seq analysis workflow.
+🎓 Whether you are a **biologist**, **bioinformatician**, or **data scientist**, **CAIBIrnaseq** provides a **turnkey solution** for interpreting your transcriptomic datasets in a reproducible and insightful way.

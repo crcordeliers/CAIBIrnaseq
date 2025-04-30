@@ -1,0 +1,6 @@
+---
+title: "Reference"
+output: pkgdown::html_document
+---
+
+Welcome to the **CAIBIrnaseq reference**. Below, you’ll find all exported functions organized by topic.
