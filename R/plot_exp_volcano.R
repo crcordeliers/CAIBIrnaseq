@@ -1,87 +1,67 @@
-#' Plot Volcano Plot of Differential Expression Results
-#'
-#' Generates an interactive volcano plot based on the results of differential expression analysis, highlighting upregulated and downregulated genes.
-#'
-#' @param diffexp A data frame containing differential expression results. Must include the following columns:
-#'   - `log2FoldChange`: The log2 fold change values for each gene.
-#'   - `padj`: The adjusted p-value for each gene.
-#'
-#' @return A `plotly` object representing the interactive volcano plot.
-#'
-#' @importFrom ggplot2 ggplot aes geom_point geom_hline geom_vline labs theme_minimal
-#' @importFrom plotly ggplotly
-#' @importFrom dplyr filter arrange slice_head
-#' @importFrom forcats fct_rev
-#' @export
-#'
-plot_exp_volcano <- function(diffexp) {
-  ## --------------------------- ##
-  ## Verifications / Validation  ##
-  ## --------------------------- ##
-  if (!is.data.frame(diffexp)) {
-    stop("diffexp must be a data.frame.")
-  }
+library(tidyverse)
+library(ggrepel)
+deseq_volcanoPlot <- function(resLFC,
+                              contrast_name = "",
+                              lfc_tresh = 2.5,
+                              padj_tresh = 0.05,
+                              ngenes_show = 10,
+                              gene_col = "external_gene_name",
+                              annot_pos = c(Inf, Inf)) {
+  #-- Get annotations
+  #---- Genes to show
+  genes_up <- resLFC %>%
+    filter(log2FoldChange > lfc_tresh) %>%
+    slice_min(order_by = padj, n = ngenes_show/2) %>%
+    pull({{gene_col}})
+  genes_down <- resLFC %>%
+    filter(log2FoldChange < -lfc_tresh) %>%
+    slice_min(order_by = padj, n = ngenes_show/2) %>%
+    pull({{gene_col}})
+  genes_label <- c(genes_up, genes_down)
+  #---- x-axis
+  fc_leg <- paste("FC", contrast_name)
+  #---- Number of DEGs
+  ndegs <- sum(resLFC$padj < padj_tresh, na.rm = TRUE)
+  deg_annot <-  paste0("atop(bold('DEGs:'), ", ndegs, "/", nrow(resLFC), ")")
 
-  required_cols <- c("log2FoldChange", "padj")
-  missing_cols <- setdiff(required_cols, colnames(diffexp))
-  if (length(missing_cols) > 0) {
-    stop("The following required columns are missing from diffexp: ", paste(missing_cols, collapse = ", "))
-  }
+  #-- Plot data
+  data2plot <- resLFC %>%
+    mutate(lpval = -log10(padj),
+           signif = case_when(
+             log2FoldChange > lfc_tresh & padj < padj_tresh ~ "up",
+             log2FoldChange < -lfc_tresh & padj < padj_tresh ~ "down",
+             padj < 0.05 ~ "signif",
+             TRUE ~ "ns"
+           ),
+           gene_name = pull(resLFC, {{gene_col}}),
+           label = ifelse(gene_name %in% genes_label, gene_name, NA))
 
-  if (!is.numeric(diffexp$log2FoldChange)) {
-    stop("'log2FoldChange' column must be numeric.")
-  }
-  if (!is.numeric(diffexp$padj)) {
-    stop("'padj' column must be numeric.")
-  }
+  #-- Get annotation position params
+  hjust_value <- case_when(
+    annot_pos[1] == Inf ~ 1,
+    annot_pos[1] == -Inf ~ -1,
+    TRUE ~ 0
+  )
+  vjust_value <- case_when(
+    annot_pos[2] == Inf ~ 1,
+    annot_pos[2] == -Inf ~ -1,
+    TRUE ~ 0
+  )
 
-  if (is.null(rownames(diffexp))) {
-    stop("diffexp must have rownames corresponding to gene names.")
-  }
+  plt <- ggplot(data2plot, aes(log2FoldChange, lpval)) +
+    geom_point(aes(color = signif), alpha = 0.7) +
+    geom_text_repel(aes(label = label), size = 3) +
+    annotate("text", x=annot_pos[1], y=annot_pos[2],
+             vjust=vjust_value, hjust=hjust_value, label=deg_annot,
+             size = 3.5, parse = TRUE) +
+    scale_color_manual(values = c("up" = "#ef8a62",
+                                  "down" = "#67a9cf",
+                                  "signif" = "grey60",
+                                  "ns" = "grey90")) +
+    labs(x = bquote("log"[2]*.(fc_leg)), y = expression(-"log"[10]*"adj. p-value")) +
+    guides(color = "none") +
+    theme_minimal()
 
-  ## --------------------------- ##
-  ##         Main Function        ##
-  ## --------------------------- ##
+  return(plt)
 
-  diffexp$Significance <- NA
-  diffexp$Significance[diffexp$padj < 0.05 & diffexp$log2FoldChange < -1] <- "Downregulated"
-  diffexp$Significance[diffexp$padj < 0.05 & diffexp$log2FoldChange > 1] <- "Upregulated"
-
-  top_genes <- diffexp |>
-    dplyr::filter(padj < 0.05 & abs(log2FoldChange) > 1) |>
-    dplyr::arrange(padj) |>
-    dplyr::slice_head(n = 20)
-
-  volcanoPlot <- ggplot2::ggplot(
-    diffexp,
-    ggplot2::aes(
-      x = log2FoldChange,
-      y = -log10(padj),
-      color = forcats::fct_rev(Significance),
-      text = paste(
-        "Gene:", rownames(diffexp),
-        "<br>Log2FC:", signif(log2FoldChange, 3),
-        "<br>-log10(padj):", signif(-log10(padj), 3)
-      )
-    )
-  ) +
-    ggplot2::geom_point(alpha = 0.6, size = 2) +
-    ggplot2::geom_hline(yintercept = -log10(0.05), linetype = "dotted", color = "darkgray") +
-    ggplot2::geom_vline(xintercept = c(-1, 1), linetype = "dotted", color = "darkgray") +
-    ggplot2::labs(
-      title = "Volcano Plot of Differential Expression",
-      x = "Log2 Fold Change",
-      y = "-Log10 Adjusted p-value",
-      color = "Significance"
-    ) +
-    ggplot2::theme_minimal(base_size = 14) +
-    ggplot2::theme(
-      legend.position = "right",
-      legend.title = ggplot2::element_text(face = "bold"),
-      plot.title = ggplot2::element_text(face = "bold", hjust = 0.5)
-    )
-
-  # interactivePlot <- plotly::ggplotly(volcanoPlot, tooltip = "text")
-
-  return(volcanoPlot)
 }
