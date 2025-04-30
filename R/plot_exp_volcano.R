@@ -35,15 +35,21 @@ plot_exp_volcano <- function(diffexp) {
   # Ajouter les labels pour annotation
   diffexp$label <- ifelse(rownames(diffexp) %in% rownames(top_genes), rownames(diffexp), NA)
 
+  # Définir la couleur des points : bleu pour upregulated, rouge pour downregulated
+  diffexp$point_color <- "gray"  # Définir une couleur par défaut (gris pour les gènes non significatifs)
+  diffexp$point_color[diffexp$Significance == "Upregulated"] <- "blue"
+  diffexp$point_color[diffexp$Significance == "Downregulated"] <- "red"
+
   # Création du volcano plot
   plot <- ggplot2::ggplot(diffexp, ggplot2::aes(
     x = log2FoldChange,
     y = -log10(padj),
-    color = forcats::fct_rev(Significance)
+    color = point_color  # Utiliser la couleur définie dans point_color
   )) +
     ggplot2::geom_point(alpha = 0.6, size = 2) +
     ggrepel::geom_text_repel(
       ggplot2::aes(label = label),
+      color = "black",  # Texte des labels en noir
       max.overlaps = 100
     ) +
     ggplot2::geom_hline(
