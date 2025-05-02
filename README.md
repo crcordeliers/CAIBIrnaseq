@@ -15,7 +15,7 @@ Whether you are performing supervised or unsupervised RNA-seq analysis, this pac
 
 ## Quick Installation
 
-In RStudio, just try run these command lines :
+In RStudio, try running these command lines :
 
 ```
 # If not already installed
