@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Supervised and Unsupervised RNAseq(bulk) Analysis • CAIBIrnaseq</title>
+<title>CAIBIrnaseq • CAIBIrnaseq</title>
 <!-- mathjax math --><script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script><script>
   window.MathJax = {
     chtml: {
@@ -19,9 +19,11 @@
 <link href="deps/Roboto_Slab-0.4.10/font.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Supervised and Unsupervised RNAseq(bulk) Analysis">
-<meta name="description" content="This package provides tools for both supervised and unsupervised analysis of RNA sequencing data, specifically for bulk RNA-seq experiments. It includes functions for data preprocessing, quality control, normalization, clustering, dimensionality reduction (PCA), pathway analysis, and visualization. The package is designed to handle complex RNA-seq datasets, offering various methods for analyzing gene expression, pathway enrichment, and differential expression.">
-<meta property="og:description" content="This package provides tools for both supervised and unsupervised analysis of RNA sequencing data, specifically for bulk RNA-seq experiments. It includes functions for data preprocessing, quality control, normalization, clustering, dimensionality reduction (PCA), pathway analysis, and visualization. The package is designed to handle complex RNA-seq datasets, offering various methods for analyzing gene expression, pathway enrichment, and differential expression.">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="CAIBIrnaseq">
+<meta name="description" content="Outils pour l'analyse supervisée et non supervisée de données RNA-seq (bulk).
+">
+<meta property="og:description" content="Outils pour l'analyse supervisée et non supervisée de données RNA-seq (bulk).
+">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -62,8 +64,9 @@
   </div>
 </nav><div class="container template-home">
 <div class="row">
-  <main id="main" class="col-md-9"><div class="section level2">
-<h2 id="id_-welcome-to-caibirnaseq-">🎯 Welcome to CAIBIrnaseq <img src="reference/figures/CAIBI.png" align="right" alt="CAIBIrnaseq logo" width="120"><a class="anchor" aria-label="anchor" href="#id_-welcome-to-caibirnaseq-"></a>
+  <main id="main" class="col-md-9"><p><img src="reference/figures/CAIBI.png" align="right" alt="" width="120"></p>
+<div class="section level2">
+<h2 id="id_-welcome-to-caibirnaseq">🎯 Welcome to CAIBIrnaseq<a class="anchor" aria-label="anchor" href="#id_-welcome-to-caibirnaseq"></a>
 </h2>
 <p><strong>CAIBIrnaseq</strong> is an R package designed to streamline, standardize, and reproduce key steps of gene expression analysis from RNA-seq data. Developed by the <strong>CAIBI platform team</strong>, it integrates powerful tools for:</p>
 <ul>
@@ -79,8 +82,21 @@
 <strong>Tumor microenvironment investigation</strong> (MCPcounter, cell-type signatures)</li>
 </ul>
 <p>Whether you are performing supervised or unsupervised RNA-seq analysis, this package provides robust methods for interpreting gene expression data</p>
+</div>
+<div class="section level2">
+<h2 id="quick-installation">Quick Installation<a class="anchor" aria-label="anchor" href="#quick-installation"></a>
+</h2>
+<p>In RStudio, just try run these command lines :</p>
+<pre><code><span><span class="co"># If not already installed</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Installation from Github :</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"crcordeliers/CAIBIrnaseq"</span>, dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre>
+<p>If you have any problems, more informations about installation are available on our package website : <a href="https://crcordeliers.github.io/CAIBIrnaseq/" class="external-link uri">https://crcordeliers.github.io/CAIBIrnaseq/</a></p>
 <p><strong>We hope this will help you in your projects !</strong></p>
 </div>
+
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">

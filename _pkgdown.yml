@@ -1,5 +1,7 @@
 url: https://CAIBIrnaseq-package.com
 
+readme: false  # Ignorer le fichier README.md
+
 name: CAIBIrnaseq
 title: "CAIBIrnaseq"
 output_dir: "docs"
@@ -21,13 +23,10 @@ navbar:
   components:
     installation:
       text: Installation Guide
-      href: articles/installation.html
+      href: articles/installation.html  # Lien vers la vignette 'installation'
     reference:
       text: References
-      href: reference/index.html
-    articles:
-      text: Articles
-      href: articles/index.html
+      href: reference/index.html  # Lien vers la section 'reference'
     search:
       search: []
     github: ~
@@ -63,10 +62,18 @@ template:
 development:
   mode: auto
 
+home:
+  title: "CAIBIrnaseq"
+  description: >
+    Outils pour l'analyse supervisée et non supervisée de données RNA-seq (bulk).
+  file: index.Rmd
+
+
+# Articles : l'index est la page d'accueil
 articles:
   - title: "Installation Guide"
     contents:
-      - installation
+      - installation  # Référence au fichier installation.Rmd
 
 reference:
   - title: "Preprocessing"

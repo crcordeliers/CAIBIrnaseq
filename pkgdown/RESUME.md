@@ -1,6 +1,5 @@
-<img src="man/figures/CAIBI.png" align="right" alt="" width="120" />
+<img src="../man/figures/CAIBI.png" align="right" alt="" width="120" />
 
-## 🎯 Welcome to CAIBIrnaseq 
 
 **CAIBIrnaseq** is an R package designed to streamline, standardize, and reproduce key steps of gene expression analysis from RNA-seq data. Developed by the **CAIBI platform team**, it integrates powerful tools for:
 
@@ -12,22 +11,4 @@
 
 Whether you are performing supervised or unsupervised RNA-seq analysis, this package provides robust methods for interpreting gene expression data
 
-
-## Quick Installation
-
-In RStudio, just try run these command lines :
-
-```
-# If not already installed
-install.packages("devtools")
-install.packages("BiocManager")
-
-# Installation from Github : 
-devtools::install_github("crcordeliers/CAIBIrnaseq", dependencies = TRUE)
-```
-
-If you have any problems, more informations about installation are available on our package website : 
-https://crcordeliers.github.io/CAIBIrnaseq/
-
 **We hope this will help you in your projects !**
-
