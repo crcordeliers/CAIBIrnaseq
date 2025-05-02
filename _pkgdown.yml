@@ -1,7 +1,5 @@
 url: https://CAIBIrnaseq-package.com
 
-readme: false  # Ignorer le fichier README.md
-
 name: CAIBIrnaseq
 title: "CAIBIrnaseq"
 output_dir: "docs"
