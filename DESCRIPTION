@@ -3,9 +3,9 @@ Type: Package
 Title: Supervised and Unsupervised RNAseq(bulk) Analysis
 Version: 1.0.0
 Authors@R: c(
-    person("Chloe", "Witz", email = "chloewitz.pro@gmail.com", role = "aut"),
-    person("Nicolas", "Salaün", email = "nicolas.salaun@inserm.fr", role = "cre"),
-    person("Clarice", "Groeneveld", email = "clarice.groeneveld@inserm.fr", role = "cre"))
+    person("Nicolas", "Salaün", email = "nicolas.salaun@inserm.fr", role = "ctb"),
+    person("Clarice", "Groeneveld", email = "clarice.groeneveld@inserm.fr", role = "cre"),
+    person("Chloe", "Witz", email = "chloewitz.pro@gmail.com", role = "aut"))
 License: MIT
 Encoding: UTF-8
 LazyData: true
