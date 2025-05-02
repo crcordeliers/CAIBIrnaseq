@@ -10,8 +10,6 @@
 - **Functional and pathway analysis** (FGSEA, ORA, PROGENy scoring)
 - **Tumor microenvironment investigation** (MCPcounter, cell-type signatures)
 
-Whether you are performing supervised or unsupervised RNA-seq analysis, this package provides robust methods for interpreting gene expression data
-
 
 ## Quick Installation
 
