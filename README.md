@@ -29,5 +29,6 @@ devtools::install_github("crcordeliers/CAIBIrnaseq", dependencies = TRUE)
 If you have any problems, more informations about installation are available on our package website : 
 https://crcordeliers.github.io/CAIBIrnaseq/
 
-**We hope this will help you in your projects !**
+**We hope this will help you in your projects !!!**
+
 
