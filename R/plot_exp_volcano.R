@@ -46,7 +46,7 @@ plot_exp_volcano <- function(diffexp) {
     y = -log10(padj),
     color = point_color  # Utiliser la couleur définie dans point_color
   )) +
-    ggplot2::geom_point(alpha = 0.6, size = 2) +
+    ggplot2::geom_point(alpha = 0.6, size = 1) +
     ggrepel::geom_text_repel(
       ggplot2::aes(label = label),
       color = "black",  # Texte des labels en noir
