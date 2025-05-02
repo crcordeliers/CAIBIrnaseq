@@ -4,7 +4,7 @@
 \alias{plot_exp_volcano}
 \title{Plot Volcano Plot of Differential Expression Results}
 \usage{
-plot_exp_volcano(diffexp)
+plot_exp_volcano(diffexp, title = "Volcano Plot of Differential Expression")
 }
 \arguments{
 \item{diffexp}{A data frame containing differential expression results. Must include:
