@@ -78,6 +78,7 @@ exp_data <- airway
 Next cell is for the `airway dataset`. The goal is to match the names of the variables used in the package with the names of the dataset. 
 
 ```{r}
+#| message: false
 rowData(exp_data)$gene_length_kb <- 
   (rowData(exp_data)$gene_seq_end - rowData(exp_data)$gene_seq_start) / 1000
 
