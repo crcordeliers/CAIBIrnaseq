@@ -1,0 +1,230 @@
+---
+title: "Unsupervised RNA-seq analysis"
+author: "Cordeliers Artificial Intelligence and Bioinformatics"
+date: "`r Sys.Date()`"
+format: 
+  html:
+    toc: true
+    embed-resources: true
+editor: source
+---
+```{r read_params}
+library(airway)
+library(SummarizedExperiment)
+```
+
+
+Source functions & load data
+```{r dependencies}
+#| message: false
+# 
+annotation <- "dex"
+diffexpMethod <- "deseq2" # Either limma or deseq2
+species <- "human"
+pathwayMethod <- "fgsea"  # We can run ORA or fgsea, we should change it at this step 
+
+collections <- c("CGP", "CP", "CP:KEGG_LEGACY", "CP:BIOCARTA")
+
+# Pathways plus pertinents :
+pathwayOfInterest <- list("HALLMARK_INFLAMMATORY_RESPONSE", "GOBP_RESPONSE_TO_GLUCOCORTICOID","GOBP_REGULATION_OF_CELL_PROLIFERATION","HALLMARK_APOPTOSIS")
+
+boxplot_pathways <- list("HALLMARK_INFLAMMATORY_RESPONSE","GOBP_RESPONSE_TO_STEROID_HORMONE")
+
+heatmap_genes <- list(
+  Inflammation = c("IL6", "TNF", "RELA", "NFKBIA", "JUN", "STAT3"),
+  SteroidResponse = c("NR3C1", "FKBP5", "TSC22D3", "ZBTB16"),
+  Metabolism = c("LDHA", "PDK1", "G6PD", "ACACA")
+)
+
+heatmap_pathways <- c(
+  "KUMAMOTO_RESPONSE_TO_NUTLIN_3A_UP",
+  "BIOCARTA_SALMONELLA_PATHWAY",
+  "CASTELLANO_HRAS_TARGETS_DN",
+  "FARDIN_HYPOXIA_9"
+)
+
+
+
+library(CAIBIrnaseq)
+```
+
+This section loads the RNA-seq dataset for analysis. It ensures the correct input file is used, as specified in the parameters.
+rebase_gexp
+```{r load_data}
+data(airway, package="airway")
+exp_data <- airway
+
+rowData(exp_data)$gene_length_kb <- 
+  (rowData(exp_data)$gene_seq_end - rowData(exp_data)$gene_seq_start) / 1000
+
+library(biomaRt)
+
+# Initialiser biomaRt pour Ensembl humain
+mart <- useMart("ensembl", dataset = "hsapiens_gene_ensembl")
+
+# Obtenir les descriptions basées sur les gene_id
+gene_ids <- rowData(exp_data)$gene_id
+
+annot <- getBM(attributes = c("ensembl_gene_id", "description"),
+               filters = "ensembl_gene_id",
+               values = gene_ids,
+               mart = mart)
+
+# Faire correspondre les descriptions aux lignes de rowData
+matched <- match(rowData(exp_data)$gene_id, annot$ensembl_gene_id)
+rowData(exp_data)$gene_description <- annot$description[matched]
+
+```
+
+## Pre-processing
+
+Rebase and filter
+```{r}
+# exp_data <- readRDS(data_file)
+exp_data <- rebase_gexp(exp_data, annotation = "gene_name")
+exp_data <- filter_gexp(exp_data,
+                        min_nsamp = 1, 
+                        min_counts = 1)
+```
+
+Visualization of the filtering process to ensure the criteria applied align with the dataset’s characteristics:
+
+```{r plot_qc_filters}
+colData(exp_data)$sample_id <- colnames(exp_data)
+
+plot_qc_filters(exp_data)
+```
+
+### Normalize
+
+Here, we apply a normalization to the expression data, making samples comparable by reducing variability due to technical differences. For datasets with few samples, `rlog` is the preferred normalization and when more samples are present, `vst` is applied.
+
+```{r}
+exp_data <- normalize_gexp(exp_data)
+```
+
+## PCA
+
+Principal component analysis (PCA) identifies the major patterns in the dataset. These patterns help explore similarities or differences among samples based on gene expression.
+
+```{r}
+heatmap_genes <- list(
+  DNA_repair = c("BRCA1", "BRCA2", "ATM", "ATR", "CHEK1", "CHEK2", "RAD51", "XRCC1"),
+  Metabolism = c("ACLY", "ACACA", "FASN", "G6PD", "HK2", "LDHA", "PDK1"),
+  Cell_Cycle = c("CDK1", "CDK2", "CCND1", "CCNE1", "RB1", "TP53", "E2F1")
+)
+S4Vectors::metadata(exp_data)[["pca_res"]] <- pca_gexp(exp_data)
+annotations <- setdiff(annotation, c("exp_cluster", "path_cluster"))
+plot_pca(exp_data, color = annotation)
+```
+
+## Diffexp
+```{r}
+diffexp <- diffExpAnalysis(countData = assays(exp_data)$counts,
+                                          sampleInfo = colData(exp_data),
+                                          method = diffexpMethod, cutoff = 10,
+                                          annotation = annotation)
+```
+
+Filtering
+```{r}
+if(tolower(diffexpMethod) == "limma"){
+  diffexp <- diffexp |>
+    rename(
+      log2FoldChange = logFC,
+      pvalue = P.Value,
+      padj = adj.P.Val
+    )
+}
+diffexp_filtered <- diffexp |>
+    dplyr::filter(padj <= 0.05) |>
+    dplyr::arrange(padj)
+
+# Select top 50 differentially expressed genes
+top_de_genes <- rownames(diffexp_filtered)[1:30]
+```
+
+generate heatmap
+```{r}
+hm <- plot_exp_heatmap(exp_data,  genes = top_de_genes, 
+                 annotations = annotation,
+                 show_rownames = TRUE,
+                 hm_color_limits = c(-2,2),
+                 show_dend_row = FALSE,
+                 fname = "results/clustering/heatmap_2000hvg_exp_cluster.pdf")
+hm
+
+```
+
+##Volcano plot
+```{r}
+volcano_plot <- plot_exp_volcano(diffexp)
+volcano_plot
+```
+```{r}
+volcano_plot + ggplot2::coord_flip()
+```
+
+## Pathway analysis
+
+```{r}
+#| label: collections
+msigdbr::msigdbr_collections() |> kableExtra::kbl() |> kableExtra::kable_styling() |> kableExtra::scroll_box(height = "300px")
+```
+
+
+```{r}
+pathways <- get_annotation_collection(collections, 
+                                      species = species)
+
+pathwayResult <- pathwayAnalysis(diffexp_filtered,
+                              pathways = pathways,
+                              method = pathwayMethod, species = species) |> as.data.frame()
+rownames(pathwayResult) <- pathwayResult$pathway
+S4Vectors::metadata(exp_data)[["pathwayEnrichment"]] <- pathwayResult
+```
+
+
+```{r}
+pathwayDotplot <- plot_pathway_dotplot(exp_data, score_name = "pathwayEnrichment")
+pathwayDotplot
+```
+"SRR1039508" "SRR1039509" "SRR1039512" "SRR1039513" "SRR1039516"
+[6] "SRR1039517" "SRR1039520" "SRR1039521"
+
+```{r}
+
+hms <- lapply(1:length(heatmap_genes), function(i) {
+  genes <- heatmap_genes[[i]]
+  name <- ifelse(is.null(names(heatmap_genes)), i, names(heatmap_genes)[i])
+  hm <- plot_exp_heatmap(exp_data, genes = genes, 
+                   annotations = annotation,
+                   show_rownames = ifelse(length(genes) <= 100, TRUE, FALSE),
+                   hm_color_limits = c(-2,2),
+                   show_dend_row = FALSE,
+                   fname = stringr::str_glue("results/targeted/hm_genes_{i}.pdf"))
+})
+patchwork::wrap_plots(hms, ncol = 2, guides = "collect")
+```
+
+```{r} 
+dir.create("results/targeted/boxplots", recursive = TRUE, showWarnings = FALSE)
+pathway_scores <- score_pathways(exp_data, pathways, verbose = FALSE)
+S4Vectors::metadata(exp_data)[["pathway_scores"]] <- pathway_scores
+
+boxplots <- lapply(heatmap_pathways, function(path) {
+  lapply(annotation, function(annotation) {
+    plt <- plot_path_boxplot(exp_data, 
+                             pathway = path,
+                   annotation = annotation, 
+                   color_var = annotation, 
+                   pt_size = 2,
+                   fname = stringr::str_glue("results/targeted/boxplots/box_{path}_{annotation}.pdf"))
+  })
+}) |> purrr::flatten()
+
+```
+
+```{r}
+patchwork::wrap_plots(boxplots, nrows = round(length(boxplots)/2), guides = "collect")
+```

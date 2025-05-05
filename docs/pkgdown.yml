@@ -3,7 +3,9 @@ pkgdown: 2.1.2
 pkgdown_sha: ~
 articles:
   installation: installation.html
-last_built: 2025-05-02T13:47Z
+  sup_rnaseq: sup_rnaseq.html
+  unsup_rnaseq: unsup_rnaseq.html
+last_built: 2025-05-05T09:23Z
 urls:
   reference: https://crcordeliers.github.io/CAIBIrnaseq/reference
   article: https://crcordeliers.github.io/CAIBIrnaseq/articles

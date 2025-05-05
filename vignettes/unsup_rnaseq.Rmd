@@ -1,0 +1,482 @@
+---
+title: "Unsupervised RNA-seq analysis"
+author: "Cordeliers Artificial Intelligence and Bioinformatics"
+date: "`r Sys.Date()`"
+format: 
+  html:
+    toc: true
+    embed-resources: true
+editor: source
+---
+
+```{r read_params}
+
+data_file <- "/home/marie-christian/1_PACKAGE/SUP/data/MAIT_counts.xls"
+species <- "Mus musculus"
+plot_annotations <- "Genotype"
+
+# Paramètres de qualité (QC)
+qc_min_nsamp <- 2
+qc_min_gene_counts <- 1
+
+# Clustering d'expression
+exp_cluster_k <- 2
+
+# Clustering des métadonnées
+metadata_clusters_pathway_scores_k <- 2
+metadata_clusters_microenv_scores_k <- 3
+
+# Collections de pathways
+pathway_collections <- "CP:KEGG_MEDICUS"
+
+# Gènes pour les heatmaps (2 groupes)
+heatmap_genes <- list(
+  c("Exo1", "Lig1", "Mlh1", "Mlh3", "Msh2", "Msh3", "Msh6", "Pcna", 
+    "Pms2", "Pold1", "Pold2", "Pold3", "Pold4", "Rfc1", "Rfc2", "Rfc3", 
+    "Rfc4", "Rfc5", "Rpa1", "Rpa2", "Rpa3", "Ssbp1"),
+  c("Suclg2", "Fh1", "Pcx", "Idh3b", "Sdha", "Aco1", "Ogdh", "Sucla2", "Pdhb",
+    "Acly", "Pdha1", "Sdhb", "Mdh1", "Sdhc", "Pck1", "Idh1", "Dlst", "Dld",
+    "Aco2", "Suclg1", "Sdhd", "Ogdhl", "Cs", "Mdh2", "Idh3a", "Idh3g", "Pck2", "Idh2", "Dlat")
+)
+
+# Pathways pour les heatmaps
+heatmap_pathways <- c(
+  "KEGG_MEDICUS_REFERENCE_RECRUITMENT_AND_FORMATION_OF_THE_MCC",
+  "KEGG_MEDICUS_REFERENCE_LEWIS_X_ANTIGEN_BIOSYNTHESIS"
+)
+
+# Gènes pour les boxplots
+boxplot_genes <- c("Msh2", "Rpa3")
+
+# Pathways pour les boxplots
+boxplot_pathways <- c(
+  "KEGG_MEDICUS_REFERENCE_RECRUITMENT_AND_FORMATION_OF_THE_MCC",
+  "KEGG_MEDICUS_REFERENCE_LEWIS_X_ANTIGEN_BIOSYNTHESIS"
+)
+
+# Corrélations entre gènes
+correlation_genes <- list(
+  c("Msh2", "Rfc3"),
+  c("Msh2", "Rfc2")
+)
+
+# Corrélations entre pathways
+correlation_pathways <- list(
+  c("KEGG_MEDICUS_REFERENCE_RECRUITMENT_AND_FORMATION_OF_THE_MCC", "KEGG_MEDICUS_REFERENCE_LEWIS_X_ANTIGEN_BIOSYNTHESIS"),
+  c("KEGG_MEDICUS_REFERENCE_RECRUITMENT_AND_FORMATION_OF_THE_MCC", "KEGG_MEDICUS_ENV_FACTOR_ARSENIC_TO_ELECTRON_TRANSFER_IN_COMPLEX_IV")
+)
+
+```
+
+```{r dependencies}
+#| message: false
+library(CAIBIrnaseq)
+```
+
+## Load data
+
+This section loads the RNA-seq dataset for analysis. It ensures the correct input file is used, as specified in the parameters.
+rebase_gexp
+```{r load_data}
+exp_data <- readRDS(data_file)
+```
+
+## Pre-processing
+
+Most datasets use ensemble gene ID by default after alignment, so this step rebases the expression data to gene names. This ensures consistency in naming for downstream analyses.
+
+```{r rebase_gexp}
+#| eval: !expr use_symbol
+exp_data <- rebase_gexp(exp_data, annotation = "gene_name")
+```
+
+### Filter
+
+Here, we filter out genes expressed in too few samples or with very low counts. This removes noise from the data and focuses on meaningful gene expressions.
+
+```{r filter_gexp}
+exp_data <- filter_gexp(exp_data,
+                        min_nsamp = qc$min_nsamp, 
+                        min_counts = qc$min_gene_counts)
+```
+diffexp <- diffExpAnalysis(countData = SummarizedExperiment::assays(exp_data)$counts, sampleInfo = SummarizedExperiment::colData(exp_data), method = diffexpMethod, cutoff = 10, design, coefname)
+Visualization of the filtering process to ensure the criteria applied align with the dataset’s characteristics:
+
+```{r plot_qc_filters}
+plot_qc_filters(exp_data)
+```
+
+### Normalize
+
+Here, we apply a normalization to the expression data, making samples comparable by reducing variability due to technical differences. For datasets with few samples, `rlog` is the preferred normalization and when more samples are present, `vst` is applied.
+class(exp_data)
+```{r}
+exp_data <- normalize_gexp(exp_data)
+```
+
+## PCA
+
+Principal component analysis (PCA) identifies the major patterns in the dataset. These patterns help explore similarities or differences among samples based on gene expression.
+
+```{r}
+pca_res = pca_gexp(exp_data)
+exp_data@metadata[["pca_res"]] <- pca_res
+
+annotations <- setdiff(plot_annotations, c("exp_cluster", "path_cluster"))
+plot_pca(exp_data, color = plot_annotations)
+```
+```{r}
+library(factoextra)
+groups <- SummarizedExperiment::colData(exp_data)$Genotype  # ou le nom réel de la colonne indiquant STING_KO/Wild_type
+
+fviz_pca_ind(pca_res,
+             geom = "point",
+             habillage = groups,
+             palette = c("#00AFBB", "#E7B800"),  # couleurs personnalisées
+             addEllipses = TRUE,
+             ellipse.type = "confidence",
+             repel = TRUE,
+             label = "none"
+)
+```
+
+
+## Unsupervised clustering
+
+Here, we group samples based on expression patterns without prior knowledge using hierarchical clustering on either a selected gene list from the parameters or, by default, the 2000 most highly expressed genes.
+
+This can be useful for discovering sample subgroups or new biological insights.
+
+```{r}
+#| label: exp cluster
+#| eval: !expr is.list(exp_cluster)
+exp_data <- cluster_exp(exp_data, k = exp_cluster$k, genes = exp_cluster$genes)
+```
+
+Visual representation of expression levels for HVG across clusters, highlighting distinct patterns.
+
+```{r}
+#| label: plot hvg
+#| fig.width: 8
+#| fig.height: 5
+hvg <- highly_variable_genes(exp_data)
+hm <- plot_exp_heatmap(exp_data,  genes = hvg, 
+                 annotations = c(plot_annotations, "exp_cluster"),
+                 show_rownames = FALSE,
+                 hm_color_limits = c(-2,2),
+                 fname = "results/clustering/heatmap_2000hvg_exp_cluster.pdf")
+```
+
+## Pathway activity
+
+Pathway analysis enables us to understand the functional implications of gene expression changes. Here, we analyze the dataset for pathway activity using two methods.
+
+### PROGENy
+
+PROGENy is a collection of only 14 core pathway responsive genes from large signaling perturbation experiments. For more information see the [original paper](https://www.nature.com/articles/s41467-017-02391-6).
+
+```{r}
+#| label: progenyprovided
+progeny_scores <- score_progeny(exp_data, species = species)
+
+tmp <- S4Vectors::metadata(exp_data)          # récupère une liste depuis exp_data
+tmp[["progeny_scores"]] <- progeny_scores  # modifie cette liste
+S4Vectors::metadata(exp_data) <- tmp  
+
+plot_progeny_heatmap(exp_data, annotations = plot_annotations,
+                     fname = "results/pathways/hm_progeny_scores.pdf")
+write.csv(progeny_scores, file = "results/pathways/progeny_scores.csv")
+```
+
+### Pathways
+
+Pathway collections available in the MSIGdb can be specified in the parameters. These pathways are scored and ranked by their variance in the data. These are the available collections (use `gs_subcat` as name except for Hallmarks, which should be 'H').
+
+```{r}
+#| label: collections
+msigdbr::msigdbr_collections() |> kableExtra::kbl() |> kableExtra::kable_styling() |> kableExtra::scroll_box(height = "300px")
+```
+
+```{r}
+SummarizedExperiment::rowData(exp_data)
+```
+
+
+```{r}
+#| label: pathways
+#| fig-width: 10
+#| fig-height: 5
+
+pathways <- get_annotation_collection(params$pathway_collections, 
+                                      species = params$species)
+pathway_scores <- score_pathways(exp_data, pathways, verbose = FALSE)
+S4Vectors::metadata(exp_data)[["pathway_scores"]] <- pathway_scores
+
+collections <- params$pathway_collections |> 
+  paste(collapse = "_") |>
+  stringr::str_remove("\\:")
+
+plot_pathway_heatmap(exp_data, annotations = params$plot_annotations,
+                    fwidth = 9,
+                    fname = stringr::str_glue(
+                      "results/pathways/hm_paths_{collections}_top20.pdf")
+                    )
+write.csv(pathways, file = stringr::str_glue("results/pathways/paths_{collections}.csv"))
+```
+
+## Microenvironment scores
+
+This step calculates immune and stromal cell type abundances using MCPcounter or mMCPcounter. It helps to infer the composition of the tumor microenvironment or similar contexts.
+
+```{r}
+#| label: microenvironment
+mcp_scores <- mcp_counter(exp_data, species = "Mus musculus")
+S4Vectors::metadata(exp_data)[["microenv_scores"]] <- mcp_scores
+
+plot_microenv_heatmap(exp_data, annotations = c("Genotype", "exp_cluster"),
+                      fname = "results/tme/heatSmap_mcpcounter.pdf")
+write.csv(mcp_scores, file = "results/tme/scores_mcpcounter.csv")
+```
+
+## Targeted plots
+
+This section focuses on visualizing specific genes or pathways of interest, as specified in the parameters.
+
+### Heatmaps
+
+Generates heatmaps for pre-selected genes of interest to observe their expression across samples or conditions.
+
+#### Selected genes#| label: plot_correlation_paths2
+#| eval: !expr '!is_empty(params$correlation_paths)'
+
+```{r}
+#| label: evaluate_hm_genes
+#| eval: !expr '!is_empty(params$heatmap_genes)'
+
+heatmap_genes <- params$heatmap_genes
+fviz_pca_ind(iris.pca,
+             label = "none", # hide individual labels
+             habillage = iris$Species, # color by groups
+             palette = c("#00AFBB", "#E7B800", "#FC4E07"),
+             addEllipses = TRUE # Concentration ellipses
+             )
+heatmap_genes <- lapply(heatmap_genes, function(genes) {
+  if(any(genes %in% rownames(pathway_scores))) {
+    get_pathway_genes(pathways, genes)
+  } else {
+    genes
+  }
+})
+
+```
+
+```{r}
+#| label: plot_hm_genes
+#| eval: !expr '!is_empty(params$heatmap_genes)'
+#| fig-width: 10
+#| fig-height: 4
+
+hms <- lapply(1:length(heatmap_genes), function(i) {
+  gene_annot <- SummarizedExperiment::rowData(exp_data)
+#| eval: !expr '!is_empty(params$heatmap_genes)'t
+
+  genes <- heatmap_genes[[i]]
+
+  name <- ifelse(is.null(names(heatmap_genes)), i, names(heatmap_genes)[i])
+  plot_exp_heatmap(exp_data, genes = genes, 
+                   annotations = params$plot_annotations,
+                   fname = stringr::str_glue("results/targeted/hm_genes_{i}.pdf"))
+})
+patchwork::wrap_plots(hms, ncol = 2, guides = "collect")
+```
+
+#### Selected pathways
+
+```{r}
+#| label: plot_hm_pathways
+#| eval: !expr '!is_empty(params$heatmap_pathways)'
+#| fig-width: 7
+#| fig-height: 4
+
+valid_pathways <- intersect(params$heatmap_pathways, rownames(pathway_scores))
+
+plot_pathway_heatmap(exp_data, 
+                     annotations = params$plot_annotations, 
+                     pathways = valid_pathways,
+                     fname = stringr::str_glue("results/targeted/hm_pathways_selected.pdf"))
+```
+
+### Boxplots
+
+Boxplots provide a clear comparison of expression levels across experimental groups or conditions.
+
+#### Selected genes
+
+```{r}
+#| label: plot_box_genes
+#| eval: !expr '!is_empty(params$boxplot_genes)'
+#| message: true
+#| warning: false
+genes <- params$boxplot_genes
+annotations <- params$plot_annotations
+
+boxplots <- lapply(genes, function(gene) {
+  lapply(annotations, function(annotation) {
+    plt <- plot_exp_boxplot(exp_data, gene = gene, 
+                   annotation = annotation, 
+                   color_var = annotation, 
+                   pt_size = 2,
+                   fname = stringr::str_glue("results/targeted/boxplots/box_{gene}_{annotation}.pdf"))
+  })
+}) |> purrr::flatten()
+```
+
+```{r}
+#| label: plot_box_genes2
+#| eval: !expr '!is_empty(params$boxplot_genes)'
+#| fig-width: 10
+#| fig-height: 4
+patchwork::wrap_plots(boxplots, nrows = round(length(boxplots)/2), guides = "collect")
+```
+
+#### Selected pathways
+
+```{r}
+#| label: plot_box_paths
+#| eval: !expr '!is_empty(params$boxplot_pathways)'
+#| message: true
+#| warning: false
+paths <- params$boxplot_pathways
+annotations <- params$plot_annotations
+
+boxplots <- lapply(paths, function(path) {
+  lapply(annotations, function(annotation) {
+    plt <- plot_path_boxplot(exp_data, 
+                             pathway = path,
+                   annotation = annotation, 
+                   color_var = annotation, 
+                   pt_size = 2,
+                   fname = stringr::str_glue("results/targeted/boxplots/box_{path}_{annotation}.pdf"))
+  })
+}) |> purrr::flatten()
+```
+
+```{r}
+#| label: plot_box_paths2
+#| eval: !expr '!is_empty(params$boxplot_pathways)'
+#| fig-width: 10
+#| fig-height: 4
+patchwork::wrap_plots(boxplots, nrows = round(length(boxplots)/2), guides = "collect")
+```
+
+### Correlations
+
+This section visualizes relationships between pairs of genes or pathways by plotting their expression/activity correlations. Correlation analysis can reveal important co-regulation or interaction patterns, helping to uncover biologically meaningful relationships.
+
+#### Selected genes
+
+Here we plot the correlation between selected gene pairs across the dataset. Each pair is plotted separately, and color-coded by sample annotation.
+
+```{r}
+#| label: plot_correlation_genes
+#| eval: !expr '!is_empty(params$correlation_genes)'
+
+gene_pairs <- params$correlation_genes
+annotations <- params$plot_annotations
+
+cor_plts <- lapply(gene_pairs, function(gene_pair) {
+  lapply(annotations, function(annot) {
+      plot_exp_scatter(exp_data, 
+                   gene1 = gene_pair[1],
+                   gene2 = gene_pair[2], 
+                   color_var = annot,
+                   fname = stringr::str_glue(
+                     "results/targeted/correlations/cor_{gene_pair[1]}_{gene_pair[2]}_color={annot}.pdf"))
+  })
+}) |> purrr::flatten()
+```
+
+```{r}
+#| label: plot_correlation_genes2
+#| eval: !expr '!is_empty(params$correlation_genes)'
+#| fig-width: 10
+#| fig-height: 4
+patchwork::wrap_plots(cor_plts, nrows = round(length(cor_plts)/2), guides = "collect")
+```
+
+#### Selected pathways
+
+Correlation plots for selected pathways can help identify similarities or differences in pathway activity patterns across samples. Each pathway pair is plotted separately and color-coded by sample annotation to illustrate trends within each condition.
+
+```{r}
+#| label: plot_correlation_paths
+#| eval: !expr '!is_empty(params$correlation_pathways)'
+
+path_pairs <- params$correlation_pathways
+annotations <- params$plot_annotations
+
+cor_plts <- lapply(path_pairs, function(path_pair) {
+  lapply(annotations, function(annot) {
+      plot_path_scatter(exp_data, 
+                   pathway1 = path_pair[1],
+                   pathway2 = path_pair[2], 
+                   color_var = annot,
+                   fname = stringr::str_glue(
+                     "results/targeted/correlations/cor_{path_pair[1]}_{path_pair[2]}_color={annot}.pdf"))
+  })
+}) |> purrr::flatten()
+```
+
+```{r}
+#| label: plot_correlation_paths2
+#| eval: !expr '!is_empty(params$correlation_paths)'
+#| fig-width: 10
+#| fig-height: 4
+patchwork::wrap_plots(cor_plts, nrows = round(length(cor_plts)/2), guides = "collect")
+```
+
+## Cluster using metadata
+
+```{r}
+#| label: cluster_metadata
+#| eval: !expr '!is_empty(params$metadata_clusters)'
+#| warning: false
+types = names(params$metadata_clusters)
+
+for(type in types) {
+  exp_data <- cluster_metadata(exp_data, 
+                   metadata_name = type, 
+                   k = params$metadata_clusters[[type]]$k, 
+                   features = params$metadata_clusters[[type]]$features)
+}
+```
+
+## Save SummarizedExperiment
+
+The final step saves the processed dataset and results. This ensures all outputs can be revisited or shared for further analysis.
+
+```{r}
+saveRDS(exp_data, file = stringr::str_glue("results/data_SummarizedExp_{lubridate::today()}.RDS"))
+```
+
+## Report parameters
+
+For reproducibility, the parameters used in the analysis and the computational environment details are documented.
+
+### params.yml
+
+These parameters were used to generate this report:
+
+```{r}
+#| echo: false
+cat(as.yaml(params))
+```
+
+### sessionInfo
+
+The `sessionInfo()` prints out all packages loaded at the time of analysis, as well as their versions.
+
+```{r}
+sessionInfo()
+```
+

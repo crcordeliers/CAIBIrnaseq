@@ -1,0 +1,30 @@
+project: Mouse STING KO
+data_file: /home/marie-christian/1_PACKAGE/SUP/data/MAIT_counts.xls
+use_symbol: true
+show_code: false
+species: Mus musculus
+plot_annotations: Genotype
+qc:
+  min_nsamp: 2
+  min_gene_counts: 1
+exp_cluster:
+  k: 2
+metadata_clusters:
+  pathway_scores:
+    k: 2
+  microenv_scores:
+    k: 3
+pathway_collections: CP:KEGG_MEDICUS
+heatmap_genes: [
+  [Exo1, Lig1, Mlh1, Mlh3, Msh2, Msh3, Msh6, Pcna, 
+    Pms2, Pold1, Pold2, Pold3, Pold4, Rfc1, Rfc2, Rfc3, 
+    Rfc4, Rfc5, Rpa1, Rpa2, Rpa3, Ssbp1], 
+  [Suclg2, Fh1, Pcx, Idh3b, Sdha, Aco1, Ogdh, Sucla2, Pdhb,
+   Acly, Pdha1, Sdhb, Mdh1, Sdhc, Pck1, Idh1, Dlst, Dld,
+   Aco2, Suclg1, Sdhd, Ogdhl, Cs, Mdh2, Idh3a, Idh3g, Pck2, Idh2, Dlat]  
+   ]
+heatmap_pathways: [KEGG_MEDICUS_REFERENCE_RECRUITMENT_AND_FORMATION_OF_THE_MCC, KEGG_MEDICUS_REFERENCE_LEWIS_X_ANTIGEN_BIOSYNTHESIS]
+boxplot_genes: [Msh2, Rpa3]
+boxplot_pathways: [KEGG_MEDICUS_REFERENCE_RECRUITMENT_AND_FORMATION_OF_THE_MCC, KEGG_MEDICUS_REFERENCE_LEWIS_X_ANTIGEN_BIOSYNTHESIS]
+correlation_genes: [[Msh2, Rfc3], [Msh2, Rfc2]]
+correlation_pathways: [[KEGG_MEDICUS_REFERENCE_RECRUITMENT_AND_FORMATION_OF_THE_MCC, KEGG_MEDICUS_REFERENCE_LEWIS_X_ANTIGEN_BIOSYNTHESIS], [KEGG_MEDICUS_REFERENCE_RECRUITMENT_AND_FORMATION_OF_THE_MCC, KEGG_MEDICUS_ENV_FACTOR_ARSENIC_TO_ELECTRON_TRANSFER_IN_COMPLEX_IV]]

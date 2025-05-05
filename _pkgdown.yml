@@ -10,6 +10,7 @@ navbar:
     left:
       - installation
       - reference
+      - example
     right:
       - search
       - github
@@ -21,10 +22,17 @@ navbar:
   components:
     installation:
       text: Installation Guide
-      href: articles/installation.html  # Lien vers la vignette 'installation'
+      href: articles/installation.html
     reference:
       text: References
-      href: reference/index.html  # Lien vers la section 'reference'
+      href: reference/index.html
+    example:
+      text: Examples
+      menu:
+        - text: "Supervised analysis"
+          href: articles/sup_rnaseq.html
+        - text: "Unsupervised analysis"
+          href: articles/unsup_rnaseq.html
     search:
       search: []
     github: ~
@@ -66,12 +74,14 @@ home:
     Outils pour l'analyse supervisée et non supervisée de données RNA-seq (bulk).
   file: index.Rmd
 
-
-# Articles : l'index est la page d'accueil
 articles:
   - title: "Installation Guide"
     contents:
-      - installation  # Référence au fichier installation.Rmd
+      - installation
+  - title: "Examples"
+    contents:
+      - sup_rnaseq
+      - unsup_rnaseq
 
 reference:
   - title: "Preprocessing"
