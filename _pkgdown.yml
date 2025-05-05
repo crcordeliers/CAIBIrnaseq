@@ -29,10 +29,10 @@ navbar:
     example:
       text: Examples
       menu:
-        - text: "Supervised analysis"
-          href: articles/sup_rnaseq.html
         - text: "Unsupervised analysis"
           href: articles/unsup_rnaseq.html
+        - text: "Supervised analysis"
+          href: articles/sup_rnaseq.html
     search:
       search: []
     github: ~
@@ -80,9 +80,8 @@ articles:
       - installation
   - title: "Examples"
     contents:
-      - sup_rnaseq
       - unsup_rnaseq
-
+      - sup_rnaseq
 reference:
   - title: "Preprocessing"
     contents:

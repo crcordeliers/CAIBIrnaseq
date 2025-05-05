@@ -1,7 +1,6 @@
 ---
 title: "Unsupervised RNA-seq analysis"
 author: "Cordeliers Artificial Intelligence and Bioinformatics"
-date: "`r Sys.Date()`"
 format: 
   html:
     toc: true
@@ -9,54 +8,65 @@ format:
 editor: source
 ---
 
+For the 2 examples, we are using an open dataset which is given by the `airway` package. 
+It provides a gene expression dataset derived from **human bronchial epithelial cells**, treated or not with **dexamethasone** (a corticosteroid).
+ 
+Here is an example of how the **unsupervised** part of the `CAIBIrnaseq` package can be use. 
+
+First, we need to import the required packages :
 ```{r}
 #| message: false
 library(airway)
 library(SummarizedExperiment)
 ```
 
+Before analysing the dataset, we define the variables with the names of the genes / pathways ... that we want to analyse.
+
+These variables will change in function of how your dataset is build and which type of data it is.
+
+If you find the definition of the variables heavy in your code, you can create a `.yml` file, for example named `params.yml`, call it in a cell, and it will automatically import the variables. Your code will be clearer. 
 
 ```{r read_params}
 #| message: false
 
 species <- "Homo sapiens"
 
-# Variable d'annotation à visualiser (colData(airway))
-plot_annotations <- "dex"  # traitement au dexaméthasone
+# Annotation variable to visualize
+plot_annotations <- "dex"  # treated or untreated
 
-# Paramètres de qualité (QC)
+# Quality parameters
 qc_min_nsamp <- 2
-qc_min_gene_counts <- 10  # valeur un peu plus élevée pour un jeu réel
+qc_min_gene_counts <- 10  
 
-# Clustering d'expression
+# Clustering of expression
 exp_cluster <- data.frame(k = 2)
 
-# Clustering des métadonnées
+# Clustering of metadata
 metadata_clusters <- list(
   pathway_scores = data.frame(k = 2),
   microenv_scores = data.frame(k = 3)
 )
 
 
-# Collections de pathways (humaines)
-pathway_collections <- "CP:KEGG_LEGACY"  # KEGG tout court est plus standard pour Homo sapiens
+# Pathway collections 
+pathway_collections <- "CP:KEGG_LEGACY"  # You can add as many pathways as you want it will only create more plots
 
-# Gènes pertinents dans airway pour les heatmaps (liés au métabolisme, réponse au stress, etc.)
+# Interesting genes
 heatmap_genes <- list(
   c("NR3C1", "FKBP5", "TSC22D3", "ZBTB16", "PER1"),  # gènes régulés par le glucocorticoïde
   c("CYP1B1", "G6PD", "HMOX1", "NQO1", "SOD2")       # stress oxydatif / métabolisme
 )
 
-# Exemples de pathways (à adapter selon les résultats d'analyse)
+# Interesting pathways (adapt to the results)
 heatmap_pathways <- c(
   "KEGG_APOPTOSIS",
   "KEGG_GLUTATHIONE_METABOLISM"
 )
 
-# Gènes pour les boxplots (fortement exprimés et différentiels)
+# Genes for the boxplots
 boxplot_genes <- c("FKBP5", "TSC22D3")
 
-# Pathways pour les boxplots
+# Pathways for the boxplots
 boxplot_pathways <- c(
   "KEGG_APOPTOSIS",
   "KEGG_GLUTATHIONE_METABOLISM"
@@ -68,13 +78,16 @@ correlation_genes <- list(
   c("FKBP5", "ZBTB16")
 )
 
-# Corrélations entre pathways
+# Pathways correlation
 correlation_pathways <- list(
   c("KEGG_APOPTOSIS", "KEGG_GLUTATHIONE_METABOLISM"),
   c("KEGG_APOPTOSIS", "KEGG_NOD_LIKE_RECEPTOR_SIGNALING_PATHWAY")
 )
 
 ```
+
+Do not forget to import the package ! ;-) 
+(installation precisions on the website)
 
 ```{r dependencies}
 #| message: false
@@ -85,20 +98,22 @@ library(CAIBIrnaseq)
 
 This section loads the RNA-seq dataset for analysis. It ensures the correct input file is used, as specified in the parameters.
 rebase_gexp
+
 ```{r load_data}
 #| message: false
 data(airway, package="airway")
 exp_data <- airway
+```
+
+Next cell is for the `airway dataset`. The goal is to match the names of the variables used in the package with the names of the dataset. 
+``` {r}
+#| message: false
+library(biomaRt)
 
 rowData(exp_data)$gene_length_kb <- 
   (rowData(exp_data)$gene_seq_end - rowData(exp_data)$gene_seq_start) / 1000
 
-library(biomaRt)
-
-# Initialiser biomaRt pour Ensembl humain
 mart <- useMart("ensembl", dataset = "hsapiens_gene_ensembl")
-
-# Obtenir les descriptions basées sur les gene_id
 gene_ids <- rowData(exp_data)$gene_id
 
 annot <- getBM(attributes = c("ensembl_gene_id", "description"),
@@ -106,14 +121,13 @@ annot <- getBM(attributes = c("ensembl_gene_id", "description"),
                values = gene_ids,
                mart = mart)
 
-# Faire correspondre les descriptions aux lignes de rowData
 matched <- match(rowData(exp_data)$gene_id, annot$ensembl_gene_id)
 rowData(exp_data)$gene_description <- annot$description[matched]
 ```
 
 ## Pre-processing
 
-Most datasets use ensemble gene ID by default after alignment, so this step rebases the expression data to gene names. This ensures consistency in naming for downstream analyses.
+Most datasets use ensembl gene ID by default after alignment, so this step rebases the expression data to gene names. This ensures consistency in naming for downstream analyses.
 
 ```{r rebase_gexp}
 #| message: false
@@ -130,7 +144,7 @@ exp_data <- filter_gexp(exp_data,
                         min_nsamp = 1, 
                         min_counts = 1)
 ```
-diffexp <- diffExpAnalysis(countData = SummarizedExperiment::assays(exp_data)$counts, sampleInfo = SummarizedExperiment::colData(exp_data), method = diffexpMethod, cutoff = 10, design, coefname)
+
 Visualization of the filtering process to ensure the criteria applied align with the dataset’s characteristics:
 
 ```{r plot_qc_filters}
@@ -142,7 +156,7 @@ plot_qc_filters(exp_data)
 ### Normalize
 
 Here, we apply a normalization to the expression data, making samples comparable by reducing variability due to technical differences. For datasets with few samples, `rlog` is the preferred normalization and when more samples are present, `vst` is applied.
-class(exp_data)
+
 ```{r}
 #| message: false
 exp_data <- normalize_gexp(exp_data)
@@ -160,14 +174,18 @@ exp_data@metadata[["pca_res"]] <- pca_res
 annotations <- setdiff(plot_annotations, c("exp_cluster", "path_cluster"))
 plot_pca(exp_data, color = plot_annotations)
 ```
+
+If you want to add a circular/oval shape to circle the different genotypes of samples, use the `fviz_pca_ind` function from the `factoextra` package.
+With this dataset, it is not relevant but it can be with your persona dataset.
+
 ```{r}
 library(factoextra)
-groups <- SummarizedExperiment::colData(exp_data)$dex  # ou le nom réel de la colonne indiquant STING_KO/Wild_type
+groups <- SummarizedExperiment::colData(exp_data)$dex  # here we want to split in function of `treated` and `untreated`
 
 fviz_pca_ind(pca_res,
              geom = "point",
              habillage = groups,
-             palette = c("#00AFBB", "#E7B800"),  # couleurs personnalisées
+             palette = c("#00AFBB", "#E7B800"),  # Personalized colors
              addEllipses = TRUE,
              ellipse.type = "confidence",
              repel = TRUE,
@@ -204,6 +222,11 @@ hm <- plot_exp_heatmap(exp_data,  genes = hvg,
                  fname = "results/clustering/heatmap_2000hvg_exp_cluster.pdf")
 ```
 
+```{r}
+hm
+```
+
+
 ## Pathway activity
 
 Pathway analysis enables us to understand the functional implications of gene expression changes. Here, we analyze the dataset for pathway activity using two methods.
@@ -217,8 +240,8 @@ PROGENy is a collection of only 14 core pathway responsive genes from large sign
 #| label: progenyprovided
 progeny_scores <- score_progeny(exp_data, species = "Homo sapiens")
 
-tmp <- S4Vectors::metadata(exp_data)          # récupère une liste depuis exp_data
-tmp[["progeny_scores"]] <- progeny_scores  # modifie cette liste
+tmp <- S4Vectors::metadata(exp_data)         
+tmp[["progeny_scores"]] <- progeny_scores  
 S4Vectors::metadata(exp_data) <- tmp  
 
 plot_progeny_heatmap(exp_data, annotations = plot_annotations,
@@ -331,7 +354,6 @@ Boxplots provide a clear comparison of expression levels across experimental gro
 ```{r}
 #| message: false
 #| label: plot_box_genes
-#| message: true
 #| warning: false
 genes <- boxplot_genes
 annotations <- plot_annotations
