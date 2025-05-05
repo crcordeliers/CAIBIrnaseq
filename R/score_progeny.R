@@ -30,10 +30,13 @@ score_progeny <- function(exp_data, species = "Homo sapiens") {
   # Extract the normalized gene expression matrix
   gexp <- SummarizedExperiment::assays(exp_data)[["norm"]]
 
-  # Validate species input and determine organism type
-  organism <- dplyr::if_else(species == "Homo sapiens", "Human",
-                             if_else(species == "Mus musculus", "Mouse",
-                                     stop("Invalid species. Choose either 'Homo sapiens' or 'Mus musculus'.")))
+  if (species == "Homo sapiens" || species == " homo sapiens" || species == "human" || species == "Human") {
+    organism <- "Human"
+  } else if (species == "Mus musculus" || species == "mus musculus" || species == "Mouse" || species == "mouse") {
+    organism <- "Mouse"
+  } else {
+    stop("Invalid species. Choose either 'Homo sapiens' or 'Mus musculus'.")
+  }
 
   # Calculate PROGENy pathway scores
   progeny_scores <- t(progeny::progeny(gexp, organism = organism))  # Transpose for correct format
