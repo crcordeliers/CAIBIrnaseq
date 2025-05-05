@@ -9,6 +9,7 @@ format:
 editor: source
 ---
 ```{r read_params}
+#| message: false
 library(airway)
 library(SummarizedExperiment)
 ```
@@ -51,6 +52,7 @@ library(CAIBIrnaseq)
 This section loads the RNA-seq dataset for analysis. It ensures the correct input file is used, as specified in the parameters.
 rebase_gexp
 ```{r load_data}
+#| message: false
 data(airway, package="airway")
 exp_data <- airway
 
@@ -80,6 +82,7 @@ rowData(exp_data)$gene_description <- annot$description[matched]
 
 Rebase and filter
 ```{r}
+#| message: false
 # exp_data <- readRDS(data_file)
 exp_data <- rebase_gexp(exp_data, annotation = "gene_name")
 exp_data <- filter_gexp(exp_data,
@@ -90,6 +93,7 @@ exp_data <- filter_gexp(exp_data,
 Visualization of the filtering process to ensure the criteria applied align with the dataset’s characteristics:
 
 ```{r plot_qc_filters}
+#| message: false
 colData(exp_data)$sample_id <- colnames(exp_data)
 
 plot_qc_filters(exp_data)
@@ -100,6 +104,7 @@ plot_qc_filters(exp_data)
 Here, we apply a normalization to the expression data, making samples comparable by reducing variability due to technical differences. For datasets with few samples, `rlog` is the preferred normalization and when more samples are present, `vst` is applied.
 
 ```{r}
+#| message: false
 exp_data <- normalize_gexp(exp_data)
 ```
 
@@ -108,6 +113,7 @@ exp_data <- normalize_gexp(exp_data)
 Principal component analysis (PCA) identifies the major patterns in the dataset. These patterns help explore similarities or differences among samples based on gene expression.
 
 ```{r}
+#| message: false
 heatmap_genes <- list(
   DNA_repair = c("BRCA1", "BRCA2", "ATM", "ATR", "CHEK1", "CHEK2", "RAD51", "XRCC1"),
   Metabolism = c("ACLY", "ACACA", "FASN", "G6PD", "HK2", "LDHA", "PDK1"),
@@ -120,6 +126,7 @@ plot_pca(exp_data, color = annotation)
 
 ## Diffexp
 ```{r}
+#| message: false
 diffexp <- diffExpAnalysis(countData = assays(exp_data)$counts,
                                           sampleInfo = colData(exp_data),
                                           method = diffexpMethod, cutoff = 10,
@@ -128,6 +135,7 @@ diffexp <- diffExpAnalysis(countData = assays(exp_data)$counts,
 
 Filtering
 ```{r}
+#| message: false
 if(tolower(diffexpMethod) == "limma"){
   diffexp <- diffexp |>
     rename(
@@ -146,6 +154,7 @@ top_de_genes <- rownames(diffexp_filtered)[1:30]
 
 generate heatmap
 ```{r}
+#| message: false
 hm <- plot_exp_heatmap(exp_data,  genes = top_de_genes, 
                  annotations = annotation,
                  show_rownames = TRUE,
@@ -158,22 +167,27 @@ hm
 
 ##Volcano plot
 ```{r}
+#| message: false
 volcano_plot <- plot_exp_volcano(diffexp)
 volcano_plot
 ```
+
 ```{r}
+#| message: false
 volcano_plot + ggplot2::coord_flip()
 ```
 
 ## Pathway analysis
 
 ```{r}
+#| message: false
 #| label: collections
 msigdbr::msigdbr_collections() |> kableExtra::kbl() |> kableExtra::kable_styling() |> kableExtra::scroll_box(height = "300px")
 ```
 
 
 ```{r}
+#| message: false
 pathways <- get_annotation_collection(collections, 
                                       species = species)
 
@@ -186,6 +200,7 @@ S4Vectors::metadata(exp_data)[["pathwayEnrichment"]] <- pathwayResult
 
 
 ```{r}
+#| message: false
 pathwayDotplot <- plot_pathway_dotplot(exp_data, score_name = "pathwayEnrichment")
 pathwayDotplot
 ```
@@ -193,7 +208,7 @@ pathwayDotplot
 [6] "SRR1039517" "SRR1039520" "SRR1039521"
 
 ```{r}
-
+#| message: false
 hms <- lapply(1:length(heatmap_genes), function(i) {
   genes <- heatmap_genes[[i]]
   name <- ifelse(is.null(names(heatmap_genes)), i, names(heatmap_genes)[i])
@@ -208,6 +223,7 @@ patchwork::wrap_plots(hms, ncol = 2, guides = "collect")
 ```
 
 ```{r} 
+#| message: false
 dir.create("results/targeted/boxplots", recursive = TRUE, showWarnings = FALSE)
 pathway_scores <- score_pathways(exp_data, pathways, verbose = FALSE)
 S4Vectors::metadata(exp_data)[["pathway_scores"]] <- pathway_scores
@@ -226,5 +242,6 @@ boxplots <- lapply(heatmap_pathways, function(path) {
 ```
 
 ```{r}
+#| message: false
 patchwork::wrap_plots(boxplots, nrows = round(length(boxplots)/2), guides = "collect")
 ```
