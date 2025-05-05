@@ -8,17 +8,29 @@ format:
     embed-resources: true
 editor: source
 ---
+
+For the 2 examples, we are using an open dataset which is given by the `airway` package. 
+It provides a gene expression dataset derived from **human bronchial epithelial cells**, treated or not with **dexamethasone** (a corticosteroid).
+ 
+Here is an example of how the **supervised** part of the `CAIBIrnaseq` package can be use. 
+
+First, we need to import the required packages :
+
 ```{r read_params}
 #| message: false
 library(airway)
 library(SummarizedExperiment)
 ```
 
+Before analysing the dataset, we define the variables with the names of the genes / pathways ... that we want to analyse.
 
-Source functions & load data
+These variables will change in function of how your dataset is build and which type of data it is.
+
+If you find the definition of the variables heavy in your code, you can create a `.yml` file, for example named `params.yml`, call it in a cell, and it will automatically import the variables. Your code will be clearer. 
+
 ```{r dependencies}
 #| message: false
-# 
+
 annotation <- "dex"
 diffexpMethod <- "deseq2" # Either limma or deseq2
 species <- "human"
@@ -43,19 +55,29 @@ heatmap_pathways <- c(
   "CASTELLANO_HRAS_TARGETS_DN",
   "FARDIN_HYPOXIA_9"
 )
+```
 
+Do not forget to import the package ! ;-) 
 
-
+```{r}
+#| message: false
 library(CAIBIrnaseq)
 ```
 
+## Load data
+
 This section loads the RNA-seq dataset for analysis. It ensures the correct input file is used, as specified in the parameters.
 rebase_gexp
+
 ```{r load_data}
 #| message: false
 data(airway, package="airway")
 exp_data <- airway
+```
 
+Next cell is for the `airway dataset`. The goal is to match the names of the variables used in the package with the names of the dataset. 
+
+```{r}
 rowData(exp_data)$gene_length_kb <- 
   (rowData(exp_data)$gene_seq_end - rowData(exp_data)$gene_seq_start) / 1000
 
@@ -80,11 +102,19 @@ rowData(exp_data)$gene_description <- annot$description[matched]
 
 ## Pre-processing
 
-Rebase and filter
+Most datasets use ensembl gene ID by default after alignment, so this step rebases the expression data to gene names. This ensures consistency in naming for downstream analyses.
+
 ```{r}
 #| message: false
-# exp_data <- readRDS(data_file)
 exp_data <- rebase_gexp(exp_data, annotation = "gene_name")
+```
+
+### Filter
+
+Here, we filter out genes expressed in too few samples or with very low counts. This removes noise from the data and focuses on meaningful gene expressions.
+
+```{r}
+#| message: false
 exp_data <- filter_gexp(exp_data,
                         min_nsamp = 1, 
                         min_counts = 1)
@@ -133,7 +163,7 @@ diffexp <- diffExpAnalysis(countData = assays(exp_data)$counts,
                                           annotation = annotation)
 ```
 
-Filtering
+Diffexp Filtering
 ```{r}
 #| message: false
 if(tolower(diffexpMethod) == "limma"){

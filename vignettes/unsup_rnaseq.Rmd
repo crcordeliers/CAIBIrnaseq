@@ -49,7 +49,7 @@ metadata_clusters <- list(
 
 
 # Pathway collections 
-pathway_collections <- "CP:KEGG_LEGACY"  # You can add as many pathways as you want it will only create more plots
+pathway_collections <- c("CP:REACTOME", "H")  # You can add as many pathways as you want it will only create more plots
 
 # Interesting genes
 heatmap_genes <- list(
@@ -59,8 +59,8 @@ heatmap_genes <- list(
 
 # Interesting pathways (adapt to the results)
 heatmap_pathways <- c(
-  "KEGG_APOPTOSIS",
-  "KEGG_GLUTATHIONE_METABOLISM"
+  "REACTOME_INTERLEUKIN_36_PATHWAY",
+  "REACTOME_IRS_ACTIVATION"
 )
 
 # Genes for the boxplots
@@ -68,8 +68,8 @@ boxplot_genes <- c("FKBP5", "TSC22D3")
 
 # Pathways for the boxplots
 boxplot_pathways <- c(
-  "KEGG_APOPTOSIS",
-  "KEGG_GLUTATHIONE_METABOLISM"
+  "REACTOME_INTERLEUKIN_36_PATHWAY",
+  "REACTOME_IRS_ACTIVATION"
 )
 
 # Corrélations entre gènes
@@ -80,14 +80,13 @@ correlation_genes <- list(
 
 # Pathways correlation
 correlation_pathways <- list(
-  c("KEGG_APOPTOSIS", "KEGG_GLUTATHIONE_METABOLISM"),
-  c("KEGG_APOPTOSIS", "KEGG_NOD_LIKE_RECEPTOR_SIGNALING_PATHWAY")
+  c("REACTOME_INTERLEUKIN_36_PATHWAY", "REACTOME_IRS_ACTIVATION"),
+  c("REACTOME_INTERLEUKIN_36_PATHWAY", "REACTOME_UBIQUINOL_BIOSYNTHESIS")
 )
 
 ```
 
 Do not forget to import the package ! ;-) 
-(installation precisions on the website)
 
 ```{r dependencies}
 #| message: false
@@ -213,6 +212,7 @@ Visual representation of expression levels for HVG across clusters, highlighting
 #| label: plot hvg
 #| fig.width: 8
 #| fig.height: 5
+#| message: false
 hvg <- highly_variable_genes(exp_data)
 exp_cluster <- data.frame(k = 2)
 hm <- plot_exp_heatmap(exp_data,  genes = hvg, 
@@ -220,9 +220,6 @@ hm <- plot_exp_heatmap(exp_data,  genes = hvg,
                  show_rownames = FALSE,
                  hm_color_limits = c(-2,2),
                  fname = "results/clustering/heatmap_2000hvg_exp_cluster.pdf")
-```
-
-```{r}
 hm
 ```
 
@@ -251,17 +248,21 @@ write.csv(progeny_scores, file = "results/pathways/progeny_scores.csv")
 
 ### Pathways
 
-Pathway collections available in the MSIGdb can be specified in the parameters. These pathways are scored and ranked by their variance in the data. These are the available collections (use `gs_subcat` as name except for Hallmarks, which should be 'H').
+Pathway collections available in the MSIGdb can be specified in the parameters. These pathways are scored and ranked by their variance in the data. These are the available collections (use `gs_subcollection` as name except for Hallmarks, which should be 'H').
 
 ```{r}
 #| message: false
 #| label: collections
-msigdbr::msigdbr_collections() |> kableExtra::kbl() |> kableExtra::kable_styling() |> kableExtra::scroll_box(height = "300px")
-```
+library(msigdbr)
+library(dplyr)
+library(kableExtra)
 
-```{r}
-#| message: false
-SummarizedExperiment::rowData(exp_data)
+
+msigdbr::msigdbr_collections() |>
+  kableExtra::kbl() |>
+  kableExtra::kable_styling() |>
+  kableExtra::scroll_box(height = "300px")
+
 ```
 
 
@@ -348,7 +349,7 @@ plot_pathway_heatmap(exp_data,
 ### Boxplots
 
 Boxplots provide a clear comparison of expression levels across experimental groups or conditions.
-
+All jobs still running at 10:00 on Friday will be killed as part of the maintenance.
 #### Selected genes
 
 ```{r}
@@ -456,7 +457,7 @@ cor_plts <- lapply(path_pairs, function(path_pair) {
   lapply(annotations, function(annot) {
       plot_path_scatter(exp_data, 
                    pathway1 = path_pair[1],
-                   pathway2 = path_pair[2], 
+                   pathway2 = path_pair[2],## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was 
                    color_var = annot,
                    fname = stringr::str_glue(
                      "results/targeted/correlations/cor_{path_pair[1]}_{path_pair[2]}_color={annot}.pdf"))

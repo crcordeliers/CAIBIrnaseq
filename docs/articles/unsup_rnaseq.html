@@ -126,7 +126,7 @@ import the variables. Your code will be clearer.</p>
 <span></span>
 <span></span>
 <span><span class="co"># Pathway collections </span></span>
-<span><span class="va">pathway_collections</span> <span class="op">&lt;-</span> <span class="st">"CP:KEGG_LEGACY"</span>  <span class="co"># You can add as many pathways as you want it will only create more plots</span></span>
+<span><span class="va">pathway_collections</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CP:REACTOME"</span>, <span class="st">"H"</span><span class="op">)</span>  <span class="co"># You can add as many pathways as you want it will only create more plots</span></span>
 <span></span>
 <span><span class="co"># Interesting genes</span></span>
 <span><span class="va">heatmap_genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -136,8 +136,8 @@ import the variables. Your code will be clearer.</p>
 <span></span>
 <span><span class="co"># Interesting pathways (adapt to the results)</span></span>
 <span><span class="va">heatmap_pathways</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>  <span class="st">"KEGG_APOPTOSIS"</span>,</span>
-<span>  <span class="st">"KEGG_GLUTATHIONE_METABOLISM"</span></span>
+<span>  <span class="st">"REACTOME_INTERLEUKIN_36_PATHWAY"</span>,</span>
+<span>  <span class="st">"REACTOME_IRS_ACTIVATION"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Genes for the boxplots</span></span>
@@ -145,8 +145,8 @@ import the variables. Your code will be clearer.</p>
 <span></span>
 <span><span class="co"># Pathways for the boxplots</span></span>
 <span><span class="va">boxplot_pathways</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>  <span class="st">"KEGG_APOPTOSIS"</span>,</span>
-<span>  <span class="st">"KEGG_GLUTATHIONE_METABOLISM"</span></span>
+<span>  <span class="st">"REACTOME_INTERLEUKIN_36_PATHWAY"</span>,</span>
+<span>  <span class="st">"REACTOME_IRS_ACTIVATION"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Corrélations entre gènes</span></span>
@@ -157,11 +157,10 @@ import the variables. Your code will be clearer.</p>
 <span></span>
 <span><span class="co"># Pathways correlation</span></span>
 <span><span class="va">correlation_pathways</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"KEGG_APOPTOSIS"</span>, <span class="st">"KEGG_GLUTATHIONE_METABOLISM"</span><span class="op">)</span>,</span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"KEGG_APOPTOSIS"</span>, <span class="st">"KEGG_NOD_LIKE_RECEPTOR_SIGNALING_PATHWAY"</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"REACTOME_INTERLEUKIN_36_PATHWAY"</span>, <span class="st">"REACTOME_IRS_ACTIVATION"</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"REACTOME_INTERLEUKIN_36_PATHWAY"</span>, <span class="st">"REACTOME_UBIQUINOL_BIOSYNTHESIS"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>Do not forget to import the package ! ;-) (installation precisions on
-the website)</p>
+<p>Do not forget to import the package ! ;-)</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://crcordeliers.github.io/CAIBIrnaseq">CAIBIrnaseq</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
@@ -223,7 +222,7 @@ align with the dataset’s characteristics:</p>
 <span><span class="co">##   Please open an issue with your example code at</span></span>
 <span><span class="co">##   https://github.com/ropensci/plotly/issues</span></span></code></pre>
 <div class="plotly html-widget html-fill-item" id="htmlwidget-ac96cb3ee4656e2e9ec3" style="width:700px;height:432.632880098888px;"></div>
-<script type="application/json" data-for="htmlwidget-ac96cb3ee4656e2e9ec3">{"x":{"data":[{"x":[5000,5000],"y":[0,33900036.5],"text":"","type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(0,0,0,1)","dash":"dash"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0,28378.900000000001],"y":[5000000,5000000],"text":"","type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(0,0,0,1)","dash":"dash"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[24483,24384,25517,23006,25341,25799,24513,23867],"y":[20637971,18809481,25348649,15163415,24448408,30818215,19126151,21164133],"text":["sample_id: SRR1039508<br />qc_status: QC pass","sample_id: SRR1039509<br />qc_status: QC pass","sample_id: SRR1039512<br />qc_status: QC pass","sample_id: SRR1039513<br />qc_status: QC pass","sample_id: SRR1039516<br />qc_status: QC pass","sample_id: SRR1039517<br />qc_status: QC pass","sample_id: SRR1039520<br />qc_status: QC pass","sample_id: SRR1039521<br />qc_status: QC pass"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,0,0,1)","opacity":1,"size":5.6692913385826778,"symbol":"circle","line":{"width":1.8897637795275593,"color":"rgba(0,0,0,1)"}},"hoveron":"points","name":"QC pass","legendgroup":"QC pass","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":27.824636418824401,"r":7.3059360730593621,"b":41.778974318367787,"l":54.794520547945211},"plot_bgcolor":"rgba(235,235,235,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0,28378.900000000001],"tickmode":"array","ticktext":["0","10000","20000"],"tickvals":[0,10000,20000],"categoryorder":"array","categoryarray":["0","10000","20000"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"Number of genes with non-zero counts","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0,33900036.5],"tickmode":"array","ticktext":["0e+00","1e+07","2e+07","3e+07"],"tickvals":[0,10000000,20000000,30000000],"categoryorder":"array","categoryarray":["0e+00","1e+07","2e+07","3e+07"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"Total number of counts","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498},"title":{"text":"QC status","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"ecf62e939c20":{"xintercept":{},"type":"scatter"},"ecf620ef2f9e":{"yintercept":{}},"ecf616bf9686":{"x":{},"y":{},"label":{},"colour":{}},"ecf628f20fde":{"x":{},"y":{},"label":{}}},"cur_data":"ecf62e939c20","visdat":{"ecf62e939c20":["function (y) ","x"],"ecf620ef2f9e":["function (y) ","x"],"ecf616bf9686":["function (y) ","x"],"ecf628f20fde":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<script type="application/json" data-for="htmlwidget-ac96cb3ee4656e2e9ec3">{"x":{"data":[{"x":[5000,5000],"y":[0,33900036.5],"text":"","type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(0,0,0,1)","dash":"dash"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0,28378.900000000001],"y":[5000000,5000000],"text":"","type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(0,0,0,1)","dash":"dash"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[24483,24384,25517,23006,25341,25799,24513,23867],"y":[20637971,18809481,25348649,15163415,24448408,30818215,19126151,21164133],"text":["sample_id: SRR1039508<br />qc_status: QC pass","sample_id: SRR1039509<br />qc_status: QC pass","sample_id: SRR1039512<br />qc_status: QC pass","sample_id: SRR1039513<br />qc_status: QC pass","sample_id: SRR1039516<br />qc_status: QC pass","sample_id: SRR1039517<br />qc_status: QC pass","sample_id: SRR1039520<br />qc_status: QC pass","sample_id: SRR1039521<br />qc_status: QC pass"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,0,0,1)","opacity":1,"size":5.6692913385826778,"symbol":"circle","line":{"width":1.8897637795275593,"color":"rgba(0,0,0,1)"}},"hoveron":"points","name":"QC pass","legendgroup":"QC pass","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":27.824636418824401,"r":7.3059360730593621,"b":41.778974318367787,"l":54.794520547945211},"plot_bgcolor":"rgba(235,235,235,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0,28378.900000000001],"tickmode":"array","ticktext":["0","10000","20000"],"tickvals":[0,10000,20000],"categoryorder":"array","categoryarray":["0","10000","20000"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"Number of genes with non-zero counts","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0,33900036.5],"tickmode":"array","ticktext":["0e+00","1e+07","2e+07","3e+07"],"tickvals":[0,10000000,20000000,30000000],"categoryorder":"array","categoryarray":["0e+00","1e+07","2e+07","3e+07"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"Total number of counts","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498},"title":{"text":"QC status","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"11d0d7cc1d991":{"xintercept":{},"type":"scatter"},"11d0d14500023":{"yintercept":{}},"11d0d4c800ec2":{"x":{},"y":{},"label":{},"colour":{}},"11d0d371d68d5":{"x":{},"y":{},"label":{}}},"cur_data":"11d0d7cc1d991","visdat":{"11d0d7cc1d991":["function (y) ","x"],"11d0d14500023":["function (y) ","x"],"11d0d4c800ec2":["function (y) ","x"],"11d0d371d68d5":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 </div>
 <div class="section level3">
 <h3 id="normalize">Normalize<a class="anchor" aria-label="anchor" href="#normalize"></a>
@@ -250,7 +249,7 @@ among samples based on gene expression.</p>
 <span><span class="va">annotations</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/setops.html" class="external-link">setdiff</a></span><span class="op">(</span><span class="va">plot_annotations</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"exp_cluster"</span>, <span class="st">"path_cluster"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/plot_pca.html">plot_pca</a></span><span class="op">(</span><span class="va">exp_data</span>, color <span class="op">=</span> <span class="va">plot_annotations</span><span class="op">)</span></span></code></pre></div>
 <div class="plotly html-widget html-fill-item" id="htmlwidget-e5c8c404fe174e4c81bd" style="width:700px;height:432.632880098888px;"></div>
-<script type="application/json" data-for="htmlwidget-e5c8c404fe174e4c81bd">{"x":{"data":[{"x":[14.839069421975847,24.593807654692181,16.383181911026984,25.967675811227551],"y":[5.0172517058590902,9.0421838417274021,-30.394274516115658,11.425730228598246],"text":["sample_id: SRR1039509<br />dex: trt","sample_id: SRR1039513<br />dex: trt","sample_id: SRR1039517<br />dex: trt","sample_id: SRR1039521<br />dex: trt"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","opacity":1,"size":7.559055118110237,"symbol":"circle","line":{"width":1.8897637795275593,"color":"rgba(248,118,109,1)"}},"hoveron":"points","name":"trt","legendgroup":"trt","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[-21.384638314040082,-19.659551572912438,-20.542436740837015,-20.197108171133014],"y":[10.241576532822902,9.2251012769538185,-31.202632473378614,16.645063403532838],"text":["sample_id: SRR1039508<br />dex: untrt","sample_id: SRR1039512<br />dex: untrt","sample_id: SRR1039516<br />dex: untrt","sample_id: SRR1039520<br />dex: untrt"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,191,196,1)","opacity":1,"size":7.559055118110237,"symbol":"circle","line":{"width":1.8897637795275593,"color":"rgba(0,191,196,1)"}},"hoveron":"points","name":"untrt","legendgroup":"untrt","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[-23.752254020303464,28.335291517490933],"y":[0,0],"text":"","type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(127,127,127,1)","dash":"dash"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0,0],"y":[-33.595017267224186,19.03744819737841],"text":"","type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(127,127,127,1)","dash":"dash"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":27.824636418824401,"r":7.3059360730593621,"b":41.778974318367787,"l":43.105022831050235},"plot_bgcolor":"rgba(255,255,255,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-23.752254020303464,28.335291517490933],"tickmode":"array","ticktext":["-20","-10","0","10","20"],"tickvals":[-20,-10,0,10.000000000000004,20.000000000000004],"categoryorder":"array","categoryarray":["-20","-10","0","10","20"],"nticks":null,"ticks":"outside","tickcolor":"rgba(0,0,0,1)","ticklen":3.6529680365296811,"tickwidth":0.33208800332088001,"showticklabels":true,"tickfont":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(222,222,222,1)","gridwidth":0.33208800332088001,"zeroline":false,"anchor":"y","title":{"text":"PC 1 (24.6%)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-33.595017267224186,19.03744819737841],"tickmode":"array","ticktext":["-30","-20","-10","0","10"],"tickvals":[-30,-20,-10,0,10],"categoryorder":"array","categoryarray":["-30","-20","-10","0","10"],"nticks":null,"ticks":"outside","tickcolor":"rgba(0,0,0,1)","ticklen":3.6529680365296811,"tickwidth":0.33208800332088001,"showticklabels":true,"tickfont":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(222,222,222,1)","gridwidth":0.33208800332088001,"zeroline":false,"anchor":"x","title":{"text":"PC 2 (18.6%)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":"transparent","line":{"color":"rgba(0,0,0,1)","width":0.66417600664176002,"linetype":"solid"},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498},"title":{"text":"dex","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"ecf63a33a6fd":{"label":{},"x":{},"y":{},"colour":{},"type":"scatter"},"ecf6ff36438":{"yintercept":{}},"ecf618a83ec4":{"xintercept":{}}},"cur_data":"ecf63a33a6fd","visdat":{"ecf63a33a6fd":["function (y) ","x"],"ecf6ff36438":["function (y) ","x"],"ecf618a83ec4":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script><p>If you want to add a circular/oval shape to circle the different
+<script type="application/json" data-for="htmlwidget-e5c8c404fe174e4c81bd">{"x":{"data":[{"x":[14.839069421975847,24.593807654692181,16.383181911026984,25.967675811227551],"y":[5.0172517058590902,9.0421838417274021,-30.394274516115658,11.425730228598246],"text":["sample_id: SRR1039509<br />dex: trt","sample_id: SRR1039513<br />dex: trt","sample_id: SRR1039517<br />dex: trt","sample_id: SRR1039521<br />dex: trt"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","opacity":1,"size":7.559055118110237,"symbol":"circle","line":{"width":1.8897637795275593,"color":"rgba(248,118,109,1)"}},"hoveron":"points","name":"trt","legendgroup":"trt","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[-21.384638314040082,-19.659551572912438,-20.542436740837015,-20.197108171133014],"y":[10.241576532822902,9.2251012769538185,-31.202632473378614,16.645063403532838],"text":["sample_id: SRR1039508<br />dex: untrt","sample_id: SRR1039512<br />dex: untrt","sample_id: SRR1039516<br />dex: untrt","sample_id: SRR1039520<br />dex: untrt"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,191,196,1)","opacity":1,"size":7.559055118110237,"symbol":"circle","line":{"width":1.8897637795275593,"color":"rgba(0,191,196,1)"}},"hoveron":"points","name":"untrt","legendgroup":"untrt","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[-23.752254020303464,28.335291517490933],"y":[0,0],"text":"","type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(127,127,127,1)","dash":"dash"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0,0],"y":[-33.595017267224186,19.03744819737841],"text":"","type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(127,127,127,1)","dash":"dash"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":27.824636418824401,"r":7.3059360730593621,"b":41.778974318367787,"l":43.105022831050235},"plot_bgcolor":"rgba(255,255,255,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-23.752254020303464,28.335291517490933],"tickmode":"array","ticktext":["-20","-10","0","10","20"],"tickvals":[-20,-10,0,10.000000000000004,20.000000000000004],"categoryorder":"array","categoryarray":["-20","-10","0","10","20"],"nticks":null,"ticks":"outside","tickcolor":"rgba(0,0,0,1)","ticklen":3.6529680365296811,"tickwidth":0.33208800332088001,"showticklabels":true,"tickfont":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(222,222,222,1)","gridwidth":0.33208800332088001,"zeroline":false,"anchor":"y","title":{"text":"PC 1 (24.6%)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-33.595017267224186,19.03744819737841],"tickmode":"array","ticktext":["-30","-20","-10","0","10"],"tickvals":[-30,-20,-10,0,10],"categoryorder":"array","categoryarray":["-30","-20","-10","0","10"],"nticks":null,"ticks":"outside","tickcolor":"rgba(0,0,0,1)","ticklen":3.6529680365296811,"tickwidth":0.33208800332088001,"showticklabels":true,"tickfont":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(222,222,222,1)","gridwidth":0.33208800332088001,"zeroline":false,"anchor":"x","title":{"text":"PC 2 (18.6%)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":"transparent","line":{"color":"rgba(0,0,0,1)","width":0.66417600664176002,"linetype":"solid"},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498},"title":{"text":"dex","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"11d0d25daf815":{"label":{},"x":{},"y":{},"colour":{},"type":"scatter"},"11d0d1ca8478e":{"yintercept":{}},"11d0d356350e9":{"xintercept":{}}},"cur_data":"11d0d25daf815","visdat":{"11d0d25daf815":["function (y) ","x"],"11d0d1ca8478e":["function (y) ","x"],"11d0d356350e9":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script><p>If you want to add a circular/oval shape to circle the different
 genotypes of samples, use the <code>fviz_pca_ind</code> function from
 the <code>factoextra</code> package. With this dataset, it is not
 relevant but it can be with your persona dataset.</p>
@@ -292,11 +291,9 @@ highlighting distinct patterns.</p>
 <span>                 annotations <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">plot_annotations</span>, <span class="st">"exp_cluster"</span><span class="op">)</span>,</span>
 <span>                 show_rownames <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>                 hm_color_limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">2</span>,<span class="fl">2</span><span class="op">)</span>,</span>
-<span>                 fname <span class="op">=</span> <span class="st">"results/clustering/heatmap_2000hvg_exp_cluster.pdf"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## -- Saving heatmap at results/clustering/heatmap_2000hvg_exp_cluster.pdf</span></span></code></pre>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">hm</span></span></code></pre></div>
-<p><img src="unsup_rnaseq_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
+<span>                 fname <span class="op">=</span> <span class="st">"results/clustering/heatmap_2000hvg_exp_cluster.pdf"</span><span class="op">)</span></span>
+<span><span class="va">hm</span></span></code></pre></div>
+<p><img src="unsup_rnaseq_files/figure-html/plot%20hvg-1.png" width="768"></p>
 </div>
 <div class="section level2">
 <h2 id="pathway-activity">Pathway activity<a class="anchor" aria-label="anchor" href="#pathway-activity"></a>
@@ -311,7 +308,7 @@ activity using two methods.</p>
 large signaling perturbation experiments. For more information see the
 <a href="https://www.nature.com/articles/s41467-017-02391-6" class="external-link">original
 paper</a>.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">progeny_scores</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/score_progeny.html">score_progeny</a></span><span class="op">(</span><span class="va">exp_data</span>, species <span class="op">=</span> <span class="st">"Homo sapiens"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu">S4Vectors</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Annotated-class.html" class="external-link">metadata</a></span><span class="op">(</span><span class="va">exp_data</span><span class="op">)</span>         </span>
@@ -323,7 +320,7 @@ paper</a>.</p>
 <pre><code><span><span class="co">## Warning in prep_scores_hm(exp_data, progeny_scores): 'sample_id' already exists</span></span>
 <span><span class="co">## in colData and will be overwritten.</span></span></code></pre>
 <p><img src="unsup_rnaseq_files/figure-html/progenyprovided-1.png" width="700"></p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span><span class="va">progeny_scores</span>, file <span class="op">=</span> <span class="st">"results/pathways/progeny_scores.csv"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -332,10 +329,18 @@ paper</a>.</p>
 <p>Pathway collections available in the MSIGdb can be specified in the
 parameters. These pathways are scored and ranked by their variance in
 the data. These are the available collections (use
-<code>gs_subcat</code> as name except for Hallmarks, which should be
-‘H’).</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">msigdbr</span><span class="fu">::</span><span class="fu"><a href="https://igordot.github.io/msigdbr/reference/msigdbr_collections.html" class="external-link">msigdbr_collections</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">kableExtra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/kbl.html" class="external-link">kbl</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">kableExtra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/kable_styling.html" class="external-link">kable_styling</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">kableExtra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/scroll_box.html" class="external-link">scroll_box</a></span><span class="op">(</span>height <span class="op">=</span> <span class="st">"300px"</span><span class="op">)</span></span></code></pre></div>
+<code>gs_subcollection</code> as name except for Hallmarks, which should
+be ‘H’).</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://igordot.github.io/msigdbr/" class="external-link">msigdbr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://haozhu233.github.io/kableExtra/" class="external-link">kableExtra</a></span><span class="op">)</span></span>
+<span></span>
+<span></span>
+<span><span class="fu">msigdbr</span><span class="fu">::</span><span class="fu"><a href="https://igordot.github.io/msigdbr/reference/msigdbr_collections.html" class="external-link">msigdbr_collections</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">kableExtra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/kbl.html" class="external-link">kbl</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">kableExtra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/kable_styling.html" class="external-link">kable_styling</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">kableExtra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/scroll_box.html" class="external-link">scroll_box</a></span><span class="op">(</span>height <span class="op">=</span> <span class="st">"300px"</span><span class="op">)</span></span></code></pre></div>
 <div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:300px; ">
 <table class="table table" style="margin-left: auto; margin-right: auto;">
 <thead><tr>
@@ -702,39 +707,12 @@ Hallmark
 </tbody>
 </table>
 </div>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">SummarizedExperiment</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">exp_data</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## DataFrame with 33026 rows and 5 columns</span></span>
-<span><span class="co">##              gene_name                gene_id gene_length_kb</span></span>
-<span><span class="co">##            &lt;character&gt;            &lt;character&gt;      &lt;numeric&gt;</span></span>
-<span><span class="co">## 5S_rRNA        5S_rRNA ENSG00000201285, ENS..       0.621923</span></span>
-<span><span class="co">## 7SK                7SK ENSG00000232512, ENS..       6.147750</span></span>
-<span><span class="co">## A1BG              A1BG        ENSG00000121410       8.321000</span></span>
-<span><span class="co">## A1BG-AS1      A1BG-AS1        ENSG00000268895       7.432000</span></span>
-<span><span class="co">## A1CF              A1CF        ENSG00000148584      86.266000</span></span>
-<span><span class="co">## ...                ...                    ...            ...</span></span>
-<span><span class="co">## snoU109        snoU109 ENSG00000238410, ENS..       0.133714</span></span>
-<span><span class="co">## snoU13          snoU13 ENSG00000238294, ENS..       0.105013</span></span>
-<span><span class="co">## snoZ185        snoZ185        ENSG00000252672       0.086000</span></span>
-<span><span class="co">## snoZ5            snoZ5        ENSG00000251721       0.084000</span></span>
-<span><span class="co">## yR211F11.2  yR211F11.2        ENSG00000213076       0.879000</span></span>
-<span><span class="co">##                  gene_description   gene_biotype</span></span>
-<span><span class="co">##                       &lt;character&gt;    &lt;character&gt;</span></span>
-<span><span class="co">## 5S_rRNA    RNA, 5S ribosomal ps..           rRNA</span></span>
-<span><span class="co">## 7SK        novel transcript, lo..        lincRNA</span></span>
-<span><span class="co">## A1BG       alpha-1-B glycoprote.. protein_coding</span></span>
-<span><span class="co">## A1BG-AS1   A1BG antisense RNA 1..      antisense</span></span>
-<span><span class="co">## A1CF       APOBEC1 complementat.. protein_coding</span></span>
-<span><span class="co">## ...                           ...            ...</span></span>
-<span><span class="co">## snoU109    , small Cajal body-s..         snoRNA</span></span>
-<span><span class="co">## snoU13     NA, , small nucleola..         snoRNA</span></span>
-<span><span class="co">## snoZ185                        NA         snoRNA</span></span>
-<span><span class="co">## snoZ5                          NA         snoRNA</span></span>
-<span><span class="co">## yR211F11.2 SNARE Vti1a-beta pro..     pseudogene</span></span></code></pre>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pathways</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_annotation_collection.html">get_annotation_collection</a></span><span class="op">(</span><span class="va">pathway_collections</span>, </span>
-<span>                                      species <span class="op">=</span> <span class="va">species</span><span class="op">)</span></span>
-<span><span class="va">pathway_scores</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/score_pathways.html">score_pathways</a></span><span class="op">(</span><span class="va">exp_data</span>, <span class="va">pathways</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span>                                      species <span class="op">=</span> <span class="va">species</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Warning in FUN(X[[i]], ...): Collection `H` not found in MSigDB. Skipping.</span></span></code></pre>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">pathway_scores</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/score_pathways.html">score_pathways</a></span><span class="op">(</span><span class="va">exp_data</span>, <span class="va">pathways</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu">S4Vectors</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Annotated-class.html" class="external-link">metadata</a></span><span class="op">(</span><span class="va">exp_data</span><span class="op">)</span><span class="op">[[</span><span class="st">"pathway_scores"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">pathway_scores</span></span>
 <span></span>
 <span><span class="va">collections</span> <span class="op">&lt;-</span> <span class="va">pathway_collections</span> <span class="op">|&gt;</span> </span>
@@ -749,7 +727,7 @@ Hallmark
 <pre><code><span><span class="co">## Warning in prep_scores_hm(exp_data, pathway_scores, pathways): 'sample_id'</span></span>
 <span><span class="co">## already exists in colData and will be overwritten.</span></span></code></pre>
 <p><img src="unsup_rnaseq_files/figure-html/pathways-1.png" width="960"></p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span><span class="va">pathways</span>, file <span class="op">=</span> <span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_glue.html" class="external-link">str_glue</a></span><span class="op">(</span><span class="st">"results/pathways/paths_{collections}.csv"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
@@ -759,7 +737,7 @@ Hallmark
 <p>This step calculates immune and stromal cell type abundances using
 MCPcounter or mMCPcounter. It helps to infer the composition of the
 tumor microenvironment or similar contexts.</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mcp_scores</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mcp_counter.html">mcp_counter</a></span><span class="op">(</span><span class="va">exp_data</span>, species <span class="op">=</span> <span class="va">species</span><span class="op">)</span></span>
 <span><span class="fu">S4Vectors</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Annotated-class.html" class="external-link">metadata</a></span><span class="op">(</span><span class="va">exp_data</span><span class="op">)</span><span class="op">[[</span><span class="st">"microenv_scores"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">mcp_scores</span></span>
 <span></span>
@@ -768,7 +746,7 @@ tumor microenvironment or similar contexts.</p>
 <pre><code><span><span class="co">## Warning in prep_scores_hm(exp_data, microenv_scores): 'sample_id' already</span></span>
 <span><span class="co">## exists in colData and will be overwritten.</span></span></code></pre>
 <p><img src="unsup_rnaseq_files/figure-html/microenvironment-1.png" width="700"></p>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span><span class="va">mcp_scores</span>, file <span class="op">=</span> <span class="st">"results/tme/scores_mcpcounter.csv"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -781,7 +759,7 @@ interest, as specified in the parameters.</p>
 </h3>
 <p>Generates heatmaps for pre-selected genes of interest to observe
 their expression across samples or conditions.</p>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hms</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">heatmap_genes</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">i</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">gene_annot</span> <span class="op">&lt;-</span> <span class="fu">SummarizedExperiment</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">exp_data</span><span class="op">)</span></span>
 <span>  <span class="va">genes</span> <span class="op">&lt;-</span> <span class="va">heatmap_genes</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span></span>
@@ -795,7 +773,7 @@ their expression across samples or conditions.</p>
 <div class="section level4">
 <h4 id="selected-pathways">Selected pathways<a class="anchor" aria-label="anchor" href="#selected-pathways"></a>
 </h4>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">valid_pathways</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/setops.html" class="external-link">intersect</a></span><span class="op">(</span><span class="va">heatmap_pathways</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">pathway_scores</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/plot_pathway_heatmap.html">plot_pathway_heatmap</a></span><span class="op">(</span><span class="va">exp_data</span>, </span>
@@ -811,11 +789,10 @@ their expression across samples or conditions.</p>
 <h3 id="boxplots">Boxplots<a class="anchor" aria-label="anchor" href="#boxplots"></a>
 </h3>
 <p>Boxplots provide a clear comparison of expression levels across
-experimental groups or conditions.</p>
-<div class="section level4">
-<h4 id="selected-genes">Selected genes<a class="anchor" aria-label="anchor" href="#selected-genes"></a>
-</h4>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+experimental groups or conditions. All jobs still running at 10:00 on
+Friday will be killed as part of the maintenance. #### Selected
+genes</p>
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">genes</span> <span class="op">&lt;-</span> <span class="va">boxplot_genes</span></span>
 <span><span class="va">annotations</span> <span class="op">&lt;-</span> <span class="va">plot_annotations</span></span>
 <span></span>
@@ -828,14 +805,13 @@ experimental groups or conditions.</p>
 <span>                   fname <span class="op">=</span> <span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_glue.html" class="external-link">str_glue</a></span><span class="op">(</span><span class="st">"results/targeted/boxplots/box_{gene}_{annotation}.pdf"</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="op">}</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu">flatten</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">boxplots</span>, nrows <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">boxplots</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span><span class="op">)</span>, guides <span class="op">=</span> <span class="st">"collect"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="unsup_rnaseq_files/figure-html/plot_box_genes2-1.png" width="960"></p>
-</div>
 <div class="section level4">
 <h4 id="selected-pathways-1">Selected pathways<a class="anchor" aria-label="anchor" href="#selected-pathways-1"></a>
 </h4>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">paths</span> <span class="op">&lt;-</span> <span class="va">boxplot_pathways</span></span>
 <span><span class="va">annotations</span> <span class="op">&lt;-</span> <span class="va">plot_annotations</span></span>
 <span></span>
@@ -849,7 +825,7 @@ experimental groups or conditions.</p>
 <span>                   fname <span class="op">=</span> <span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_glue.html" class="external-link">str_glue</a></span><span class="op">(</span><span class="st">"results/targeted/boxplots/box_{path}_{annotation}.pdf"</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="op">}</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu">flatten</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">boxplots</span>, nrows <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">boxplots</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span><span class="op">)</span>, guides <span class="op">=</span> <span class="st">"collect"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="unsup_rnaseq_files/figure-html/plot_box_paths2-1.png" width="960"></p>
 </div>
@@ -862,12 +838,12 @@ pathways by plotting their expression/activity correlations. Correlation
 analysis can reveal important co-regulation or interaction patterns,
 helping to uncover biologically meaningful relationships.</p>
 <div class="section level4">
-<h4 id="selected-genes-1">Selected genes<a class="anchor" aria-label="anchor" href="#selected-genes-1"></a>
+<h4 id="selected-genes">Selected genes<a class="anchor" aria-label="anchor" href="#selected-genes"></a>
 </h4>
 <p>Here we plot the correlation between selected gene pairs across the
 dataset. Each pair is plotted separately, and color-coded by sample
 annotation.</p>
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gene_pairs</span> <span class="op">&lt;-</span> <span class="va">correlation_genes</span></span>
 <span><span class="va">annotations</span> <span class="op">&lt;-</span> <span class="va">plot_annotations</span></span>
 <span></span>
@@ -881,7 +857,7 @@ annotation.</p>
 <span>                     <span class="st">"results/targeted/correlations/cor_{gene_pair[1]}_{gene_pair[2]}_color={annot}.pdf"</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="op">}</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu">flatten</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">cor_plts</span>, nrows <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">cor_plts</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span><span class="op">)</span>, guides <span class="op">=</span> <span class="st">"collect"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="unsup_rnaseq_files/figure-html/plot_correlation_genes2-1.png" width="960"></p>
 </div>
@@ -892,7 +868,7 @@ annotation.</p>
 similarities or differences in pathway activity patterns across samples.
 Each pathway pair is plotted separately and color-coded by sample
 annotation to illustrate trends within each condition.</p>
-<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">path_pairs</span> <span class="op">&lt;-</span><span class="va">correlation_pathways</span></span>
 <span><span class="va">annotations</span> <span class="op">&lt;-</span> <span class="va">plot_annotations</span></span>
 <span></span>
@@ -900,13 +876,13 @@ annotation to illustrate trends within each condition.</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">annotations</span>, <span class="kw">function</span><span class="op">(</span><span class="va">annot</span><span class="op">)</span> <span class="op">{</span></span>
 <span>      <span class="fu"><a href="../reference/plot_path_scatter.html">plot_path_scatter</a></span><span class="op">(</span><span class="va">exp_data</span>, </span>
 <span>                   pathway1 <span class="op">=</span> <span class="va">path_pair</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,</span>
-<span>                   pathway2 <span class="op">=</span> <span class="va">path_pair</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, </span>
+<span>                   pathway2 <span class="op">=</span> <span class="va">path_pair</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>,<span class="co">## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was </span></span>
 <span>                   color_var <span class="op">=</span> <span class="va">annot</span>,</span>
 <span>                   fname <span class="op">=</span> <span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_glue.html" class="external-link">str_glue</a></span><span class="op">(</span></span>
 <span>                     <span class="st">"results/targeted/correlations/cor_{path_pair[1]}_{path_pair[2]}_color={annot}.pdf"</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="op">}</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu">flatten</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">cor_plts</span>, nrows <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">cor_plts</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span><span class="op">)</span>, guides <span class="op">=</span> <span class="st">"collect"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="unsup_rnaseq_files/figure-html/plot_correlation_paths2-1.png" width="960"></p>
 </div>
@@ -915,7 +891,7 @@ annotation to illustrate trends within each condition.</p>
 <div class="section level2">
 <h2 id="cluster-using-metadata">Cluster using metadata<a class="anchor" aria-label="anchor" href="#cluster-using-metadata"></a>
 </h2>
-<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">types</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">metadata_clusters</span><span class="op">)</span></span>
 <span></span>
 <span><span class="kw">for</span><span class="op">(</span><span class="va">type</span> <span class="kw">in</span> <span class="va">types</span><span class="op">)</span> <span class="op">{</span></span>
@@ -931,7 +907,7 @@ annotation to illustrate trends within each condition.</p>
 </h2>
 <p>The final step saves the processed dataset and results. This ensures
 all outputs can be revisited or shared for further analysis.</p>
-<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">saveRDS</a></span><span class="op">(</span><span class="va">exp_data</span>, file <span class="op">=</span> <span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_glue.html" class="external-link">str_glue</a></span><span class="op">(</span><span class="st">"results/data_SummarizedExp_{lubridate::today()}.RDS"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -944,7 +920,7 @@ computational environment details are documented.</p>
 </h3>
 <p>The <code><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo()</a></code> prints out all packages loaded at the
 time of analysis, as well as their versions.</p>
-<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## R version 4.5.0 (2025-04-11)</span></span>
 <span><span class="co">## Platform: x86_64-pc-linux-gnu</span></span>
@@ -970,15 +946,17 @@ time of analysis, as well as their versions.</p>
 <span><span class="co">## [8] base     </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
-<span><span class="co">##  [1] factoextra_1.0.7            ggplot2_3.5.2              </span></span>
-<span><span class="co">##  [3] biomaRt_2.64.0              CAIBIrnaseq_1.0.0          </span></span>
-<span><span class="co">##  [5] R.utils_2.13.0              R.oo_1.27.1                </span></span>
-<span><span class="co">##  [7] R.methodsS3_1.8.2           airway_1.28.0              </span></span>
-<span><span class="co">##  [9] SummarizedExperiment_1.38.1 Biobase_2.68.0             </span></span>
-<span><span class="co">## [11] GenomicRanges_1.60.0        GenomeInfoDb_1.44.0        </span></span>
-<span><span class="co">## [13] IRanges_2.42.0              S4Vectors_0.46.0           </span></span>
-<span><span class="co">## [15] BiocGenerics_0.54.0         generics_0.1.3             </span></span>
-<span><span class="co">## [17] MatrixGenerics_1.20.0       matrixStats_1.5.0          </span></span>
+<span><span class="co">##  [1] kableExtra_1.4.0            dplyr_1.1.4                </span></span>
+<span><span class="co">##  [3] msigdbr_10.0.2              factoextra_1.0.7           </span></span>
+<span><span class="co">##  [5] ggplot2_3.5.2               biomaRt_2.64.0             </span></span>
+<span><span class="co">##  [7] CAIBIrnaseq_1.0.0           R.utils_2.13.0             </span></span>
+<span><span class="co">##  [9] R.oo_1.27.1                 R.methodsS3_1.8.2          </span></span>
+<span><span class="co">## [11] airway_1.28.0               SummarizedExperiment_1.38.1</span></span>
+<span><span class="co">## [13] Biobase_2.68.0              GenomicRanges_1.60.0       </span></span>
+<span><span class="co">## [15] GenomeInfoDb_1.44.0         IRanges_2.42.0             </span></span>
+<span><span class="co">## [17] S4Vectors_0.46.0            BiocGenerics_0.54.0        </span></span>
+<span><span class="co">## [19] generics_0.1.3              MatrixGenerics_1.20.0      </span></span>
+<span><span class="co">## [21] matrixStats_1.5.0          </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
 <span><span class="co">##   [1] ggplotify_0.1.2             filelock_1.0.3             </span></span>
@@ -993,71 +971,70 @@ time of analysis, as well as their versions.</p>
 <span><span class="co">##  [19] cowplot_1.1.3               DBI_1.2.3                  </span></span>
 <span><span class="co">##  [21] RColorBrewer_1.1-3          lubridate_1.9.4            </span></span>
 <span><span class="co">##  [23] abind_1.4-8                 purrr_1.0.4                </span></span>
-<span><span class="co">##  [25] msigdbr_10.0.2              yulab.utils_0.2.0          </span></span>
-<span><span class="co">##  [27] rappdirs_0.3.3              GenomeInfoDbData_1.2.14    </span></span>
-<span><span class="co">##  [29] ggrepel_0.9.6               irlba_2.3.5.1              </span></span>
-<span><span class="co">##  [31] tidytree_0.4.6              GSVA_2.2.0                 </span></span>
-<span><span class="co">##  [33] MCPcounter_1.2.0            annotate_1.86.0            </span></span>
-<span><span class="co">##  [35] svglite_2.1.3               pkgdown_2.1.2              </span></span>
-<span><span class="co">##  [37] codetools_0.2-20            DelayedArray_0.34.1        </span></span>
-<span><span class="co">##  [39] xml2_1.3.8                  tidyselect_1.2.1           </span></span>
-<span><span class="co">##  [41] aplot_0.2.5                 UCSC.utils_1.4.0           </span></span>
-<span><span class="co">##  [43] farver_2.1.2                ScaledMatrix_1.16.0        </span></span>
-<span><span class="co">##  [45] BiocFileCache_2.16.0        jsonlite_2.0.0             </span></span>
-<span><span class="co">##  [47] Formula_1.2-5               systemfonts_1.2.3          </span></span>
-<span><span class="co">##  [49] tools_4.5.0                 progress_1.2.3             </span></span>
-<span><span class="co">##  [51] treeio_1.32.0               ragg_1.4.0                 </span></span>
-<span><span class="co">##  [53] Rcpp_1.0.14                 glue_1.8.0                 </span></span>
-<span><span class="co">##  [55] gridExtra_2.3               SparseArray_1.8.0          </span></span>
-<span><span class="co">##  [57] xfun_0.52                   DESeq2_1.48.0              </span></span>
-<span><span class="co">##  [59] dplyr_1.1.4                 HDF5Array_1.36.0           </span></span>
-<span><span class="co">##  [61] withr_3.0.2                 fastmap_1.2.0              </span></span>
-<span><span class="co">##  [63] rhdf5filters_1.20.0         digest_0.6.37              </span></span>
-<span><span class="co">##  [65] rsvd_1.0.5                  timechange_0.3.0           </span></span>
-<span><span class="co">##  [67] R6_2.6.1                    gridGraphics_0.5-1         </span></span>
-<span><span class="co">##  [69] textshaping_1.0.1           RSQLite_2.3.10             </span></span>
-<span><span class="co">##  [71] h5mread_1.0.0               tidyr_1.3.1                </span></span>
-<span><span class="co">##  [73] data.table_1.17.0           prettyunits_1.2.0          </span></span>
-<span><span class="co">##  [75] httr_1.4.7                  htmlwidgets_1.6.4          </span></span>
-<span><span class="co">##  [77] S4Arrays_1.8.0              pkgconfig_2.0.3            </span></span>
-<span><span class="co">##  [79] gtable_0.3.6                progeny_1.30.0             </span></span>
-<span><span class="co">##  [81] blob_1.2.4                  SingleCellExperiment_1.30.0</span></span>
-<span><span class="co">##  [83] XVector_0.48.0              htmltools_0.5.8.1          </span></span>
-<span><span class="co">##  [85] carData_3.0-5               fgsea_1.34.0               </span></span>
-<span><span class="co">##  [87] msigdbdf_24.1.0             GSEABase_1.70.0            </span></span>
-<span><span class="co">##  [89] kableExtra_1.4.0            scales_1.4.0               </span></span>
-<span><span class="co">##  [91] tidyverse_2.0.0             png_0.1-8                  </span></span>
-<span><span class="co">##  [93] SpatialExperiment_1.18.0    ggfun_0.1.8                </span></span>
-<span><span class="co">##  [95] knitr_1.50                  rstudioapi_0.17.1          </span></span>
-<span><span class="co">##  [97] tzdb_0.5.0                  reshape2_1.4.4             </span></span>
-<span><span class="co">##  [99] rjson_0.2.23                nlme_3.1-168               </span></span>
-<span><span class="co">## [101] curl_6.2.2                  cachem_1.1.0               </span></span>
-<span><span class="co">## [103] rhdf5_2.52.0                stringr_1.5.1              </span></span>
-<span><span class="co">## [105] parallel_4.5.0              vipor_0.4.7                </span></span>
-<span><span class="co">## [107] AnnotationDbi_1.70.0        desc_1.4.3                 </span></span>
-<span><span class="co">## [109] pillar_1.10.2               grid_4.5.0                 </span></span>
-<span><span class="co">## [111] vctrs_0.6.5                 ggpubr_0.6.0               </span></span>
-<span><span class="co">## [113] BiocSingular_1.24.0         car_3.1-3                  </span></span>
-<span><span class="co">## [115] dbplyr_2.5.0                beachmat_2.24.0            </span></span>
-<span><span class="co">## [117] xtable_1.8-4                beeswarm_0.4.0             </span></span>
-<span><span class="co">## [119] evaluate_1.0.3              readr_2.1.5                </span></span>
-<span><span class="co">## [121] magick_2.8.6                cli_3.6.5                  </span></span>
-<span><span class="co">## [123] locfit_1.5-9.12             compiler_4.5.0             </span></span>
-<span><span class="co">## [125] rlang_1.1.6                 crayon_1.5.3               </span></span>
-<span><span class="co">## [127] ggsignif_0.6.4.9000         labeling_0.4.3             </span></span>
-<span><span class="co">## [129] plyr_1.8.9                  forcats_1.0.0              </span></span>
-<span><span class="co">## [131] fs_1.6.6                    ggbeeswarm_0.7.2           </span></span>
-<span><span class="co">## [133] stringi_1.8.7               viridisLite_0.4.2          </span></span>
-<span><span class="co">## [135] BiocParallel_1.42.0         assertthat_0.2.1           </span></span>
-<span><span class="co">## [137] babelgene_22.9              Biostrings_2.76.0          </span></span>
-<span><span class="co">## [139] lazyeval_0.2.2              ggheatmapper_0.2.1         </span></span>
-<span><span class="co">## [141] Matrix_1.7-3                hms_1.1.3                  </span></span>
-<span><span class="co">## [143] patchwork_1.3.0             sparseMatrixStats_1.20.0   </span></span>
-<span><span class="co">## [145] bit64_4.6.0-1               Rhdf5lib_1.30.0            </span></span>
-<span><span class="co">## [147] KEGGREST_1.48.0             broom_1.0.8                </span></span>
-<span><span class="co">## [149] memoise_2.0.1               bslib_0.9.0                </span></span>
-<span><span class="co">## [151] ggtree_3.16.0               fastmatch_1.1-6            </span></span>
-<span><span class="co">## [153] bit_4.6.0                   ape_5.8-1</span></span></code></pre>
+<span><span class="co">##  [25] yulab.utils_0.2.0           rappdirs_0.3.3             </span></span>
+<span><span class="co">##  [27] GenomeInfoDbData_1.2.14     ggrepel_0.9.6              </span></span>
+<span><span class="co">##  [29] irlba_2.3.5.1               tidytree_0.4.6             </span></span>
+<span><span class="co">##  [31] GSVA_2.2.0                  MCPcounter_1.2.0           </span></span>
+<span><span class="co">##  [33] annotate_1.86.0             svglite_2.1.3              </span></span>
+<span><span class="co">##  [35] pkgdown_2.1.2               codetools_0.2-20           </span></span>
+<span><span class="co">##  [37] DelayedArray_0.34.1         xml2_1.3.8                 </span></span>
+<span><span class="co">##  [39] tidyselect_1.2.1            aplot_0.2.5                </span></span>
+<span><span class="co">##  [41] UCSC.utils_1.4.0            farver_2.1.2               </span></span>
+<span><span class="co">##  [43] ScaledMatrix_1.16.0         BiocFileCache_2.16.0       </span></span>
+<span><span class="co">##  [45] jsonlite_2.0.0              Formula_1.2-5              </span></span>
+<span><span class="co">##  [47] systemfonts_1.2.3           tools_4.5.0                </span></span>
+<span><span class="co">##  [49] progress_1.2.3              treeio_1.32.0              </span></span>
+<span><span class="co">##  [51] ragg_1.4.0                  Rcpp_1.0.14                </span></span>
+<span><span class="co">##  [53] glue_1.8.0                  gridExtra_2.3              </span></span>
+<span><span class="co">##  [55] SparseArray_1.8.0           xfun_0.52                  </span></span>
+<span><span class="co">##  [57] DESeq2_1.48.0               HDF5Array_1.36.0           </span></span>
+<span><span class="co">##  [59] withr_3.0.2                 fastmap_1.2.0              </span></span>
+<span><span class="co">##  [61] rhdf5filters_1.20.0         digest_0.6.37              </span></span>
+<span><span class="co">##  [63] rsvd_1.0.5                  timechange_0.3.0           </span></span>
+<span><span class="co">##  [65] R6_2.6.1                    gridGraphics_0.5-1         </span></span>
+<span><span class="co">##  [67] textshaping_1.0.1           RSQLite_2.3.10             </span></span>
+<span><span class="co">##  [69] h5mread_1.0.0               tidyr_1.3.1                </span></span>
+<span><span class="co">##  [71] data.table_1.17.0           prettyunits_1.2.0          </span></span>
+<span><span class="co">##  [73] httr_1.4.7                  htmlwidgets_1.6.4          </span></span>
+<span><span class="co">##  [75] S4Arrays_1.8.0              pkgconfig_2.0.3            </span></span>
+<span><span class="co">##  [77] gtable_0.3.6                progeny_1.30.0             </span></span>
+<span><span class="co">##  [79] blob_1.2.4                  SingleCellExperiment_1.30.0</span></span>
+<span><span class="co">##  [81] XVector_0.48.0              htmltools_0.5.8.1          </span></span>
+<span><span class="co">##  [83] carData_3.0-5               fgsea_1.34.0               </span></span>
+<span><span class="co">##  [85] msigdbdf_24.1.0             GSEABase_1.70.0            </span></span>
+<span><span class="co">##  [87] scales_1.4.0                tidyverse_2.0.0            </span></span>
+<span><span class="co">##  [89] png_0.1-8                   SpatialExperiment_1.18.0   </span></span>
+<span><span class="co">##  [91] ggfun_0.1.8                 knitr_1.50                 </span></span>
+<span><span class="co">##  [93] rstudioapi_0.17.1           tzdb_0.5.0                 </span></span>
+<span><span class="co">##  [95] reshape2_1.4.4              rjson_0.2.23               </span></span>
+<span><span class="co">##  [97] nlme_3.1-168                curl_6.2.2                 </span></span>
+<span><span class="co">##  [99] cachem_1.1.0                rhdf5_2.52.0               </span></span>
+<span><span class="co">## [101] stringr_1.5.1               parallel_4.5.0             </span></span>
+<span><span class="co">## [103] vipor_0.4.7                 AnnotationDbi_1.70.0       </span></span>
+<span><span class="co">## [105] desc_1.4.3                  pillar_1.10.2              </span></span>
+<span><span class="co">## [107] grid_4.5.0                  vctrs_0.6.5                </span></span>
+<span><span class="co">## [109] ggpubr_0.6.0                BiocSingular_1.24.0        </span></span>
+<span><span class="co">## [111] car_3.1-3                   dbplyr_2.5.0               </span></span>
+<span><span class="co">## [113] beachmat_2.24.0             xtable_1.8-4               </span></span>
+<span><span class="co">## [115] beeswarm_0.4.0              evaluate_1.0.3             </span></span>
+<span><span class="co">## [117] readr_2.1.5                 magick_2.8.6               </span></span>
+<span><span class="co">## [119] cli_3.6.5                   locfit_1.5-9.12            </span></span>
+<span><span class="co">## [121] compiler_4.5.0              rlang_1.1.6                </span></span>
+<span><span class="co">## [123] crayon_1.5.3                ggsignif_0.6.4.9000        </span></span>
+<span><span class="co">## [125] labeling_0.4.3              plyr_1.8.9                 </span></span>
+<span><span class="co">## [127] forcats_1.0.0               fs_1.6.6                   </span></span>
+<span><span class="co">## [129] ggbeeswarm_0.7.2            stringi_1.8.7              </span></span>
+<span><span class="co">## [131] viridisLite_0.4.2           BiocParallel_1.42.0        </span></span>
+<span><span class="co">## [133] assertthat_0.2.1            babelgene_22.9             </span></span>
+<span><span class="co">## [135] Biostrings_2.76.0           lazyeval_0.2.2             </span></span>
+<span><span class="co">## [137] ggheatmapper_0.2.1          Matrix_1.7-3               </span></span>
+<span><span class="co">## [139] hms_1.1.3                   patchwork_1.3.0            </span></span>
+<span><span class="co">## [141] sparseMatrixStats_1.20.0    bit64_4.6.0-1              </span></span>
+<span><span class="co">## [143] Rhdf5lib_1.30.0             KEGGREST_1.48.0            </span></span>
+<span><span class="co">## [145] broom_1.0.8                 memoise_2.0.1              </span></span>
+<span><span class="co">## [147] bslib_0.9.0                 ggtree_3.16.0              </span></span>
+<span><span class="co">## [149] fastmatch_1.1-6             bit_4.6.0                  </span></span>
+<span><span class="co">## [151] ape_5.8-1</span></span></code></pre>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
