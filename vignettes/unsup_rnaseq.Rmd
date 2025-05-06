@@ -226,7 +226,7 @@ hm <- plot_exp_heatmap(exp_data,  genes = hvg,
                  annotations = c(plot_annotations, "exp_cluster"),
                  show_rownames = FALSE,
                  hm_color_limits = c(-2,2),
-                 fname = "results/clustering/heatmap_2000hvg_exp_cluster.pdf")
+                 fname = "results/unsup/clustering/heatmap_2000hvg_exp_cluster.pdf")
 hm
 ```
 
@@ -251,8 +251,8 @@ tmp[["progeny_scores"]] <- progeny_scores
 S4Vectors::metadata(exp_data) <- tmp  
 
 plot_progeny_heatmap(exp_data, annotations = plot_annotations,
-                     fname = "results/pathways/hm_progeny_scores.pdf")
-write.csv(progeny_scores, file = "results/pathways/progeny_scores.csv")
+                     fname = "results/unsup/pathways/hm_progeny_scores.pdf")
+write.csv(progeny_scores, file = "results/unsup/pathways/progeny_scores.csv")
 ```
 
 ### Pathways
@@ -293,9 +293,9 @@ collections <- pathway_collections |>
 plot_pathway_heatmap(exp_data, annotations = plot_annotations,
                     fwidth = 9,
                     fname = stringr::str_glue(
-                      "results/pathways/hm_paths_{collections}_top20.pdf")
+                      "results/unsup/pathways/hm_paths_{collections}_top20.pdf")
                     )
-write.csv(pathways, file = stringr::str_glue("results/pathways/paths_{collections}.csv"))
+write.csv(pathways, file = stringr::str_glue("results/unsup/pathways/paths_{collections}.csv"))
 ```
 
 
@@ -310,8 +310,8 @@ mcp_scores <- mcp_counter(exp_data, species = species)
 S4Vectors::metadata(exp_data)[["microenv_scores"]] <- mcp_scores
 
 plot_microenv_heatmap(exp_data, annotations = c("dex", "exp_cluster"),
-                      fname = "results/tme/heatSmap_mcpcounter.pdf")
-write.csv(mcp_scores, file = "results/tme/scores_mcpcounter.csv")
+                      fname = "results/unsup/tme/heatSmap_mcpcounter.pdf")
+write.csv(mcp_scores, file = "results/unsup/tme/scores_mcpcounter.csv")
 ```
 
 
@@ -336,7 +336,7 @@ hms <- lapply(1:length(heatmap_genes), function(i) {
   name <- ifelse(is.null(names(heatmap_genes)), i, names(heatmap_genes)[i])
   plot_exp_heatmap(exp_data, genes = genes, 
                    annotations = plot_annotations,
-                   fname = stringr::str_glue("results/targeted/hm_genes_{i}.pdf"))
+                   fname = stringr::str_glue("results/unsup/targeted/hm_genes_{i}.pdf"))
 })
 patchwork::wrap_plots(hms, ncol = 2, guides = "collect")
 ```
@@ -354,7 +354,7 @@ valid_pathways <- intersect(heatmap_pathways, rownames(pathway_scores))
 plot_pathway_heatmap(exp_data, 
                      annotations = plot_annotations, 
                      pathways = valid_pathways,
-                     fname = stringr::str_glue("results/targeted/hm_pathways_selected.pdf"))
+                     fname = stringr::str_glue("results/unsup/targeted/hm_pathways_selected.pdf"))
 ```
 
 ### Boxplots
@@ -376,7 +376,7 @@ boxplots <- lapply(genes, function(gene) {
                    annotation = annotation, 
                    color_var = annotation, 
                    pt_size = 2,
-                   fname = stringr::str_glue("results/targeted/boxplots/box_{gene}_{annotation}.pdf"))
+                   fname = stringr::str_glue("results/unsup/targeted/boxplots/box_{gene}_{annotation}.pdf"))
   })
 }) |> purrr::flatten()
 ```
@@ -405,7 +405,7 @@ boxplots <- lapply(paths, function(path) {
                    annotation = annotation, 
                    color_var = annotation, 
                    pt_size = 2,
-                   fname = stringr::str_glue("results/targeted/boxplots/box_{path}_{annotation}.pdf"))
+                   fname = stringr::str_glue("results/unsup/targeted/boxplots/box_{path}_{annotation}.pdf"))
   })
 }) |> purrr::flatten()
 ```
@@ -440,7 +440,7 @@ cor_plts <- lapply(gene_pairs, function(gene_pair) {
                    gene2 = gene_pair[2], 
                    color_var = annot,
                    fname = stringr::str_glue(
-                     "results/targeted/correlations/cor_{gene_pair[1]}_{gene_pair[2]}_color={annot}.pdf"))
+                     "results/unsup/targeted/correlations/cor_{gene_pair[1]}_{gene_pair[2]}_color={annot}.pdf"))
   })
 }) |> purrr::flatten()
 ```
@@ -471,7 +471,7 @@ cor_plts <- lapply(path_pairs, function(path_pair) {
                    pathway2 = path_pair[2],## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was 
                    color_var = annot,
                    fname = stringr::str_glue(
-                     "results/targeted/correlations/cor_{path_pair[1]}_{path_pair[2]}_color={annot}.pdf"))
+                     "results/unsup/targeted/correlations/cor_{path_pair[1]}_{path_pair[2]}_color={annot}.pdf"))
   })
 }) |> purrr::flatten()
 ```
@@ -507,7 +507,7 @@ The final step saves the processed dataset and results. This ensures all outputs
 
 ```{r}
 #| message: false
-saveRDS(exp_data, file = stringr::str_glue("results/data_SummarizedExp_{lubridate::today()}.RDS"))
+saveRDS(exp_data, file = stringr::str_glue("results/unsup/data_SummarizedExp_{lubridate::today()}.RDS"))
 ```
 
 ## Report parameters

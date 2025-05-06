@@ -32,9 +32,9 @@ If you find the definition of the variables heavy in your code, you can create a
 #| message: false
 
 annotation <- "dex"
-diffexpMethod <- "deseq2" # Either limma or deseq2
+diffexpMethod <- "limma" # Either limma or deseq2
 species <- "human"
-pathwayMethod <- "fgsea"  # We can run ORA or fgsea, we should change it at this step 
+pathwayMethod <- "ora"  # We can run ORA or fgsea, we should change it at this step 
 
 collections <- c("CGP", "CP", "CP:KEGG_LEGACY", "CP:BIOCARTA")
 
@@ -158,6 +158,11 @@ plot_pca(exp_data, color = annotation)
 ## Diffexp
 ```{r}
 #| message: false
+library(edgeR)
+colData(exp_data)$dex <- factor(colData(exp_data)$dex)
+colData(exp_data)$dex <- factor(colData(exp_data)$dex, levels = c("untrt", "trt"))
+
+
 diffexp <- diffExpAnalysis(countData = assays(exp_data)$counts,
                                           sampleInfo = colData(exp_data),
                                           method = diffexpMethod, cutoff = 10,
@@ -186,12 +191,14 @@ top_de_genes <- rownames(diffexp_filtered)[1:30]
 generate heatmap
 ```{r}
 #| message: false
+dir.create(file.path("results", "sup", "clustering", pathwayMethod), recursive = TRUE, showWarnings = FALSE)
+fname <- sprintf("results/sup/clustering/%s/heatmap_2000hvg_exp_cluster.pdf", diffexpMethod)
 hm <- plot_exp_heatmap(exp_data,  genes = top_de_genes, 
                  annotations = annotation,
                  show_rownames = TRUE,
                  hm_color_limits = c(-2,2),
                  show_dend_row = FALSE,
-                 fname = "results/clustering/heatmap_2000hvg_exp_cluster.pdf")
+                 fname = fname)
 hm
 
 ```
@@ -199,7 +206,7 @@ hm
 ##Volcano plot
 ```{r}
 #| message: false
-volcano_plot <- plot_exp_volcano(diffexp)
+volcano_plot <- plot_exp_volcano(diffexp, 20)
 volcano_plot
 ```
 
@@ -248,14 +255,14 @@ hms <- lapply(1:length(heatmap_genes), function(i) {
                    show_rownames = ifelse(length(genes) <= 100, TRUE, FALSE),
                    hm_color_limits = c(-2,2),
                    show_dend_row = FALSE,
-                   fname = stringr::str_glue("results/targeted/hm_genes_{i}.pdf"))
+                   fname = stringr::str_glue("results/sup/targeted/{pathwayMethod}/hm_genes_{i}.pdf"))
 })
 patchwork::wrap_plots(hms, ncol = 2, guides = "collect")
 ```
 
 ```{r} 
 #| message: false
-dir.create("results/targeted/boxplots", recursive = TRUE, showWarnings = FALSE)
+dir.create(file.path("results", "sup", "targeted", pathwayMethod, "boxplots"), recursive = TRUE, showWarnings = FALSE)
 pathway_scores <- score_pathways(exp_data, pathways, verbose = FALSE)
 S4Vectors::metadata(exp_data)[["pathway_scores"]] <- pathway_scores
 
@@ -266,7 +273,7 @@ boxplots <- lapply(heatmap_pathways, function(path) {
                    annotation = annotation, 
                    color_var = annotation, 
                    pt_size = 2,
-                   fname = stringr::str_glue("results/targeted/boxplots/box_{path}_{annotation}.pdf"))
+                   fname = stringr::str_glue("results/sup/targeted/{pathwayMethod}/boxplots/box_{path}_{annotation}.pdf"))
   })
 }) |> purrr::flatten()
 

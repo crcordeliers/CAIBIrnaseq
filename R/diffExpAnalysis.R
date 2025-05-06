@@ -24,7 +24,7 @@ diffExpAnalysis <- function(countData, sampleInfo, method = "DESeq2", cutoff = 1
     # Create DESeqDataSet object
     dds <- DESeq2::DESeqDataSetFromMatrix(countData = countData,
                                           colData = sampleInfo,
-                                  design = as.formula(paste('~',annotation)))
+                                          design = as.formula(paste('~', annotation)))
 
     keep <- rowSums(BiocGenerics::counts(dds)) >= cutoff
     dds <- dds[keep,]
@@ -37,28 +37,30 @@ diffExpAnalysis <- function(countData, sampleInfo, method = "DESeq2", cutoff = 1
     res_shrink <- DESeq2::lfcShrink(dds, coef = tail(DESeq2::resultsNames(dds), 1))
 
     return(as.data.frame(res_shrink))
-
   }
+
   # Limma-Voom Method
   else if (tolower(method) == "limma") {
     # Create DGEList object for Limma
-    dge <- DGEList(counts = countData)
-    dge <- calcNormFactors(dge)
-    drop <- which(apply(cpm(dge), 1, max) < cutoff)
+    dge <- edgeR::DGEList(counts = countData)
+    dge <- edgeR::calcNormFactors(dge)
+    drop <- which(apply(edgeR::cpm(dge), 1, max) < cutoff)
     dge <- dge[-drop,]
 
-    v <- voom(dge, design = model.matrix(~ condition, data = sampleInfo), plot = TRUE)
+    # Build design matrix using the specified annotation variable
+    design <- model.matrix(as.formula(paste("~", annotation)), data = sampleInfo)
 
-    fit <- lmFit(v, model.matrix(~ condition, data = sampleInfo))
+    v <- limma::voom(dge, design = design, plot = TRUE)
+    fit <- limma::lmFit(v, design)
+    fit <- limma::eBayes(fit)
 
-    fit <- eBayes(fit)
-
-    top_table <- topTable(fit, coef = 2, number = Inf, sort.by = "P")
+    top_table <- limma::topTable(fit, coef = 2, number = Inf, sort.by = "P")
 
     return(top_table)
-
   }
+
   else {
     stop("Invalid method. Choose either 'DESeq2' or 'Limma'.")
   }
 }
+
