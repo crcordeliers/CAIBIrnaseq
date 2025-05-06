@@ -309,11 +309,19 @@ This step calculates immune and stromal cell type abundances using MCPcounter or
 mcp_scores <- mcp_counter(exp_data, species = species)
 S4Vectors::metadata(exp_data)[["microenv_scores"]] <- mcp_scores
 
-plot_microenv_heatmap(exp_data, annotations = c("dex", "exp_cluster"),
+plot_microenv_heatsmap(exp_data, annotations = c("dex", "exp_cluster"),
                       fname = "results/unsup/tme/heatSmap_mcpcounter.pdf")
 write.csv(mcp_scores, file = "results/unsup/tme/scores_mcpcounter.csv")
 ```
+By default, the rows are order by scores. But, the `plot_microenv_heatsmap` function has the `ellipsis argument`. That means that this function can have a wide range of inputs. 
+So, it is possible to plot the rows in a different order than the default one :
 
+```{r}
+plot_microenv_heatmap(exp_data,
+                      annotations = c("dex", "exp_cluster"),
+                      fname = "results/unsup/tme/heatmap_sorted_bydex.pdf",
+                      cluster_rows = FALSE)
+```
 
 ## Targeted plots
 
