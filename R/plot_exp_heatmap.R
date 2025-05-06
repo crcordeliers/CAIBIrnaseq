@@ -31,9 +31,7 @@ plot_exp_heatmap <- function(expData,
                              fwidth = 7,
                              fheight = 5,
                              ...) {
-  ## --------------------------- ##
-  ## Verifications / Validation  ##
-  ## --------------------------- ##
+
   if (!inherits(expData, "SummarizedExperiment")) {
     stop("expData must be a SummarizedExperiment object.")
   }
@@ -67,10 +65,6 @@ plot_exp_heatmap <- function(expData,
       stop(paste0("Some annotations not found in expData: ", paste(missing_annots, collapse = ", ")))
     }
   }
-
-  ## --------------------------- ##
-  ##         Main Function        ##
-  ## --------------------------- ##
 
   # Prepare the heatmap data (gene expression values)
   hm_data <- prep_exp_hm(expData, genes, assay, gene_name)

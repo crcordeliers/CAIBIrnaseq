@@ -98,6 +98,10 @@ library(CAIBIrnaseq)
 This section loads the RNA-seq dataset for analysis. It ensures the correct input file is used, as specified in the parameters.
 rebase_gexp
 
+Ensure your dataset is in a `Summarized Experiment` object, because all the used functions below works with SummarizedExperiment input.
+
+If you want to know more about this type of object, please click here: [Bioconductor](https://bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html)
+
 ```{r load_data}
 #| message: false
 data(airway, package="airway")
@@ -174,8 +178,10 @@ annotations <- setdiff(plot_annotations, c("exp_cluster", "path_cluster"))
 plot_pca(exp_data, color = plot_annotations)
 ```
 
-If you want to add a circular/oval shape to circle the different genotypes of samples, use the `fviz_pca_ind` function from the `factoextra` package.
+If you want something more visual, you can add a circular/oval shape to circle the different genotypes of samples, use the `fviz_pca_ind` function from the `factoextra` package.
 With this dataset, it is not relevant but it can be with your persona dataset.
+Here, it highlights the fact that the 2 groups are not crossing each other. The `trt` group has more PC1, whereas the `untrt` group has less.
+We could conclude that PC1 is more represented in the treated samples.
 
 ```{r}
 library(factoextra)
@@ -231,6 +237,8 @@ Pathway analysis enables us to understand the functional implications of gene ex
 ### PROGENy
 
 PROGENy is a collection of only 14 core pathway responsive genes from large signaling perturbation experiments. For more information see the [original paper](https://www.nature.com/articles/s41467-017-02391-6).
+
+The returned plot will give us information about the pathways that are activated for each sample. There is especially one pathway that is highly activated : `EGFR` , in the sample `SRR1039517`
 
 ```{r}
 #| message: false
