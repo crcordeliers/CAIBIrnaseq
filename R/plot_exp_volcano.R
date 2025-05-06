@@ -6,6 +6,7 @@
 #' @param diffexp A data frame containing differential expression results. Must include:
 #'   - `log2FoldChange`: The log2 fold change values for each gene.
 #'   - `padj`: The adjusted p-value for each gene.
+#' @param nb The number of genes that have an annotation
 #'
 #' @return A `ggplot` object representing the volcano plot.
 #'
@@ -15,7 +16,7 @@
 #' @importFrom forcats fct_rev
 #' @export
 #'
-plot_exp_volcano <- function(diffexp, title = "Volcano Plot of Differential Expression") {
+plot_exp_volcano <- function(diffexp, nb = 10, title = "Volcano Plot of Differential Expression") {
   # Vérification des colonnes requises
   required_cols <- c("log2FoldChange", "padj")
   if (!all(required_cols %in% colnames(diffexp))) {
@@ -34,11 +35,11 @@ plot_exp_volcano <- function(diffexp, title = "Volcano Plot of Differential Expr
     TRUE ~ "Not Significant"
   )
 
-  # Sélection des top 10 gènes
+  # Sélection des top nb gènes
   top_genes <- diffexp |>
     dplyr::filter(Significance != "Not Significant") |>
     dplyr::arrange(padj) |>
-    dplyr::slice_head(n = 10)
+    dplyr::slice_head(n = nb)
 
   # Ajouter une colonne pour les labels
   diffexp$label <- ifelse(diffexp$gene %in% top_genes$gene, diffexp$gene, NA)

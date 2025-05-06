@@ -49,7 +49,7 @@ metadata_clusters <- list(
 
 
 # Pathway collections 
-pathway_collections <- c("CP:REACTOME", "H")  # You can add as many pathways as you want it will only create more plots
+pathway_collections <- c("CP:REACTOME")  # You can add as many pathways as you want it will only create more plots
 
 # Interesting genes
 heatmap_genes <- list(
@@ -201,6 +201,7 @@ fviz_pca_ind(pca_res,
 
 ## Unsupervised clustering
 
+
 Here, we group samples based on expression patterns without prior knowledge using hierarchical clustering on either a selected gene list from the parameters or, by default, the 2000 most highly expressed genes.
 
 This can be useful for discovering sample subgroups or new biological insights.
@@ -297,6 +298,7 @@ plot_pathway_heatmap(exp_data, annotations = plot_annotations,
 write.csv(pathways, file = stringr::str_glue("results/pathways/paths_{collections}.csv"))
 ```
 
+
 ## Microenvironment scores
 
 This step calculates immune and stromal cell type abundances using MCPcounter or mMCPcounter. It helps to infer the composition of the tumor microenvironment or similar contexts.
@@ -311,6 +313,7 @@ plot_microenv_heatmap(exp_data, annotations = c("dex", "exp_cluster"),
                       fname = "results/tme/heatSmap_mcpcounter.pdf")
 write.csv(mcp_scores, file = "results/tme/scores_mcpcounter.csv")
 ```
+
 
 ## Targeted plots
 

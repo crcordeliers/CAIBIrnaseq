@@ -4,12 +4,18 @@
 \alias{plot_exp_volcano}
 \title{Plot Volcano Plot of Differential Expression Results}
 \usage{
-plot_exp_volcano(diffexp, title = "Volcano Plot of Differential Expression")
+plot_exp_volcano(
+  diffexp,
+  nb = 10,
+  title = "Volcano Plot of Differential Expression"
+)
 }
 \arguments{
 \item{diffexp}{A data frame containing differential expression results. Must include:
 - `log2FoldChange`: The log2 fold change values for each gene.
 - `padj`: The adjusted p-value for each gene.}
+
+\item{nb}{The number of genes that have an annotation}
 }
 \value{
 A `ggplot` object representing the volcano plot.
