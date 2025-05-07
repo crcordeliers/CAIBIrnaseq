@@ -242,18 +242,23 @@ PROGENy is a collection of only 14 core pathway responsive genes from large sign
 The returned plot will give us information about the pathways that are activated for each sample. There is especially one pathway that is highly activated : `EGFR` , in the sample `SRR1039517`
 
 ```{r}
+progeny_scores <- score_progeny(exp_data, species = "Homo sapiens")
+
+
+```
+
+```{r}
 #| message: false
 #| label: progenyprovided
 progeny_scores <- score_progeny(exp_data, species = "Homo sapiens")
 
-tmp <- S4Vectors::metadata(exp_data)         
-tmp[["progeny_scores"]] <- progeny_scores  
-S4Vectors::metadata(exp_data) <- tmp  
+metadata(exp_data)[["progeny_scores"]] <- progeny_scores   
 
 plot_progeny_heatmap(exp_data, annotations = plot_annotations,
                      fname = "results/unsup/pathways/hm_progeny_scores.pdf")
 write.csv(progeny_scores, file = "results/unsup/pathways/progeny_scores.csv")
 ```
+
 
 ### Pathways
 
@@ -284,7 +289,7 @@ msigdbr::msigdbr_collections() |>
 pathways <- get_annotation_collection(pathway_collections, 
                                       species = species)
 pathway_scores <- score_pathways(exp_data, pathways, verbose = FALSE)
-S4Vectors::metadata(exp_data)[["pathway_scores"]] <- pathway_scores
+metadata(exp_data)[["pathway_scores"]] <- pathway_scores
 
 collections <- pathway_collections |> 
   paste(collapse = "_") |>
