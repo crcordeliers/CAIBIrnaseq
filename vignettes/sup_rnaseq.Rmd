@@ -8,6 +8,7 @@ format:
     embed-resources: true
 editor: source
 ---
+<img src="../man/figures/CAIBI.png" align="right" alt="" width="120" />
 
 For the 2 examples, we are using an open dataset which is given by the `airway` package. 
 It provides a gene expression dataset derived from **human bronchial epithelial cells**, treated or not with **dexamethasone** (a corticosteroid).
@@ -172,19 +173,20 @@ diffexp <- diffExpAnalysis(countData = assays(exp_data)$counts,
 Diffexp Filtering
 ```{r}
 #| message: false
-if(tolower(diffexpMethod) == "limma"){
+if(tolower(diffexpMethod) == "limma") {
   diffexp <- diffexp |>
-    rename(
+    dplyr::rename(
       log2FoldChange = logFC,
       pvalue = P.Value,
       padj = adj.P.Val
     )
 }
+
 diffexp_filtered <- diffexp |>
     dplyr::filter(padj <= 0.05) |>
     dplyr::arrange(padj)
 
-# Select top 50 differentially expressed genes
+# Sélectionner les 30 gènes les plus différentiellement exprimés
 top_de_genes <- rownames(diffexp_filtered)[1:30]
 ```
 

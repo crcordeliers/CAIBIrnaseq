@@ -33,6 +33,8 @@ navbar:
           href: articles/unsup_rnaseq.html
         - text: "Supervised analysis"
           href: articles/sup_rnaseq.html
+        - text: "Comparing datasets"
+          href: articles/venn.html
     search:
       search: []
     github: ~
@@ -82,6 +84,7 @@ articles:
     contents:
       - unsup_rnaseq
       - sup_rnaseq
+      - venn
 reference:
   - title: "Preprocessing"
     contents:
@@ -112,6 +115,7 @@ reference:
       - plot_exp_heatmap
       - plot_exp_scatter
       - plot_qc_filters
+      - plot_venn
 
   - title: "Pathway Analysis"
     contents:

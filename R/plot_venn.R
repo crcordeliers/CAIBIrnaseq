@@ -40,8 +40,12 @@ plot_venn <- function(v1, v2, universe_size = NULL,
     subtitle <- paste0("Fisher test p-value = ", signif(pval, 3))
   }
 
+  caption <- paste0("Proportion of DE significant ", v1_name, " genes : ", v1_only/universe_size,
+                    "\nProportion of DE significant ", v1v2_name, " genes : ", v1v2/universe_size,
+                    "\nProportion of DE significant ", v2_name, " genes : ", v2_only/universe_size)
+
   plt <- invisible(plot(eulerr::euler(info4euler), fills = fills, quantities = quantities, ...))
   plt <- ggplotify::as.ggplot(plt)
-  plt + ggplot2::labs(title = title, subtitle = subtitle)
+  plt + ggplot2::labs(title = title, subtitle = subtitle, caption = caption)
 }
 

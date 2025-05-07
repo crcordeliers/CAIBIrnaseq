@@ -1,0 +1,198 @@
+---
+title: "Comparing two datasets with Venn Diagram"
+author: "Cordeliers Artificial Intelligence and Bioinformatics"
+date: "`r Sys.Date()`"
+format: 
+  html:
+    toc: true
+    embed-resources: true
+editor: source
+---
+<img src="../man/figures/CAIBI.png" align="right" alt="" width="120" />
+
+
+```{r}
+annotation_air <- "dex"
+annotation_mac <- "condition_name"
+
+diffexpMethod <- "limma"
+```
+
+
+```{r}
+#| message: false
+library(airway)
+library(SummarizedExperiment)
+library(macrophage)
+library(biomaRt)
+library(CAIBIrnaseq)
+```
+
+```{r load_data}
+#| message: false
+#Loading the 2 datasets
+data(airway, package="airway"); 
+airway <- airway
+
+data("gse")
+macrophage <- gse; rm(gse)
+macrophage <- macrophage[,macrophage$condition %in% c("naive", "IFNg")]
+```
+
+
+```{r}
+#| message: false
+rowData(airway)$gene_length_kb <-(rowData(airway)$gene_seq_end - rowData(airway)$gene_seq_start) / 1000
+
+# Initialiser biomaRt pour Ensembl humain
+mart_air <- useMart("ensembl", dataset = "hsapiens_gene_ensembl")
+
+# Obtenir les descriptions basées sur les gene_id
+gene_ids_air <- rowData(airway)$gene_id
+
+annot_air <- getBM(attributes = c("ensembl_gene_id", "description"),
+               filters = "ensembl_gene_id",
+               values = gene_ids_air,
+               mart = mart_air)
+
+# Faire correspondre les descriptions aux lignes de rowData
+matched_air <- match(rowData(airway)$gene_id, annot_air$ensembl_gene_id)
+rowData(airway)$gene_description <- annot_air$description[matched_air]
+
+```
+
+```{r}
+#| message: false
+# 1. Calculer la longueur des gènes
+rowData(macrophage)$gene_length_kb <- width(rowRanges(macrophage)) / 1000
+rownames(macrophage) <- sub("\\..*$", "", rowData(macrophage)$gene_id)
+rowData(macrophage)$gene_id <- sub("\\..*$", "", rowData(macrophage)$gene_id)
+
+rowData(macrophage)$gene_name <- rowData(macrophage)$SYMBOL
+
+macrophage <- macrophage[!is.na(rowData(macrophage)$SYMBOL), ]
+
+mart_mac <- useMart("ensembl", dataset = "hsapiens_gene_ensembl")
+
+annot_mac <- getBM(
+  attributes = c("ensembl_gene_id", "gene_biotype", "description"),
+  filters = "ensembl_gene_id",
+  values = unique(rowData(macrophage)$gene_id),
+  mart = mart_mac
+)
+# Correspondance entre gene_id et annot_mac
+match_mac <- match(rowData(macrophage)$gene_id, annot_mac$ensembl_gene_id)
+
+# Ajouter les colonnes dans rowData
+rowData(macrophage)$gene_biotype <- annot_mac$gene_biotype[match_mac]
+rowData(macrophage)$gene_description <- annot_mac$description[match_mac]
+
+colnames(rowData(macrophage))
+
+```
+
+```{r}
+#| message: false
+airway <- rebase_gexp(airway, annotation = "gene_name")
+```
+
+
+```{r}
+#| message: false
+macrophage <- rebase_gexp(macrophage, annotation = "SYMBOL")
+```
+
+```{r}
+#| message: false
+airway <- filter_gexp(airway,
+                        min_nsamp = 1, 
+                        min_counts = 1)
+```
+
+```{r}
+#| message: false
+macrophage <- filter_gexp(macrophage,
+                        min_nsamp = 1, 
+                        min_counts = 1)
+```
+
+
+```{r}
+colData(airway)$sample_id <- colnames(airway)
+plot_qc_filters(airway)
+
+colData(macrophage)$sample_id <- colnames(macrophage)
+plot_qc_filters(macrophage)
+```
+
+```{r}
+#| message: false
+airway <- normalize_gexp(airway)
+assay(macrophage) <- round(assay(macrophage))
+macrophage <- normalize_gexp(macrophage)
+```
+
+```{r}
+#|message: false
+metadata(airway)[["pca_res"]] <- pca_gexp(airway)
+annotations <- setdiff(annotation_air, c("exp_cluster", "path_cluster"))
+plot_pca(airway, color = annotation_air)
+
+metadata(macrophage)[["pca_res"]] <- pca_gexp(macrophage)
+annotations <- setdiff(annotation_mac, c("exp_cluster", "path_cluster"))
+plot_pca(macrophage, color = annotation_mac)
+```
+
+```{r}
+#| message: false
+library(edgeR)
+colData(airway)$dex <- factor(colData(airway)$dex)
+colData(airway)$dex <- factor(colData(airway)$dex, levels = c("untrt", "trt"))
+
+
+diffexp_air <- diffExpAnalysis(countData = assays(airway)$counts,
+                                          sampleInfo = colData(airway),
+                                          method = diffexpMethod, cutoff = 10,
+                                          annotation = annotation_air)
+
+colData(macrophage)$condition_name <- factor(colData(macrophage)$condition_name)
+colData(macrophage)$condition_name <- factor(colData(macrophage)$condition_name, levels = c("IFNg", "naive"))
+
+
+diffexp_mac <- diffExpAnalysis(countData = assays(macrophage)$counts,
+                                          sampleInfo = colData(macrophage),
+                                          method = diffexpMethod, cutoff = 10,
+                                          annotation = annotation_mac)
+```
+```{r}
+#|message: false
+if(tolower(diffexpMethod) == "limma"){
+  diffexp_air <- diffexp_air |>
+    rename(
+      log2FoldChange = logFC,
+      pvalue = P.Value,
+      padj = adj.P.Val
+    )
+}
+
+if(tolower(diffexpMethod) == "limma"){
+  diffexp_mac <- diffexp_mac |>
+    rename(
+      log2FoldChange = logFC,
+      pvalue = P.Value,
+      padj = adj.P.Val
+    )
+}
+
+# Exemple : extraction des gènes DE significatifs
+degs_air <- rownames(diffexp_air[diffexp_air$padj < 0.05, ])
+degs_mac <- rownames(diffexp_mac[diffexp_mac$padj < 0.05, ])
+universe_size <- length(union(degs_air, degs_mac))
+
+# Diagramme de Venn
+plot_venn(degs_air, degs_mac, universe_size,
+          v1_name = "Airway", v2_name = "Macrophage",
+          fills = c("lightgreen", "skyblue"),
+          title = "DEGs communs et spécifiques")
+```
+

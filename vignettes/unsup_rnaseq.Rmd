@@ -7,6 +7,8 @@ format:
     embed-resources: true
 editor: source
 ---
+<img src="../man/figures/CAIBI.png" align="right" alt="" width="120" />
+
 
 For the 2 examples, we are using an open dataset which is given by the `airway` package. 
 It provides a gene expression dataset derived from **human bronchial epithelial cells**, treated or not with **dexamethasone** (a corticosteroid).
@@ -314,7 +316,7 @@ This step calculates immune and stromal cell type abundances using MCPcounter or
 mcp_scores <- mcp_counter(exp_data, species = species)
 S4Vectors::metadata(exp_data)[["microenv_scores"]] <- mcp_scores
 
-plot_microenv_heatsmap(exp_data, annotations = c("dex", "exp_cluster"),
+plot_microenv_heatmap(exp_data, annotations = c("dex", "exp_cluster"),
                       fname = "results/unsup/tme/heatSmap_mcpcounter.pdf")
 write.csv(mcp_scores, file = "results/unsup/tme/scores_mcpcounter.csv")
 ```
