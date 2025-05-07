@@ -59,7 +59,7 @@ Remotes:
     github::csgroen/ggheatmapper,
     github::ebecht/MCPcounter/Source,
     bioc::3.21/SummarizedExperiment,
-    bioc::eulerr3.21/GSVA,
+    bioc::3.21/GSVA,
     bioc::3.21/DESeq2,
     bioc::3.21/progeny,
     bioc::3.21/ggtree,
