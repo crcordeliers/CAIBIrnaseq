@@ -10,6 +10,14 @@ editor: source
 ---
 <img src="../man/figures/CAIBI.png" align="right" alt="" width="120" />
 
+Here is an example of an application for the function `plot_venn`. For this script, we used 2 different public datasets `airway` and `macrophage`. 
+
+The `airway` dataset provides a gene expression dataset derived from **human bronchial epithelial cells**, treated or not with **dexamethasone** (a corticosteroid).  
+
+The `macrophage` dataset provides bulk RNA-seq count data from **human monocyte-derived macrophages**. These cells were either left untreated or stimulated with interferon-gamma (IFN-γ).   
+An experimental condition was applied to each of these cells, left **unstimulated**, stimulated with **IFN-gamma**, infected with **SL1344**, or pre-treated with **IFN-g** and then infected with **SL1344**. For this comparison, we will focus on the samples of the 2 first conditions (IFN-g, naive).  
+
+To compare the datasets, we will do the pre-processing part of the sup and unsup analysis, until the diffexp.  
 
 ```{r}
 annotation_air <- "dex"
@@ -18,6 +26,7 @@ annotation_mac <- "condition_name"
 diffexpMethod <- "limma"
 ```
 
+## Import libraries
 
 ```{r}
 #| message: false
@@ -28,6 +37,8 @@ library(biomaRt)
 library(CAIBIrnaseq)
 ```
 
+## Load datasets
+
 ```{r load_data}
 #| message: false
 #Loading the 2 datasets
@@ -36,18 +47,27 @@ airway <- airway
 
 data("gse")
 macrophage <- gse; rm(gse)
-macrophage <- macrophage[,macrophage$condition %in% c("naive", "IFNg")]
+macrophage <- macrophage[,macrophage$condition %in% c("naive", "IFNg")] # focus on these 2 conditions
 ```
 
+Even if the datasets are globally build the same way,  the names of the variables are not exactly the same, so if we want to keep the same code, we need to redefine a bit the variables. 
+
+If you want to know what are the used variables in this part, run this command line : `colnames(SummarizedExperiment::rowData(exp_data))`
+You should have these variables (with these exact same names):   
+  - **gene_name** : The commonly used symbol or name for the gene (e.g., A1BG).    
+  - **gene_id** : A unique and stable identifier for the gene, often from databases like Ensembl (e.g., ENSG00000141510).  
+  - **gene_length_kb** :  The length of the gene measured in kilobases   
+  - **gene_description** : A brief textual summary of the gene’s function or characteristics, often pulled from annotation databases.  
+  - **gene_biotype** : A classification of the gene based on its biological function or transcript type, such as protein_coding, lncRNA, or pseudogene.  
+
+If not, you should look at how your dataset is defined. You might need to run some command line as the following ones:   
 
 ```{r}
 #| message: false
 rowData(airway)$gene_length_kb <-(rowData(airway)$gene_seq_end - rowData(airway)$gene_seq_start) / 1000
 
-# Initialiser biomaRt pour Ensembl humain
 mart_air <- useMart("ensembl", dataset = "hsapiens_gene_ensembl")
 
-# Obtenir les descriptions basées sur les gene_id
 gene_ids_air <- rowData(airway)$gene_id
 
 annot_air <- getBM(attributes = c("ensembl_gene_id", "description"),
@@ -55,7 +75,6 @@ annot_air <- getBM(attributes = c("ensembl_gene_id", "description"),
                values = gene_ids_air,
                mart = mart_air)
 
-# Faire correspondre les descriptions aux lignes de rowData
 matched_air <- match(rowData(airway)$gene_id, annot_air$ensembl_gene_id)
 rowData(airway)$gene_description <- annot_air$description[matched_air]
 
@@ -63,7 +82,6 @@ rowData(airway)$gene_description <- annot_air$description[matched_air]
 
 ```{r}
 #| message: false
-# 1. Calculer la longueur des gènes
 rowData(macrophage)$gene_length_kb <- width(rowRanges(macrophage)) / 1000
 rownames(macrophage) <- sub("\\..*$", "", rowData(macrophage)$gene_id)
 rowData(macrophage)$gene_id <- sub("\\..*$", "", rowData(macrophage)$gene_id)
@@ -87,20 +105,25 @@ match_mac <- match(rowData(macrophage)$gene_id, annot_mac$ensembl_gene_id)
 rowData(macrophage)$gene_biotype <- annot_mac$gene_biotype[match_mac]
 rowData(macrophage)$gene_description <- annot_mac$description[match_mac]
 
-colnames(rowData(macrophage))
-
 ```
+
+## Pre-processing
+
+Most datasets use ensembl gene ID by default after alignment, so this step rebases the expression data to gene names. This ensures consistency in naming for downstream analyses.
 
 ```{r}
 #| message: false
 airway <- rebase_gexp(airway, annotation = "gene_name")
 ```
 
-
 ```{r}
 #| message: false
-macrophage <- rebase_gexp(macrophage, annotation = "SYMBOL")
+macrophage <- rebase_gexp(macrophage, annotation = "SYMBOL") # or gene_name if you renamed the variable 
 ```
+
+## Filter
+
+Here, we filter out genes expressed in too few samples or with very low counts. This removes noise from the data and focuses on meaningful gene expressions.
 
 ```{r}
 #| message: false
@@ -116,6 +139,9 @@ macrophage <- filter_gexp(macrophage,
                         min_counts = 1)
 ```
 
+### Quality Control
+
+Visualization of the filtering process to ensure the criteria applied align with the dataset’s characteristics:
 
 ```{r}
 colData(airway)$sample_id <- colnames(airway)
@@ -125,12 +151,20 @@ colData(macrophage)$sample_id <- colnames(macrophage)
 plot_qc_filters(macrophage)
 ```
 
+## Normalize
+
+Here, we apply a normalization to the expression data, making samples comparable by reducing variability due to technical differences. For datasets with few samples, `rlog` is the preferred normalization and when more samples are present, `vst` is applied.
+
 ```{r}
 #| message: false
 airway <- normalize_gexp(airway)
 assay(macrophage) <- round(assay(macrophage))
 macrophage <- normalize_gexp(macrophage)
 ```
+
+## PCA
+
+Principal component analysis (PCA) identifies the major patterns in the dataset. These patterns help explore similarities or differences among samples based on gene expression.
 
 ```{r}
 #|message: false
@@ -142,6 +176,8 @@ metadata(macrophage)[["pca_res"]] <- pca_gexp(macrophage)
 annotations <- setdiff(annotation_mac, c("exp_cluster", "path_cluster"))
 plot_pca(macrophage, color = annotation_mac)
 ```
+
+## Diffexp
 
 ```{r}
 #| message: false
@@ -164,11 +200,13 @@ diffexp_mac <- diffExpAnalysis(countData = assays(macrophage)$counts,
                                           method = diffexpMethod, cutoff = 10,
                                           annotation = annotation_mac)
 ```
+## Venn Diagram
+
 ```{r}
 #|message: false
-if(tolower(diffexpMethod) == "limma"){
+if(tolower(diffexpMethod) == "limma") {
   diffexp_air <- diffexp_air |>
-    rename(
+    dplyr::rename(
       log2FoldChange = logFC,
       pvalue = P.Value,
       padj = adj.P.Val
@@ -177,7 +215,7 @@ if(tolower(diffexpMethod) == "limma"){
 
 if(tolower(diffexpMethod) == "limma"){
   diffexp_mac <- diffexp_mac |>
-    rename(
+    dplyr::rename(
       log2FoldChange = logFC,
       pvalue = P.Value,
       padj = adj.P.Val
@@ -194,5 +232,65 @@ plot_venn(degs_air, degs_mac, universe_size,
           v1_name = "Airway", v2_name = "Macrophage",
           fills = c("lightgreen", "skyblue"),
           title = "DEGs communs et spécifiques")
+
+```
+```{r}
+#| message: false
+inter <- intersect(degs_air, degs_mac)
+
+msigdbr::msigdbr_collections() |>
+  kableExtra::kbl() |>
+  kableExtra::kable_styling() |>
+  kableExtra::scroll_box(height = "300px")
+```
+
+```{r}
+#| message: false
+#| fig-width: 10
+#| fig-height: 5
+pathway_collections <- c("CP:KEGG_MEDICUS")
+
+pathways <- get_annotation_collection(pathway_collections, 
+                                      species = "human")
+scores_airway <- score_pathways(airway, pathways, verbose = FALSE)
+scores_macrophage <- score_pathways(macrophage, pathways, verbose = FALSE)
+
+# Identifier les pathways communs
+common_paths <- intersect(rownames(scores_airway), rownames(scores_macrophage))
+
+# Définir un ordre commun basé sur les scores moyens dans airway
+order_common <- rowMeans(scores_airway[common_paths, , drop = FALSE]) |>
+  sort(decreasing = TRUE) |>
+  names()
+
+# Re-générer les heatmaps dans le même ordre
+collections <- pathway_collections |> 
+  paste(collapse = "_") |> 
+  stringr::str_remove("\\:")
+
+# Réordonner les matrices selon cet ordre
+scores_airway <- scores_airway[order_common, ]
+scores_macrophage <- scores_macrophage[order_common, ]
+
+# Remplacer les anciennes matrices dans les objets
+metadata(airway)[["pathway_scores"]] <- scores_airway
+metadata(macrophage)[["pathway_scores"]] <- scores_macrophage
+
+dir.create("results", "airway", "pathways")
+dir.create("results", "macrophage", "pathways")
+
+
+# airway
+plot_pathway_heatmap(airway, annotations = annotation_air,
+                     fwidth = 9,
+                     cluster_rows = FALSE,
+                     fname = stringr::str_glue("results/airway/pathways/hm_paths_{collections}_top20_aligned.pdf"))
+
+# macrophage
+plot_pathway_heatmap(macrophage, annotations = annotation_mac,
+                     fwidth = 9,
+                     cluster_rows = FALSE,
+                     fname = stringr::str_glue("results/macrophage/pathways/hm_paths_{collections}_top20_aligned.pdf"))
+
 ```
 
