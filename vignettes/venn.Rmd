@@ -59,7 +59,7 @@ You should have these variables (with these exact same names):
   - **gene_id** : A unique and stable identifier for the gene, often from databases like Ensembl (e.g., ENSG00000141510).  
   - **gene_length_kb** :  The length of the gene measured in kilobases   
   - **gene_description** : A brief textual summary of the gene’s function or characteristics, often pulled from annotation databases.  
-  - **gene_biotype** : A classification of the gene based on its biological function or transcript type, such as protein_coding, lncRNA, or pseudogene.  
+  - **gene_biotype** : A classification of the gene based on its biological function or transcript type, such as protein_coding, lncRNA, or pseudogene.
 
 If not, you should look at how your dataset is defined. You might need to run some command line as the following ones:   
 
@@ -67,7 +67,7 @@ If not, you should look at how your dataset is defined. You might need to run so
 #| message: false
 rowData(airway)$gene_length_kb <-(rowData(airway)$gene_seq_end - rowData(airway)$gene_seq_start) / 1000
 
-mart_air <- useMart("ensembl", dataset = "hsapiens_gene_ensembl")
+mart_air <- useEnsembl("ensembl", dataset = "hsapiens_gene_ensembl")
 
 gene_ids_air <- rowData(airway)$gene_id
 
@@ -91,7 +91,7 @@ rowData(macrophage)$gene_name <- rowData(macrophage)$SYMBOL
 
 macrophage <- macrophage[!is.na(rowData(macrophage)$SYMBOL), ]
 
-mart_mac <- useMart("ensembl", dataset = "hsapiens_gene_ensembl")
+mart_mac <- useEnsembl("ensembl", dataset = "hsapiens_gene_ensembl")
 
 annot_mac <- getBM(
   attributes = c("ensembl_gene_id", "gene_biotype", "description"),
@@ -180,6 +180,9 @@ plot_pca(macrophage, color = annotation_mac)
 
 ## Diffexp
 
+**Differential expression analysis** is a key step in RNA-seq data interpretation. It aims to identify genes whose expression levels significantly change between experimental conditions—in this case, between treated and untreated airway samples, and between IFNg-stimulated and naive macrophages. 
+By statistically testing gene expression differences, this analysis highlights **biologically relevant genes** that may be involved in **specific cellular responses or disease mechanisms**. .
+
 ```{r}
 #| message: false
 library(edgeR)
@@ -256,6 +259,10 @@ msigdbr::msigdbr_collections() |>
 #| message: false
 #| fig-width: 10
 #| fig-height: 5
+
+dir.create("results", "airway", "pathways")
+dir.create("results", "macrophage", "pathways")
+
 pathway_collections <- c("CP:KEGG_MEDICUS")
 
 pathways <- get_annotation_collection(pathway_collections, 

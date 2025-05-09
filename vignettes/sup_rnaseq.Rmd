@@ -70,13 +70,28 @@ library(CAIBIrnaseq)
 This section loads the RNA-seq dataset for analysis. It ensures the correct input file is used, as specified in the parameters.
 rebase_gexp
 
+Ensure your dataset is in a `Summarized Experiment` object, because all the used functions below works with SummarizedExperiment input.
+
+If you want to know more about this type of object, please click here: [Bioconductor](https://bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html)
+
 ```{r load_data}
 #| message: false
 data(airway, package="airway")
 exp_data <- airway
 ```
 
-Next cell is for the `airway dataset`. The goal is to match the names of the variables used in the package with the names of the dataset. 
+Even if the datasets are globally build the same way,  the names of the variables are not exactly the same, so if we want to keep the same code, we need to redefine a bit the variables. 
+
+If you want to know what are the used variables in this part, run this command line : `colnames(SummarizedExperiment::rowData(exp_data))`
+
+You should have these variables (with these exact same names):   
+  - **gene_name** : The commonly used symbol or name for the gene (e.g., A1BG).    
+  - **gene_id** : A unique and stable identifier for the gene, often from databases like Ensembl (e.g., ENSG00000141510).  
+  - **gene_length_kb** :  The length of the gene measured in kilobases   
+  - **gene_description** : A brief textual summary of the gene’s function or characteristics, often pulled from annotation databases.  
+  - **gene_biotype** : A classification of the gene based on its biological function or transcript type, such as protein_coding, lncRNA, or pseudogene.  
+
+If not, you should look at how your dataset is defined. You might need to run some command line as the following ones:   
 
 ```{r}
 #| message: false
@@ -86,7 +101,7 @@ rowData(exp_data)$gene_length_kb <-
 library(biomaRt)
 
 # Initialiser biomaRt pour Ensembl humain
-mart <- useMart("ensembl", dataset = "hsapiens_gene_ensembl")
+mart <- useEnsembl("ensembl", dataset = "hsapiens_gene_ensembl")
 
 # Obtenir les descriptions basées sur les gene_id
 gene_ids <- rowData(exp_data)$gene_id
@@ -187,22 +202,7 @@ diffexp_filtered <- diffexp |>
     dplyr::arrange(padj)
 
 # Sélectionner les 30 gènes les plus différentiellement exprimés
-top_de_genes <- rownames(diffexp_filtered)[1:30]
-```
-
-generate heatmap
-```{r}
-#| message: false
-dir.create(file.path("results", "sup", "clustering", pathwayMethod), recursive = TRUE, showWarnings = FALSE)
-fname <- sprintf("results/sup/clustering/%s/heatmap_2000hvg_exp_cluster.pdf", diffexpMethod)
-hm <- plot_exp_heatmap(exp_data,  genes = top_de_genes, 
-                 annotations = annotation,
-                 show_rownames = TRUE,
-                 hm_color_limits = c(-2,2),
-                 show_dend_row = FALSE,
-                 fname = fname)
-hm
-
+top_de_genes <- rownames(diffexp_filtered)[1:16]
 ```
 
 ##Volcano plot
@@ -236,6 +236,13 @@ pathwayResult <- pathwayAnalysis(diffexp_filtered,
                               method = pathwayMethod, species = species) |> as.data.frame()
 rownames(pathwayResult) <- pathwayResult$pathway
 S4Vectors::metadata(exp_data)[["pathwayEnrichment"]] <- pathwayResult
+
+# Trier selon PValue croissante (plus significatif en haut)
+pathwayResult_sorted <- pathwayResult[order(pathwayResult$PValue), ]
+# Garder uniquement les 10 premiers
+top10_pathways <- head(pathwayResult_sorted, 10)
+
+
 ```
 
 
@@ -247,8 +254,12 @@ pathwayDotplot
 "SRR1039508" "SRR1039509" "SRR1039512" "SRR1039513" "SRR1039516"
 [6] "SRR1039517" "SRR1039520" "SRR1039521"
 
+On the heatmaps, we can tell that the top_genes expressions are higher for the treated samples? It means that these genes are the ones that are involved in the treatment response. 
+
 ```{r}
 #| message: false
+
+heatmap_genes <- list(c( "STOM","PHC2", "MT2A", "ABAT","DUSP1","PER1","KCTD12", "SAMHD1"), c("FAM171B","MAOA","NEXN","DNAJB4","ARHGEF2","FKBP5","JADE1","RAP2B"))
 hms <- lapply(1:length(heatmap_genes), function(i) {
   genes <- heatmap_genes[[i]]
   name <- ifelse(is.null(names(heatmap_genes)), i, names(heatmap_genes)[i])
@@ -273,7 +284,7 @@ boxplots <- lapply(heatmap_pathways, function(path) {
     plt <- plot_path_boxplot(exp_data, 
                              pathway = path,
                    annotation = annotation, 
-                   color_var = annotation, 
+                  color_var = annotation, 
                    pt_size = 2,
                    fname = stringr::str_glue("results/sup/targeted/{pathwayMethod}/boxplots/box_{path}_{annotation}.pdf"))
   })

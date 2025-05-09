@@ -1,0 +1,74 @@
+---
+title: "Pathview for KEGG"
+author: "Cordeliers Artificial Intelligence and Bioinformatics"
+date: "`r Sys.Date()`"
+format: 
+  html:
+    toc: true
+    embed-resources: true
+editor: source
+---
+<img src="../man/figures/CAIBI.png" align="right" alt="" width="120" />
+
+```{r}
+#|message: false
+
+library(macrophage)
+library(DESeq2)
+library(pathview)
+library(org.Hs.eg.db)
+library(knitr)
+
+data("gse")
+macrophage <- gse; rm(gse)
+macrophage <- macrophage[,macrophage$condition %in% c("naive", "IFNg")]
+
+rownames(macrophage) <- sub("\\..*$", "", rowData(macrophage)$gene_id)
+rowData(macrophage)$gene_id <- sub("\\..*$", "", rowData(macrophage)$gene_id)
+
+# S'assurer que la variable condition_name est bien un facteur
+macrophage$condition_name <- factor(macrophage$condition_name)
+
+# Créer l'objet DESeq2 et exécuter l'analyse
+dds <- DESeqDataSet(macrophage, design = ~ condition_name)
+dds <- DESeq(dds)
+
+# Obtenir les résultats différentiels
+res <- results(dds)
+
+# Vérifier les identifiants de gènes (par défaut ce sont des Ensembl IDs)
+head(rownames(res))  # par exemple ENSG00000000003
+
+# Mapper les Ensembl IDs vers Entrez IDs
+ens_ids <- rownames(res)
+entrez_ids <- mapIds(org.Hs.eg.db, keys = ens_ids,
+                     column = "ENTREZID", keytype = "ENSEMBL", multiVals = "first")
+
+# Ajouter les Entrez IDs à l'objet res
+res$entrez <- entrez_ids
+
+# Supprimer les NA (pour garder uniquement les gènes ayant un Entrez ID)
+res_clean <- res[!is.na(res$entrez), ]
+
+# Créer un vecteur nommé de log2FoldChange avec les identifiants Entrez
+gene_data <- res_clean$log2FoldChange
+names(gene_data) <- res_clean$entrez
+
+# Visualiser sur une voie KEGG, par exemple hsa04110 (voie d'apoptose)
+# Vous pouvez changer le pathway.id selon le pathway que vous voulez visualiser
+pathview(
+  gene.data = gene_data,          # Données de log2FoldChange pour les gènes DE
+  pathway.id = "hsa04110",        # ID de la voie KEGG (par ex. hsa04110 pour l'apoptose)
+  species = "hsa",                # Espèce (ici Homo sapiens)
+  gene.idtype = "entrez",         # Utiliser les identifiants Entrez
+  out.suffix = "macrophage_apoptosis", # Suffixe pour les fichiers de sortie
+    low = "lightgreen",                    # Couleur pour les valeurs faibles (logFC négatif)
+  high = "pink",                     # Couleur pour les valeurs élevées (logFC positif)
+  na.color = "gray",
+  kegg.native = TRUE  
+)
+# Afficher le graphique dans le document
+include_graphics("hsa04110.macrophage_apoptosis.png")
+
+```
+

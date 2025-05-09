@@ -3,7 +3,7 @@ url: https://crcordeliers.github.io/CAIBIrnaseq
 name: CAIBIrnaseq
 title: "CAIBIrnaseq"
 output_dir: "docs"
-favicon: vignettes/CRC.png
+favicon: man/figures/CRC.png
 
 navbar:
   structure:
@@ -35,6 +35,8 @@ navbar:
           href: articles/sup_rnaseq.html
         - text: "Comparing datasets"
           href: articles/venn.html
+        - text: "Pathview"
+          href: articles/pathview.html
     search:
       search: []
     github: ~
@@ -85,6 +87,7 @@ articles:
       - unsup_rnaseq
       - sup_rnaseq
       - venn
+      - pathview
 reference:
   - title: "Preprocessing"
     contents:

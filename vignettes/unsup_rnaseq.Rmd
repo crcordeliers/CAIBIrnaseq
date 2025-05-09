@@ -110,7 +110,18 @@ data(airway, package="airway")
 exp_data <- airway
 ```
 
-Next cell is for the `airway dataset`. The goal is to match the names of the variables used in the package with the names of the dataset. 
+Even if the datasets are globally build the same way,  the names of the variables are not exactly the same, so if we want to keep the same code, we need to redefine a bit the variables. 
+
+If you want to know what are the used variables in this part, run this command line : `colnames(SummarizedExperiment::rowData(exp_data))`
+
+You should have these variables (with these exact same names):   
+  - **gene_name** : The commonly used symbol or name for the gene (e.g., A1BG).    
+  - **gene_id** : A unique and stable identifier for the gene, often from databases like Ensembl (e.g., ENSG00000141510).  
+  - **gene_length_kb** :  The length of the gene measured in kilobases   
+  - **gene_description** : A brief textual summary of the gene’s function or characteristics, often pulled from annotation databases.  
+  - **gene_biotype** : A classification of the gene based on its biological function or transcript type, such as protein_coding, lncRNA, or pseudogene.  
+
+If not, you should look at how your dataset is defined. You might need to run some command line as the following ones:  
 ``` {r}
 #| message: false
 library(biomaRt)
@@ -118,7 +129,7 @@ library(biomaRt)
 rowData(exp_data)$gene_length_kb <- 
   (rowData(exp_data)$gene_seq_end - rowData(exp_data)$gene_seq_start) / 1000
 
-mart <- useMart("ensembl", dataset = "hsapiens_gene_ensembl")
+mart <- useEnsembl("ensembl", dataset = "hsapiens_gene_ensembl")
 gene_ids <- rowData(exp_data)$gene_id
 
 annot <- getBM(attributes = c("ensembl_gene_id", "description"),
@@ -263,6 +274,7 @@ write.csv(progeny_scores, file = "results/unsup/pathways/progeny_scores.csv")
 
 
 ### Pathways
+Ensure your dataset is in a `Summarized Experiment` object, because all the used functions below works with SummarizedExperiment input.
 
 Pathway collections available in the MSIGdb can be specified in the parameters. These pathways are scored and ranked by their variance in the data. These are the available collections (use `gs_subcollection` as name except for Hallmarks, which should be 'H').
 
