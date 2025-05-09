@@ -53,6 +53,7 @@ macrophage <- macrophage[,macrophage$condition %in% c("naive", "IFNg")] # focus 
 Even if the datasets are globally build the same way,  the names of the variables are not exactly the same, so if we want to keep the same code, we need to redefine a bit the variables. 
 
 If you want to know what are the used variables in this part, run this command line : `colnames(SummarizedExperiment::rowData(exp_data))`
+
 You should have these variables (with these exact same names):   
   - **gene_name** : The commonly used symbol or name for the gene (e.g., A1BG).    
   - **gene_id** : A unique and stable identifier for the gene, often from databases like Ensembl (e.g., ENSG00000141510).  
@@ -202,6 +203,12 @@ diffexp_mac <- diffExpAnalysis(countData = assays(macrophage)$counts,
 ```
 ## Venn Diagram
 
+Once the diffexp done, we can plot the venn diagram. Since the datasets are not directly related, it could be interesting to see if there are still similarities. The comparison can be made between genes, pathways, ... 
+
+If there are similarities, it can means that some biological processes are activated for different condition types.
+
+This diagram show us how much genes are unique to one dataset, and which are in common. The fisher test value corresponds to the reliability of this analysis. The nearer it is to 0, the most significant this analysis is. 
+
 ```{r}
 #|message: false
 if(tolower(diffexpMethod) == "limma") {
@@ -225,7 +232,8 @@ if(tolower(diffexpMethod) == "limma"){
 # Exemple : extraction des gènes DE significatifs
 degs_air <- rownames(diffexp_air[diffexp_air$padj < 0.05, ])
 degs_mac <- rownames(diffexp_mac[diffexp_mac$padj < 0.05, ])
-universe_size <- length(union(degs_air, degs_mac))
+# universe_size <- length(union(degs_air, degs_mac))
+universe_size <- 7000
 
 # Diagramme de Venn
 plot_venn(degs_air, degs_mac, universe_size,
