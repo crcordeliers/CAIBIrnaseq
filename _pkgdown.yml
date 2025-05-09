@@ -37,9 +37,7 @@ navbar:
           href: articles/venn.html
     search:
       search: []
-    github:
-      href: "https://github.com/crcordeliers/CAIBIrnaseq"
-      text: "GitHub"
+    github: ~
     lightswitch:
       icon: fa-sun
       aria-label: Light switch
