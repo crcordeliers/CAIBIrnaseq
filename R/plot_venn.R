@@ -39,10 +39,13 @@ plot_venn <- function(v1, v2, universe_size = NULL,
     pval <- stats::fisher.test(ctg_matrix)$p.value
     subtitle <- paste0("Fisher test p-value = ", signif(pval, 3))
   }
+  p1 <- signif(v1_only/universe_size, 3)
+  p1_2 <- signif(v1v2/universe_size, 3)
+  p2 <- signif(v2_only/universe_size, 3)
 
-  caption <- paste0("Proportion of DE significant ", v1_name, " genes : ", v1_only/universe_size,
-                    "\nProportion of DE significant ", v1v2_name, " genes : ", v1v2/universe_size,
-                    "\nProportion of DE significant ", v2_name, " genes : ", v2_only/universe_size)
+  caption <- paste0("Proportion of DE significant ", v1_name, " genes : ", p1,
+                    "\nProportion of DE significant ", v1v2_name, " genes : ", p1_2,
+                    "\nProportion of DE significant ", v2_name, " genes : ", p2)
 
   plt <- invisible(plot(eulerr::euler(info4euler), fills = fills, quantities = quantities, ...))
   plt <- ggplotify::as.ggplot(plt)

@@ -10,54 +10,121 @@ editor: source
 ---
 <img src="../man/figures/CAIBI.png" align="right" alt="" width="120" />
 
-```{r}
+An additional analysis is given by the [Pathview package](https://bioconductor.org/packages/release/bioc/html/pathview.html)
+
+**Pathview** is an R tool used to visualize gene expression data on biological pathways (from KEGG), it helps for seeing how the genes of interest are involved in known cellular processes like the cell cycle or apoptosis.
+
+To create the cell cycle graph, we use the function `pathview`. The expected input for the `pathview` function is a vector of the **log2FoldChange** of the DE genes. 
+
+In this page, you will only see the specific code to get the graph. The first steps are the same for every visualization. Before the next cells of code, you will need to do all the pre-processing analyses, until the **diffexp**. If you want to see the code, you can copy/paste it from the [other pages](https://crcordeliers.github.io/CAIBIrnaseq/articles/venn.html)
+
+```{r, include=FALSE, message=FALSE, warning=FALSE}
 #|message: false
 
-library(macrophage)
-library(DESeq2)
+annotation_mac <- "condition_name"
+diffexpMethod <- "DESeq2"
+
 library(pathview)
-library(org.Hs.eg.db)
+library(airway)
+library(SummarizedExperiment)
+library(macrophage)
+library(biomaRt)
+library(CAIBIrnaseq)
 library(knitr)
 
 data("gse")
 macrophage <- gse; rm(gse)
 macrophage <- macrophage[,macrophage$condition %in% c("naive", "IFNg")]
-
+rowData(macrophage)$gene_length_kb <- width(rowRanges(macrophage)) / 1000
 rownames(macrophage) <- sub("\\..*$", "", rowData(macrophage)$gene_id)
 rowData(macrophage)$gene_id <- sub("\\..*$", "", rowData(macrophage)$gene_id)
 
-# S'assurer que la variable condition_name est bien un facteur
-macrophage$condition_name <- factor(macrophage$condition_name)
+rowData(macrophage)$gene_name <- rowData(macrophage)$SYMBOL
 
-# Créer l'objet DESeq2 et exécuter l'analyse
-dds <- DESeqDataSet(macrophage, design = ~ condition_name)
-dds <- DESeq(dds)
+macrophage <- macrophage[!is.na(rowData(macrophage)$SYMBOL), ]
 
-# Obtenir les résultats différentiels
-res <- results(dds)
+mart_mac <- useEnsembl("ensembl", dataset = "hsapiens_gene_ensembl")
 
-# Vérifier les identifiants de gènes (par défaut ce sont des Ensembl IDs)
-head(rownames(res))  # par exemple ENSG00000000003
+annot_mac <- getBM(
+  attributes = c("ensembl_gene_id", "gene_biotype", "description"),
+  filters = "ensembl_gene_id",
+  values = unique(rowData(macrophage)$gene_id),
+  mart = mart_mac
+)
+# Correspondance entre gene_id et annot_mac
+match_mac <- match(rowData(macrophage)$gene_id, annot_mac$ensembl_gene_id)
 
-# Mapper les Ensembl IDs vers Entrez IDs
-ens_ids <- rownames(res)
-entrez_ids <- mapIds(org.Hs.eg.db, keys = ens_ids,
-                     column = "ENTREZID", keytype = "ENSEMBL", multiVals = "first")
+# Ajouter les colonnes dans rowData
+rowData(macrophage)$gene_biotype <- annot_mac$gene_biotype[match_mac]
+rowData(macrophage)$gene_description <- annot_mac$description[match_mac]
 
-# Ajouter les Entrez IDs à l'objet res
-res$entrez <- entrez_ids
+macrophage <- rebase_gexp(macrophage, annotation = "SYMBOL")
 
-# Supprimer les NA (pour garder uniquement les gènes ayant un Entrez ID)
-res_clean <- res[!is.na(res$entrez), ]
+macrophage <- filter_gexp(macrophage,
+                        min_nsamp = 1, 
+                        min_counts = 1)
 
-# Créer un vecteur nommé de log2FoldChange avec les identifiants Entrez
-gene_data <- res_clean$log2FoldChange
-names(gene_data) <- res_clean$entrez
+colData(macrophage)$sample_id <- colnames(macrophage)
 
-# Visualiser sur une voie KEGG, par exemple hsa04110 (voie d'apoptose)
-# Vous pouvez changer le pathway.id selon le pathway que vous voulez visualiser
+assay(macrophage) <- round(assay(macrophage))
+macrophage <- normalize_gexp(macrophage)
+
+metadata(macrophage)[["pca_res"]] <- pca_gexp(macrophage)
+annotations <- setdiff(annotation_mac, c("exp_cluster", "path_cluster"))
+
+
+colData(macrophage)$condition_name <- factor(colData(macrophage)$condition_name)
+colData(macrophage)$condition_name <- factor(colData(macrophage)$condition_name, levels = c("IFNg", "naive"))
+
+
+diffexp_mac <- diffExpAnalysis(countData = assays(macrophage)$counts,
+                                          sampleInfo = colData(macrophage),
+                                          method = diffexpMethod, cutoff = 10,
+                                          annotation = annotation_mac)
+
+```
+This is what you get after the `diffexp`:
+```{r}
+head(diffexp_mac)
+```
+
+The next cell will take the log2FoldChange and ENTREZID to get the expected object for the `pathview` function. 
+
+```{r, message=FALSE, warning=FALSE}
+#|message: false
+library(org.Hs.eg.db)
+library(dplyr)
+
+# Récupérer les noms des gènes
+gene_symbols <- rownames(diffexp_mac)
+
+# Conversion symboles → Entrez IDs
+conversion <- AnnotationDbi::select(
+  org.Hs.eg.db,
+  keys = gene_symbols,
+  columns = c("ENTREZID"),
+  keytype = "SYMBOL"
+)
+
+# Fusion avec vos données d'expression
+diffexp_mac$SYMBOL <- rownames(diffexp_mac)
+diffexp_mac <- left_join(diffexp_mac, conversion, by = "SYMBOL")
+
+# Créer un vecteur de log2FC nommé avec les Entrez IDs
+gene.data <- diffexp_mac$log2FoldChange
+names(gene.data) <- diffexp_mac$ENTREZID
+
+# Supprimer les entrées sans identifiants
+gene.data <- gene.data[!is.na(names(gene.data))]
+head(gene.data)
+```
+
+Once done, we can call the function with specific parameters that match our dataset. 
+
+```{r, message=FALSE, warning=FALSE}
+#|message: false
 pathview(
-  gene.data = gene_data,          # Données de log2FoldChange pour les gènes DE
+  gene.data = gene.data,          # Données de log2FoldChange pour les gènes DE
   pathway.id = "hsa04110",        # ID de la voie KEGG (par ex. hsa04110 pour l'apoptose)
   species = "hsa",                # Espèce (ici Homo sapiens)
   gene.idtype = "entrez",         # Utiliser les identifiants Entrez
@@ -67,6 +134,10 @@ pathview(
   na.color = "gray",
   kegg.native = TRUE  
 )
+
+```
+
+```{r}
 # Afficher le graphique dans le document
 include_graphics("hsa04110.macrophage_apoptosis.png")
 

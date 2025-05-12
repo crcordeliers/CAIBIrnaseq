@@ -79,7 +79,7 @@
                         <h4 data-toc-skip class="author">Cordeliers
 Artificial Intelligence and Bioinformatics</h4>
             
-            <h4 data-toc-skip class="date">2025-05-09</h4>
+            <h4 data-toc-skip class="date">2025-05-12</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/crcordeliers/CAIBIrnaseq.git/blob/HEAD/vignettes/pathview.Rmd" class="external-link"><code>vignettes/pathview.Rmd</code></a></small>
       <div class="d-none name"><code>pathview.Rmd</code></div>
@@ -88,151 +88,69 @@ Artificial Intelligence and Bioinformatics</h4>
     
     
 <p><img src="../reference/figures/CAIBI.png" align="right" alt="" width="120"></p>
+<p>An additional analysis is given by the <a href="https://bioconductor.org/packages/release/bioc/html/pathview.html" class="external-link">Pathview
+package</a></p>
+<p><strong>Pathview</strong> is an R tool used to visualize gene
+expression data on biological pathways (from KEGG), it helps for seeing
+how the genes of interest are involved in known cellular processes like
+the cell cycle or apoptosis.</p>
+<p>To create the cell cycle graph, we use the function
+<code>pathview</code>. The expected input for the <code>pathview</code>
+function is a vector of the <strong>log2FoldChange</strong> of the DE
+genes.</p>
+<p>In this page, you will only see the specific code to get the graph.
+The first steps are the same for every visualization. Before the next
+cells of code, you will need to do all the pre-processing analyses,
+until the <strong>diffexp</strong>. If you want to see the code, you can
+copy/paste it from the <a href="https://crcordeliers.github.io/CAIBIrnaseq/articles/venn.html">other
+pages</a></p>
+<p>This is what you get after the <code>diffexp</code>:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">diffexp_mac</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">##              baseMean log2FoldChange     lfcSE       pvalue         padj</span></span>
+<span><span class="co">## A1BG       185.361814     0.75051222 0.3099124 4.533451e-03 2.242446e-02</span></span>
+<span><span class="co">## A1BG-AS1   315.155738    -0.32048380 0.1677420 4.293224e-02 1.375238e-01</span></span>
+<span><span class="co">## A1CF         1.604499     0.04585155 0.4781308 8.266114e-01           NA</span></span>
+<span><span class="co">## A2M      71665.137761    -1.19356380 0.2310016 3.375187e-08 7.203143e-07</span></span>
+<span><span class="co">## A2M-AS1     39.045426     0.88104208 0.5735779 1.961794e-02 7.405728e-02</span></span>
+<span><span class="co">## A2ML1        2.457721    -0.04618380 0.4598400 8.400364e-01 9.379652e-01</span></span></code></pre>
+<p>The next cell will take the log2FoldChange and ENTREZID to get the
+expected object for the <code>pathview</code> function.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#|message: false</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">org.Hs.eg.db</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">macrophage</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/thelovelab/DESeq2" class="external-link">DESeq2</a></span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Loading required package: S4Vectors</span></span></code></pre>
-<pre><code><span><span class="co">## Loading required package: stats4</span></span></code></pre>
-<pre><code><span><span class="co">## Loading required package: BiocGenerics</span></span></code></pre>
-<pre><code><span><span class="co">## Loading required package: generics</span></span></code></pre>
-<pre><code><span><span class="co">## </span></span>
-<span><span class="co">## Attaching package: 'generics'</span></span></code></pre>
-<pre><code><span><span class="co">## The following objects are masked from 'package:base':</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">##     as.difftime, as.factor, as.ordered, intersect, is.element, setdiff,</span></span>
-<span><span class="co">##     setequal, union</span></span></code></pre>
-<pre><code><span><span class="co">## </span></span>
-<span><span class="co">## Attaching package: 'BiocGenerics'</span></span></code></pre>
-<pre><code><span><span class="co">## The following objects are masked from 'package:stats':</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">##     IQR, mad, sd, var, xtabs</span></span></code></pre>
-<pre><code><span><span class="co">## The following objects are masked from 'package:base':</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">##     anyDuplicated, aperm, append, as.data.frame, basename, cbind,</span></span>
-<span><span class="co">##     colnames, dirname, do.call, duplicated, eval, evalq, Filter, Find,</span></span>
-<span><span class="co">##     get, grep, grepl, is.unsorted, lapply, Map, mapply, match, mget,</span></span>
-<span><span class="co">##     order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank,</span></span>
-<span><span class="co">##     rbind, Reduce, rownames, sapply, saveRDS, table, tapply, unique,</span></span>
-<span><span class="co">##     unsplit, which.max, which.min</span></span></code></pre>
-<pre><code><span><span class="co">## </span></span>
-<span><span class="co">## Attaching package: 'S4Vectors'</span></span></code></pre>
-<pre><code><span><span class="co">## The following object is masked from 'package:utils':</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">##     findMatches</span></span></code></pre>
-<pre><code><span><span class="co">## The following objects are masked from 'package:base':</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">##     expand.grid, I, unname</span></span></code></pre>
-<pre><code><span><span class="co">## Loading required package: IRanges</span></span></code></pre>
-<pre><code><span><span class="co">## Loading required package: GenomicRanges</span></span></code></pre>
-<pre><code><span><span class="co">## Loading required package: GenomeInfoDb</span></span></code></pre>
-<pre><code><span><span class="co">## Loading required package: SummarizedExperiment</span></span></code></pre>
-<pre><code><span><span class="co">## Loading required package: MatrixGenerics</span></span></code></pre>
-<pre><code><span><span class="co">## Loading required package: matrixStats</span></span></code></pre>
-<pre><code><span><span class="co">## </span></span>
-<span><span class="co">## Attaching package: 'MatrixGenerics'</span></span></code></pre>
-<pre><code><span><span class="co">## The following objects are masked from 'package:matrixStats':</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">##     colAlls, colAnyNAs, colAnys, colAvgsPerRowSet, colCollapse,</span></span>
-<span><span class="co">##     colCounts, colCummaxs, colCummins, colCumprods, colCumsums,</span></span>
-<span><span class="co">##     colDiffs, colIQRDiffs, colIQRs, colLogSumExps, colMadDiffs,</span></span>
-<span><span class="co">##     colMads, colMaxs, colMeans2, colMedians, colMins, colOrderStats,</span></span>
-<span><span class="co">##     colProds, colQuantiles, colRanges, colRanks, colSdDiffs, colSds,</span></span>
-<span><span class="co">##     colSums2, colTabulates, colVarDiffs, colVars, colWeightedMads,</span></span>
-<span><span class="co">##     colWeightedMeans, colWeightedMedians, colWeightedSds,</span></span>
-<span><span class="co">##     colWeightedVars, rowAlls, rowAnyNAs, rowAnys, rowAvgsPerColSet,</span></span>
-<span><span class="co">##     rowCollapse, rowCounts, rowCummaxs, rowCummins, rowCumprods,</span></span>
-<span><span class="co">##     rowCumsums, rowDiffs, rowIQRDiffs, rowIQRs, rowLogSumExps,</span></span>
-<span><span class="co">##     rowMadDiffs, rowMads, rowMaxs, rowMeans2, rowMedians, rowMins,</span></span>
-<span><span class="co">##     rowOrderStats, rowProds, rowQuantiles, rowRanges, rowRanks,</span></span>
-<span><span class="co">##     rowSdDiffs, rowSds, rowSums2, rowTabulates, rowVarDiffs, rowVars,</span></span>
-<span><span class="co">##     rowWeightedMads, rowWeightedMeans, rowWeightedMedians,</span></span>
-<span><span class="co">##     rowWeightedSds, rowWeightedVars</span></span></code></pre>
-<pre><code><span><span class="co">## Loading required package: Biobase</span></span></code></pre>
-<pre><code><span><span class="co">## Welcome to Bioconductor</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">##     Vignettes contain introductory material; view with</span></span>
-<span><span class="co">##     'browseVignettes()'. To cite Bioconductor, see</span></span>
-<span><span class="co">##     'citation("Biobase")', and for packages 'citation("pkgname")'.</span></span></code></pre>
-<pre><code><span><span class="co">## </span></span>
-<span><span class="co">## Attaching package: 'Biobase'</span></span></code></pre>
-<pre><code><span><span class="co">## The following object is masked from 'package:MatrixGenerics':</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">##     rowMedians</span></span></code></pre>
-<pre><code><span><span class="co">## The following objects are masked from 'package:matrixStats':</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">##     anyMissing, rowMedians</span></span></code></pre>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/datapplab/pathview" class="external-link">pathview</a></span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## </span></span></code></pre>
-<pre><code><span><span class="co">## ##############################################################################</span></span>
-<span><span class="co">## Pathview is an open source software package distributed under GNU General</span></span>
-<span><span class="co">## Public License version 3 (GPLv3). Details of GPLv3 is available at</span></span>
-<span><span class="co">## http://www.gnu.org/licenses/gpl-3.0.html. Particullary, users are required to</span></span>
-<span><span class="co">## formally cite the original Pathview paper (not just mention it) in publications</span></span>
-<span><span class="co">## or products. For details, do citation("pathview") within R.</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">## The pathview downloads and uses KEGG data. Non-academic uses may require a KEGG</span></span>
-<span><span class="co">## license agreement (details at http://www.kegg.jp/kegg/legal.html).</span></span>
-<span><span class="co">## ##############################################################################</span></span></code></pre>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">org.Hs.eg.db</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Loading required package: AnnotationDbi</span></span></code></pre>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://yihui.org/knitr/" class="external-link">knitr</a></span><span class="op">)</span></span>
+<span><span class="co"># Récupérer les noms des gènes</span></span>
+<span><span class="va">gene_symbols</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">diffexp_mac</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"gse"</span><span class="op">)</span></span>
-<span><span class="va">macrophage</span> <span class="op">&lt;-</span> <span class="va">gse</span>; <span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">gse</span><span class="op">)</span></span>
-<span><span class="va">macrophage</span> <span class="op">&lt;-</span> <span class="va">macrophage</span><span class="op">[</span>,<span class="va">macrophage</span><span class="op">$</span><span class="va">condition</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"naive"</span>, <span class="st">"IFNg"</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="co"># Conversion symboles → Entrez IDs</span></span>
+<span><span class="va">conversion</span> <span class="op">&lt;-</span> <span class="fu">AnnotationDbi</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/AnnotationDbi/man/AnnotationDb-class.html" class="external-link">select</a></span><span class="op">(</span></span>
+<span>  <span class="va">org.Hs.eg.db</span>,</span>
+<span>  keys <span class="op">=</span> <span class="va">gene_symbols</span>,</span>
+<span>  columns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ENTREZID"</span><span class="op">)</span>,</span>
+<span>  keytype <span class="op">=</span> <span class="st">"SYMBOL"</span></span>
+<span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">macrophage</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"\\..*$"</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">macrophage</span><span class="op">)</span><span class="op">$</span><span class="va">gene_id</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">macrophage</span><span class="op">)</span><span class="op">$</span><span class="va">gene_id</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"\\..*$"</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">macrophage</span><span class="op">)</span><span class="op">$</span><span class="va">gene_id</span><span class="op">)</span></span>
+<span><span class="co"># Fusion avec vos données d'expression</span></span>
+<span><span class="va">diffexp_mac</span><span class="op">$</span><span class="va">SYMBOL</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">diffexp_mac</span><span class="op">)</span></span>
+<span><span class="va">diffexp_mac</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">diffexp_mac</span>, <span class="va">conversion</span>, by <span class="op">=</span> <span class="st">"SYMBOL"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S'assurer que la variable condition_name est bien un facteur</span></span>
-<span><span class="va">macrophage</span><span class="op">$</span><span class="va">condition_name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">macrophage</span><span class="op">$</span><span class="va">condition_name</span><span class="op">)</span></span>
+<span><span class="co"># Créer un vecteur de log2FC nommé avec les Entrez IDs</span></span>
+<span><span class="va">gene.data</span> <span class="op">&lt;-</span> <span class="va">diffexp_mac</span><span class="op">$</span><span class="va">log2FoldChange</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">gene.data</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">diffexp_mac</span><span class="op">$</span><span class="va">ENTREZID</span></span>
 <span></span>
-<span><span class="co"># Créer l'objet DESeq2 et exécuter l'analyse</span></span>
-<span><span class="va">dds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/DESeq2/man/DESeqDataSet.html" class="external-link">DESeqDataSet</a></span><span class="op">(</span><span class="va">macrophage</span>, design <span class="op">=</span> <span class="op">~</span> <span class="va">condition_name</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## using counts and average transcript lengths from tximeta</span></span></code></pre>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">dds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/DESeq2/man/DESeq.html" class="external-link">DESeq</a></span><span class="op">(</span><span class="va">dds</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## estimating size factors</span></span></code></pre>
-<pre><code><span><span class="co">## using 'avgTxLength' from assays(dds), correcting for library size</span></span></code></pre>
-<pre><code><span><span class="co">## estimating dispersions</span></span></code></pre>
-<pre><code><span><span class="co">## gene-wise dispersion estimates</span></span></code></pre>
-<pre><code><span><span class="co">## mean-dispersion relationship</span></span></code></pre>
-<pre><code><span><span class="co">## final dispersion estimates</span></span></code></pre>
-<pre><code><span><span class="co">## fitting model and testing</span></span></code></pre>
-<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Obtenir les résultats différentiels</span></span>
-<span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/DESeq2/man/results.html" class="external-link">results</a></span><span class="op">(</span><span class="va">dds</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Vérifier les identifiants de gènes (par défaut ce sont des Ensembl IDs)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">)</span>  <span class="co"># par exemple ENSG00000000003</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "ENSG00000000003" "ENSG00000000005" "ENSG00000000419" "ENSG00000000457"</span></span>
-<span><span class="co">## [5] "ENSG00000000460" "ENSG00000000938"</span></span></code></pre>
-<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Mapper les Ensembl IDs vers Entrez IDs</span></span>
-<span><span class="va">ens_ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
-<span><span class="va">entrez_ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/AnnotationDbi/man/AnnotationDb-class.html" class="external-link">mapIds</a></span><span class="op">(</span><span class="va">org.Hs.eg.db</span>, keys <span class="op">=</span> <span class="va">ens_ids</span>,</span>
-<span>                     column <span class="op">=</span> <span class="st">"ENTREZID"</span>, keytype <span class="op">=</span> <span class="st">"ENSEMBL"</span>, multiVals <span class="op">=</span> <span class="st">"first"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## 'select()' returned 1:many mapping between keys and columns</span></span></code></pre>
-<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Ajouter les Entrez IDs à l'objet res</span></span>
-<span><span class="va">res</span><span class="op">$</span><span class="va">entrez</span> <span class="op">&lt;-</span> <span class="va">entrez_ids</span></span>
-<span></span>
-<span><span class="co"># Supprimer les NA (pour garder uniquement les gènes ayant un Entrez ID)</span></span>
-<span><span class="va">res_clean</span> <span class="op">&lt;-</span> <span class="va">res</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">entrez</span><span class="op">)</span>, <span class="op">]</span></span>
-<span></span>
-<span><span class="co"># Créer un vecteur nommé de log2FoldChange avec les identifiants Entrez</span></span>
-<span><span class="va">gene_data</span> <span class="op">&lt;-</span> <span class="va">res_clean</span><span class="op">$</span><span class="va">log2FoldChange</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">gene_data</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">res_clean</span><span class="op">$</span><span class="va">entrez</span></span>
-<span></span>
-<span><span class="co"># Visualiser sur une voie KEGG, par exemple hsa04110 (voie d'apoptose)</span></span>
-<span><span class="co"># Vous pouvez changer le pathway.id selon le pathway que vous voulez visualiser</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/pathview/man/pathview.html" class="external-link">pathview</a></span><span class="op">(</span></span>
-<span>  gene.data <span class="op">=</span> <span class="va">gene_data</span>,          <span class="co"># Données de log2FoldChange pour les gènes DE</span></span>
+<span><span class="co"># Supprimer les entrées sans identifiants</span></span>
+<span><span class="va">gene.data</span> <span class="op">&lt;-</span> <span class="va">gene.data</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">gene.data</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">gene.data</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">##           1      503538       29974           2      144571      144568 </span></span>
+<span><span class="co">##  0.75051222 -0.32048380  0.04585155 -1.19356380  0.88104208 -0.04618380</span></span></code></pre>
+<p>Once done, we can call the function with specific parameters that
+match our dataset.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#|message: false</span></span>
+<span><span class="fu">pathview</span><span class="op">(</span></span>
+<span>  gene.data <span class="op">=</span> <span class="va">gene.data</span>,          <span class="co"># Données de log2FoldChange pour les gènes DE</span></span>
 <span>  pathway.id <span class="op">=</span> <span class="st">"hsa04110"</span>,        <span class="co"># ID de la voie KEGG (par ex. hsa04110 pour l'apoptose)</span></span>
 <span>  species <span class="op">=</span> <span class="st">"hsa"</span>,                <span class="co"># Espèce (ici Homo sapiens)</span></span>
 <span>  gene.idtype <span class="op">=</span> <span class="st">"entrez"</span>,         <span class="co"># Utiliser les identifiants Entrez</span></span>
@@ -242,12 +160,9 @@ Artificial Intelligence and Bioinformatics</h4>
 <span>  na.color <span class="op">=</span> <span class="st">"gray"</span>,</span>
 <span>  kegg.native <span class="op">=</span> <span class="cn">TRUE</span>  </span>
 <span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## 'select()' returned 1:1 mapping between keys and columns</span></span></code></pre>
-<pre><code><span><span class="co">## Info: Working in directory /home/marie-christian/Desktop/CAIBIrnaseq/vignettes</span></span></code></pre>
-<pre><code><span><span class="co">## Info: Writing image file hsa04110.macrophage_apoptosis.png</span></span></code></pre>
-<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Afficher le graphique dans le document</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html" class="external-link">include_graphics</a></span><span class="op">(</span><span class="st">"hsa04110.macrophage_apoptosis.png"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">include_graphics</span><span class="op">(</span><span class="st">"hsa04110.macrophage_apoptosis.png"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="hsa04110.macrophage_apoptosis.png" width="552"></p>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
