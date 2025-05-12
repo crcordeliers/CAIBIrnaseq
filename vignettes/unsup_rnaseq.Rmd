@@ -19,8 +19,9 @@ Here is an example of how the **unsupervised** part of the `CAIBIrnaseq` package
 First, we need to import the required packages :
 ```{r}
 #| message: false
-library(airway)
-library(SummarizedExperiment)
+library(airway)               # dataset's package  
+library(SummarizedExperiment) # Object's type we are using
+library(CAIBIrnaseq)          # package
 ```
 
 Before analysing the dataset, we define the variables with the names of the genes / pathways ... that we want to analyse.
@@ -50,20 +51,22 @@ metadata_clusters <- list(
   microenv_scores = data.frame(k = 3)
 )
 
+# The following variables are those that will need to be modified depending on the analyses you want to do  
 
 # Pathway collections 
-pathway_collections <- c("CP:REACTOME")  # You can add as many pathways as you want it will only create more plots
+pathway_collections <- c("CGP", "CP", "CP:KEGG_LEGACY", "Hallmark")
 
 # Interesting genes
 heatmap_genes <- list(
-  c("NR3C1", "FKBP5", "TSC22D3", "ZBTB16", "PER1"),  # gènes régulés par le glucocorticoïde
-  c("CYP1B1", "G6PD", "HMOX1", "NQO1", "SOD2")       # stress oxydatif / métabolisme
+  gr_response_genes <- c("FKBP5", "TSC22D3", "PER1", "ZBTB16"),
+  anti_inflam_genes <- c("DUSP1", "SOCS1", "MT2A")
 )
 
-# Interesting pathways (adapt to the results)
 heatmap_pathways <- c(
-  "REACTOME_INTERLEUKIN_36_PATHWAY",
-  "REACTOME_IRS_ACTIVATION"
+  "DUTERTRE_ESTRADIOL_RESPONSE_24HR_DN",
+  "REN_ALVEOLAR_RHABDOMYOSARCOMA_DN",
+  "NUYTTEN_EZH2_TARGETS_UP",
+  "PASINI_SUZ12_TARGETS_DN"
 )
 
 # Genes for the boxplots
@@ -71,8 +74,8 @@ boxplot_genes <- c("FKBP5", "TSC22D3")
 
 # Pathways for the boxplots
 boxplot_pathways <- c(
-  "REACTOME_INTERLEUKIN_36_PATHWAY",
-  "REACTOME_IRS_ACTIVATION"
+  "KUMAMOTO_RESPONSE_TO_NUTLIN_3A_UP",
+  "CASTELLANO_HRAS_TARGETS_DN"
 )
 
 # Corrélations entre gènes
@@ -83,17 +86,10 @@ correlation_genes <- list(
 
 # Pathways correlation
 correlation_pathways <- list(
-  c("REACTOME_INTERLEUKIN_36_PATHWAY", "REACTOME_IRS_ACTIVATION"),
-  c("REACTOME_INTERLEUKIN_36_PATHWAY", "REACTOME_UBIQUINOL_BIOSYNTHESIS")
+  c("DUTERTRE_ESTRADIOL_RESPONSE_24HR_DN", "REN_ALVEOLAR_RHABDOMYOSARCOMA_DN"),
+  c("REN_ALVEOLAR_RHABDOMYOSARCOMA_DN", "NUYTTEN_EZH2_TARGETS_UP")
 )
 
-```
-
-Do not forget to import the package ! ;-) 
-
-```{r dependencies}
-#| message: false
-library(CAIBIrnaseq)
 ```
 
 ## Load data
@@ -109,6 +105,9 @@ If you want to know more about this type of object, please click here: [Biocondu
 #| message: false
 data(airway, package="airway")
 exp_data <- airway
+
+# If you are using your own dataset .RDS file), use this command line : 
+# exp_data <- readRDS(data_file)
 ```
 
 Even if the datasets are globally build the same way,  the names of the variables are not exactly the same, so if we want to keep the same code, we need to redefine a bit the variables. 
@@ -117,12 +116,14 @@ If you want to know what are the used variables in this part, run this command l
 
 You should have these variables (with these exact same names):   
   - **gene_name** : The commonly used symbol or name for the gene (e.g., A1BG).    
-  - **gene_id** : A unique and stable identifier for the gene, often from databases like Ensembl (e.g., ENSG00000141510).  
+  - **gene_id** : A unique and stable identifier for the gene, often from databases like Ensembl.  
   - **gene_length_kb** :  The length of the gene measured in kilobases   
-  - **gene_description** : A brief textual summary of the gene’s function or characteristics, often pulled from annotation databases.  
+  - **gene_description** : A brief textual summary of the gene’s function or characteristics. 
   - **gene_biotype** : A classification of the gene based on its biological function or transcript type, such as protein_coding, lncRNA, or pseudogene.  
 
-If not, you should look at how your dataset is defined. You might need to run some command line as the following ones:  
+If you are using the notebook that Clarice GROENEVELD created to convert a .xsl file into a .RDS one, you can SKIP the next cell. 
+If not, you should look at how your dataset is defined. You might need to run some command line as the following ones: 
+
 ``` {r}
 #| message: false
 library(biomaRt)
@@ -463,12 +464,15 @@ annotations <- plot_annotations
 
 cor_plts <- lapply(gene_pairs, function(gene_pair) {
   lapply(annotations, function(annot) {
-      plot_exp_scatter(exp_data, 
-                   gene1 = gene_pair[1],
-                   gene2 = gene_pair[2], 
-                   color_var = annot,
-                   fname = stringr::str_glue(
-                     "results/unsup/targeted/correlations/cor_{gene_pair[1]}_{gene_pair[2]}_color={annot}.pdf"))
+    # Correction de la construction du nom de fichier
+    fname <- stringr::str_glue("results/unsup/targeted/correlations/cor_{gene_pair[1]}_{gene_pair[2]}_color={annot}.pdf")
+    
+    # Génération du scatter plot
+    plot_exp_scatter(exp_data, 
+                     gene1 = gene_pair[1],
+                     gene2 = gene_pair[2], 
+                     color_var = annot,
+                     fname = fname)
   })
 }) |> purrr::flatten()
 ```
