@@ -12,6 +12,8 @@ editor: source
 
 Here is an example of an application for the function `plot_venn`. For this script, we used 2 different public datasets `airway` and `macrophage`. 
 
+If you want to use this notebook for your projects, it is available [here](https://github.com/crcordeliers/CAIBIrnaseq/blob/dev/vignettes/venn.Rmd)
+
 The `airway` dataset provides a gene expression dataset derived from **human bronchial epithelial cells**, treated or not with **dexamethasone** (a corticosteroid).  
 
 The `macrophage` dataset provides bulk RNA-seq count data from **human monocyte-derived macrophages**. These cells were either left untreated or stimulated with interferon-gamma (IFN-γ).   
@@ -144,7 +146,7 @@ macrophage <- filter_gexp(macrophage,
 
 Visualization of the filtering process to ensure the criteria applied align with the dataset’s characteristics:
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 colData(airway)$sample_id <- colnames(airway)
 plot_qc_filters(airway)
 
@@ -167,7 +169,7 @@ macrophage <- normalize_gexp(macrophage)
 
 Principal component analysis (PCA) identifies the major patterns in the dataset. These patterns help explore similarities or differences among samples based on gene expression.
 
-```{r}
+```{r, message=FALSE}
 #|message: false
 metadata(airway)[["pca_res"]] <- pca_gexp(airway)
 annotations <- setdiff(annotation_air, c("exp_cluster", "path_cluster"))
@@ -232,7 +234,7 @@ if(tolower(diffexpMethod) == "limma"){
     )
 }
 
-# Exemple : extraction des gènes DE significatifs
+# Exemple : extraction des degs_airgènes DE significatifs
 degs_air <- rownames(diffexp_air[diffexp_air$padj < 0.05, ])
 degs_mac <- rownames(diffexp_mac[diffexp_mac$padj < 0.05, ])
 # universe_size <- length(union(degs_air, degs_mac))
@@ -255,7 +257,29 @@ msigdbr::msigdbr_collections() |>
   kableExtra::scroll_box(height = "300px")
 ```
 
-```{r}
+```{r, warning=FALSE}
+#|message: false
+diffexp_air$gene <- rownames(diffexp_air)
+diffexp_mac$gene <- rownames(diffexp_mac)
+
+# Gènes significatifs (par exemple padj < 0.05)
+sig_air <- diffexp_air[diffexp_air$padj < 0.05, ]
+sig_mac <- diffexp_mac[diffexp_mac$padj < 0.05, ]
+
+# Gènes en commun (par nom de gène)
+common_genes <- intersect(sig_air$gene, sig_mac$gene)
+
+# Sous-ensemble des jeux avec uniquement les gènes communs
+common_air <- diffexp_air[diffexp_air$gene %in% common_genes, ]
+common_mac <- diffexp_mac[diffexp_mac$gene %in% common_genes, ]
+
+plot_exp_volcano(common_air, 15)
+plot_exp_volcano(common_mac, 15)
+
+```
+
+
+```{r, warning=FALSE}
 #| message: false
 #| fig-width: 10
 #| fig-height: 5
@@ -271,7 +295,7 @@ scores_airway <- score_pathways(airway, pathways, verbose = FALSE)
 scores_macrophage <- score_pathways(macrophage, pathways, verbose = FALSE)
 
 # Identifier les pathways communs
-common_paths <- intersect(rownames(scores_airway), rownames(scores_macrophage))
+common_paths <- intersect(rownames(scores_airway), rownames(scores_macrophage))## Warning in prep_scores_hm(exp_data, progeny_scores): 'sample_id' already exists
 
 # Définir un ordre commun basé sur les scores moyens dans airway
 order_common <- rowMeans(scores_airway[common_paths, , drop = FALSE]) |>

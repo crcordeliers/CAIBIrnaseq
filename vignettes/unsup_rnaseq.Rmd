@@ -13,7 +13,8 @@ editor: source
 For the 2 examples, we are using an open dataset which is given by the `airway` package. 
 It provides a gene expression dataset derived from **human bronchial epithelial cells**, treated or not with **dexamethasone** (a corticosteroid).
  
-Here is an example of how the **unsupervised** part of the `CAIBIrnaseq` package can be use. 
+Here is an example of how the **unsupervised** part of the `CAIBIrnaseq` package can be use. If you want to use this notebook for your projects, it is available [here](https://github.com/crcordeliers/CAIBIrnaseq/blob/dev/vignettes/sup_rnaseq.Rmd)
+
 
 First, we need to import the required packages :
 ```{r}
@@ -26,7 +27,7 @@ Before analysing the dataset, we define the variables with the names of the gene
 
 These variables will change in function of how your dataset is build and which type of data it is.
 
-If you find the definition of the variables heavy in your code, you can create a `.yml` file, for example named `params.yml`, call it in a cell, and it will automatically import the variables. Your code will be clearer. 
+If you find the definition of the variables heavy in your code, you can create a `.yml` file, for example named `params.yml`, call it in a cell, and it will automatically import the variables. Your code will be clearer (here is an [example](https://github.com/crcordeliers/CAIBIrnaseq/blob/dev/params.yml))
 
 ```{r read_params}
 #| message: false
@@ -163,7 +164,7 @@ exp_data <- filter_gexp(exp_data,
 
 Visualization of the filtering process to ensure the criteria applied align with the dataset’s characteristics:
 
-```{r plot_qc_filters}
+```{r plot_qc_filters, warning=FALSE}
 #| message: false
 colData(exp_data)$sample_id <- colnames(exp_data)
 plot_qc_filters(exp_data)
@@ -196,7 +197,7 @@ With this dataset, it is not relevant but it can be with your persona dataset.
 Here, it highlights the fact that the 2 groups are not crossing each other. The `trt` group has more PC1, whereas the `untrt` group has less.
 We could conclude that PC1 is more represented in the treated samples.
 
-```{r}
+```{r, message=FALSE}
 library(factoextra)
 groups <- SummarizedExperiment::colData(exp_data)$dex  # here we want to split in function of `treated` and `untreated`
 
@@ -260,7 +261,7 @@ progeny_scores <- score_progeny(exp_data, species = "Homo sapiens")
 
 ```
 
-```{r}
+```{r, warning=FALSE}
 #| message: false
 #| label: progenyprovided
 progeny_scores <- score_progeny(exp_data, species = "Homo sapiens")
@@ -278,7 +279,7 @@ Ensure your dataset is in a `Summarized Experiment` object, because all the used
 
 Pathway collections available in the MSIGdb can be specified in the parameters. These pathways are scored and ranked by their variance in the data. These are the available collections (use `gs_subcollection` as name except for Hallmarks, which should be 'H').
 
-```{r}
+```{r, warning=FALSE}
 #| message: false
 #| label: collections
 library(msigdbr)
@@ -294,7 +295,7 @@ msigdbr::msigdbr_collections() |>
 ```
 
 
-```{r}
+```{r, warning=FALSE}
 #| message: false
 #| label: pathways
 #| fig-width: 10
@@ -322,7 +323,7 @@ write.csv(pathways, file = stringr::str_glue("results/unsup/pathways/paths_{coll
 
 This step calculates immune and stromal cell type abundances using MCPcounter or mMCPcounter. It helps to infer the composition of the tumor microenvironment or similar contexts.
 
-```{r}
+```{r, warning=FALSE}
 #| message: false
 #| label: microenvironment
 mcp_scores <- mcp_counter(exp_data, species = species)
@@ -335,7 +336,7 @@ write.csv(mcp_scores, file = "results/unsup/tme/scores_mcpcounter.csv")
 By default, the rows are order by scores. But, the `plot_microenv_heatsmap` function has the `ellipsis argument`. That means that this function can have a wide range of inputs. 
 So, it is possible to plot the rows in a different order than the default one :
 
-```{r}
+```{r, warning=FALSE}
 plot_microenv_heatmap(exp_data,
                       annotations = c("dex", "exp_cluster"),
                       fname = "results/unsup/tme/heatmap_sorted_bydex.pdf",
@@ -370,7 +371,7 @@ patchwork::wrap_plots(hms, ncol = 2, guides = "collect")
 
 #### Selected pathways
 
-```{r}
+```{r, warning=FALSE}
 #| message: false
 #| label: plot_hm_pathways
 #| fig-width: 7

@@ -95,9 +95,13 @@ expression data on biological pathways (from KEGG), it helps for seeing
 how the genes of interest are involved in known cellular processes like
 the cell cycle or apoptosis.</p>
 <p>To create the cell cycle graph, we use the function
-<code>pathview</code>. The expected input for the <code>pathview</code>
-function is a vector of the <strong>log2FoldChange</strong> of the DE
-genes.</p>
+<code>pathview</code>. The expected input for this function is a vector
+of the <strong>log2FoldChange</strong> of the DE genes.</p>
+<p>If you want to use this notebook for your projects, it is available
+<a href="https://github.com/crcordeliers/CAIBIrnaseq/blob/dev/vignettes/pathview.Rmd" class="external-link">here</a></p>
+<div class="section level2">
+<h2 id="pre-processing">Pre-processing<a class="anchor" aria-label="anchor" href="#pre-processing"></a>
+</h2>
 <p>In this page, you will only see the specific code to get the graph.
 The first steps are the same for every visualization. Before the next
 cells of code, you will need to do all the pre-processing analyses,
@@ -114,6 +118,10 @@ pages</a></p>
 <span><span class="co">## A2M      71665.137761    -1.19356380 0.2310016 3.375187e-08 7.203143e-07</span></span>
 <span><span class="co">## A2M-AS1     39.045426     0.88104208 0.5735779 1.961794e-02 7.405728e-02</span></span>
 <span><span class="co">## A2ML1        2.457721    -0.04618380 0.4598400 8.400364e-01 9.379652e-01</span></span></code></pre>
+</div>
+<div class="section level2">
+<h2 id="conversion">Conversion<a class="anchor" aria-label="anchor" href="#conversion"></a>
+</h2>
 <p>The next cell will take the log2FoldChange and ENTREZID to get the
 expected object for the <code>pathview</code> function.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
@@ -145,6 +153,10 @@ expected object for the <code>pathview</code> function.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">gene.data</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##           1      503538       29974           2      144571      144568 </span></span>
 <span><span class="co">##  0.75051222 -0.32048380  0.04585155 -1.19356380  0.88104208 -0.04618380</span></span></code></pre>
+</div>
+<div class="section level2">
+<h2 id="graph">Graph<a class="anchor" aria-label="anchor" href="#graph"></a>
+</h2>
 <p>Once done, we can call the function with specific parameters that
 match our dataset.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
@@ -160,10 +172,20 @@ match our dataset.</p>
 <span>  na.color <span class="op">=</span> <span class="st">"gray"</span>,</span>
 <span>  kegg.native <span class="op">=</span> <span class="cn">TRUE</span>  </span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Afficher le graphique dans le document</span></span>
-<span><span class="fu">include_graphics</span><span class="op">(</span><span class="st">"hsa04110.macrophage_apoptosis.png"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="hsa04110.macrophage_apoptosis.png" width="552"></p>
+<p><img src="hsa04110.macrophage_apoptosis.png" width="120%" style="display: block; margin: auto;">
+Using the <code>pathview package</code>, we visualized the impact of
+<code>differentially expressed genes</code> from the macrophage dataset
+on the KEGG apoptosis pathway (<strong>hsa04110</strong>). The pathway
+diagram highlights genes based on their <strong>log2FoldChange</strong>
+values: <strong>upregulated</strong> genes are shown in pink (Cdc25a,
+CycA, CycB, …), while <strong>downregulated</strong> genes appear in
+light green (GADD45, Cip1, CycD, …). Genes with no expression data or
+missing values are colored gray. This visualization allows us to assess
+how the <strong>IFN-γ treatment</strong> influences components of the
+apoptotic signaling cascade, helping to identify specific regulatory
+points potentially activated or suppressed in <em>response</em> to the
+stimulus.</p>
+</div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>

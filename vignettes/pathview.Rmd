@@ -14,7 +14,12 @@ An additional analysis is given by the [Pathview package](https://bioconductor.o
 
 **Pathview** is an R tool used to visualize gene expression data on biological pathways (from KEGG), it helps for seeing how the genes of interest are involved in known cellular processes like the cell cycle or apoptosis.
 
-To create the cell cycle graph, we use the function `pathview`. The expected input for the `pathview` function is a vector of the **log2FoldChange** of the DE genes. 
+To create the cell cycle graph, we use the function `pathview`. The expected input for this function is a vector of the **log2FoldChange** of the DE genes. 
+
+If you want to use this notebook for your projects, it is available [here](https://github.com/crcordeliers/CAIBIrnaseq/blob/dev/vignettes/pathview.Rmd)
+
+
+## Pre-processing
 
 In this page, you will only see the specific code to get the graph. The first steps are the same for every visualization. Before the next cells of code, you will need to do all the pre-processing analyses, until the **diffexp**. If you want to see the code, you can copy/paste it from the [other pages](https://crcordeliers.github.io/CAIBIrnaseq/articles/venn.html)
 
@@ -87,6 +92,7 @@ This is what you get after the `diffexp`:
 ```{r}
 head(diffexp_mac)
 ```
+## Conversion
 
 The next cell will take the log2FoldChange and ENTREZID to get the expected object for the `pathview` function. 
 
@@ -119,6 +125,8 @@ gene.data <- gene.data[!is.na(names(gene.data))]
 head(gene.data)
 ```
 
+## Graph
+
 Once done, we can call the function with specific parameters that match our dataset. 
 
 ```{r, message=FALSE, warning=FALSE}
@@ -137,9 +145,9 @@ pathview(
 
 ```
 
-```{r}
-# Afficher le graphique dans le document
+```{r, echo=FALSE, out.width='120%', fig.align='center'}
 include_graphics("hsa04110.macrophage_apoptosis.png")
 
 ```
+Using the `pathview package`, we visualized the impact of `differentially expressed genes` from the macrophage dataset on the KEGG apoptosis pathway (**hsa04110**). The pathway diagram highlights genes based on their **log2FoldChange** values: **upregulated** genes are shown in pink (Cdc25a, CycA, CycB, ...), while **downregulated** genes appear in light green (GADD45, Cip1, CycD, ...). Genes with no expression data or missing values are colored gray. This visualization allows us to assess how the **IFN-γ treatment** influences components of the apoptotic signaling cascade, helping to identify specific regulatory points potentially activated or suppressed in *response* to the stimulus.
 
