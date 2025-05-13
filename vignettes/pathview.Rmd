@@ -101,28 +101,33 @@ The next cell will take the log2FoldChange and ENTREZID to get the expected obje
 library(org.Hs.eg.db)
 library(dplyr)
 
-# Récupérer les noms des gènes
+# Retrieve the gene symbols from the row names of the differential expression data
 gene_symbols <- rownames(diffexp_mac)
 
-# Conversion symboles → Entrez IDs
+# Convert gene symbols to Entrez IDs using the org.Hs.eg.db annotation database
 conversion <- AnnotationDbi::select(
-  org.Hs.eg.db,
-  keys = gene_symbols,
-  columns = c("ENTREZID"),
-  keytype = "SYMBOL"
+  org.Hs.eg.db,                   # Human gene annotation package
+  keys = gene_symbols,            # List of gene symbols to convert
+  columns = c("ENTREZID"),        # We want to retrieve Entrez IDs
+  keytype = "SYMBOL"              # Input key type is gene symbol
 )
 
-# Fusion avec vos données d'expression
+# Add gene symbols as a new column in the expression data
 diffexp_mac$SYMBOL <- rownames(diffexp_mac)
-diffexp_mac <- left_join(diffexp_mac, conversion, by = "SYMBOL")
 
-# Créer un vecteur de log2FC nommé avec les Entrez IDs
+# Merge the differential expression data with the Entrez ID conversion table
+diffexp_mac <- dplyr::left_join(diffexp_mac, conversion, by = "SYMBOL")
+
+# Create a named vector of log2 fold changes using Entrez IDs as names
 gene.data <- diffexp_mac$log2FoldChange
 names(gene.data) <- diffexp_mac$ENTREZID
 
-# Supprimer les entrées sans identifiants
+# Remove entries with missing Entrez ID names
 gene.data <- gene.data[!is.na(names(gene.data))]
+
+# Display the first few elements of the vector
 head(gene.data)
+
 ```
 
 ## Graph
@@ -132,17 +137,16 @@ Once done, we can call the function with specific parameters that match our data
 ```{r, message=FALSE, warning=FALSE}
 #|message: false
 pathview(
-  gene.data = gene.data,          # Données de log2FoldChange pour les gènes DE
-  pathway.id = "hsa04110",        # ID de la voie KEGG (par ex. hsa04110 pour l'apoptose)
-  species = "hsa",                # Espèce (ici Homo sapiens)
-  gene.idtype = "entrez",         # Utiliser les identifiants Entrez
-  out.suffix = "macrophage_apoptosis", # Suffixe pour les fichiers de sortie
-    low = "lightgreen",                    # Couleur pour les valeurs faibles (logFC négatif)
-  high = "pink",                     # Couleur pour les valeurs élevées (logFC positif)
-  na.color = "gray",
-  kegg.native = TRUE  
+  gene.data = gene.data,              # Named vector of log2FoldChange values for DE genes 
+  pathway.id = "hsa04110",            # KEGG pathway ID
+  species = "hsa",                    # Species code for Homo sapiens
+  gene.idtype = "entrez",             # The type of gene IDs used in gene.data
+  out.suffix = "macrophage_apoptosis", # Name for the output files 
+  low = "lightgreen",                 # Color for low log2 fold change values
+  high = "pink",                      # Color for high log2 fold change values
+  na.color = "gray",                  # Color for genes not mapped or without data
+  kegg.native = TRUE                  
 )
-
 ```
 
 ```{r, echo=FALSE, out.width='120%', fig.align='center'}

@@ -337,7 +337,7 @@ write.csv(mcp_scores, file = "results/unsup/tme/scores_mcpcounter.csv")
 By default, the rows are order by scores. But, the `plot_microenv_heatsmap` function has the `ellipsis argument`. That means that this function can have a wide range of inputs. 
 So, it is possible to plot the rows in a different order than the default one :
 
-```{r, warning=FALSE}
+```{r, warning=FALSE, message=FALSE}
 plot_microenv_heatmap(exp_data,
                       annotations = c("dex", "exp_cluster"),
                       fname = "results/unsup/tme/heatmap_sorted_bydex.pdf",

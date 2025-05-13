@@ -247,6 +247,13 @@ plot_venn(degs_air, degs_mac, universe_size,
           title = "DEGs communs et spécifiques")
 
 ```
+## Additional analyses
+
+### Collections
+
+The `airway` and `macrophage` datasets have some common genes. We can visualize it with the venn diagram. Now that we know that, maybe we can further analyse whether it is 'random' or something about a biological process. 
+
+
 ```{r}
 #| message: false
 inter <- intersect(degs_air, degs_mac)
@@ -256,6 +263,10 @@ msigdbr::msigdbr_collections() |>
   kableExtra::kable_styling() |>
   kableExtra::scroll_box(height = "300px")
 ```
+
+### Volcano
+
+The 2 volcano plots show us top 15 differential expressed genes. We 
 
 ```{r, warning=FALSE}
 #|message: false
@@ -278,6 +289,7 @@ plot_exp_volcano(common_mac, 15)
 
 ```
 
+### Heatmaps
 
 ```{r, warning=FALSE}
 #| message: false

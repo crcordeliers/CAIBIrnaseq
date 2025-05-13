@@ -186,10 +186,10 @@ diffexp <- diffExpAnalysis(countData = assays(exp_data)$counts,
 
 ```{r}
 #| message: false
-if(tolower(diffexpMethod) == "limma") {
+if(tolower(diffexpMethod) == "limma") {   # for 'limma', the default variables                                    names are different, so we need to rename it
   diffexp <- diffexp |>
     dplyr::rename(
-      log2FoldChange = logFC,
+      log2FoldChange = logFC, 
       pvalue = P.Value,
       padj = adj.P.Val
     )
