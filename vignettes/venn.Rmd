@@ -206,6 +206,7 @@ diffexp_mac <- diffExpAnalysis(countData = assays(macrophage)$counts,
                                           method = diffexpMethod, cutoff = 10,
                                           annotation = annotation_mac)
 ```
+
 ## Venn Diagram
 
 Once the diffexp done, we can plot the venn diagram. Since the datasets are not directly related, it could be interesting to see if there are still similarities. The comparison can be made between genes, pathways, ... 
@@ -247,8 +248,8 @@ plot_venn(degs_air, degs_mac, universe_size,
           title = "DEGs communs et spécifiques")
 
 ```
-## Additional analyses
 
+## Additional analyses
 ### Collections
 
 The `airway` and `macrophage` datasets have some common genes. We can visualize it with the venn diagram. Now that we know that, maybe we can further analyse whether it is 'random' or something about a biological process. 
@@ -299,6 +300,7 @@ plot_exp_volcano(common_mac, 15)
 dir.create("results", "airway", "pathways")
 dir.create("results", "macrophage", "pathways")
 
+
 pathway_collections <- c("CP:KEGG_MEDICUS")
 
 pathways <- get_annotation_collection(pathway_collections, 
@@ -332,16 +334,29 @@ dir.create("results", "macrophage", "pathways")
 
 
 # airway
-plot_pathway_heatmap(airway, annotations = annotation_air,
+plt_air <- plot_pathway_heatmap(airway, annotations = annotation_air,
                      fwidth = 9,
                      cluster_rows = FALSE,
                      fname = stringr::str_glue("results/airway/pathways/hm_paths_{collections}_top20_aligned.pdf"))
 
 # macrophage
-plot_pathway_heatmap(macrophage, annotations = annotation_mac,
+plt_mac <- plot_pathway_heatmap(macrophage, annotations = annotation_mac,
                      fwidth = 9,
                      cluster_rows = FALSE,
+                     show_rownames = FALSE,
                      fname = stringr::str_glue("results/macrophage/pathways/hm_paths_{collections}_top20_aligned.pdf"))
 
 ```
+
+```{r, message=FALSE, warning=FALSE, results='hide', fig.show='hide'}
+require(patchwork)
+require(ggheatmapper)
+ggsave("results/heatmap_big.png", align_heatmaps(plt_air, plt_mac), width = 16, height = 10, dpi = 300)
+```
+
+Click to zoom in :
+
+[![See the plot](results/heatmap_big.png)](results/heatmap_big.png)
+
+
 
