@@ -44,8 +44,8 @@ pathwayOfInterest <- list("HALLMARK_INFLAMMATORY_RESPONSE", "GOBP_RESPONSE_TO_GL
 boxplot_pathways <- list("HALLMARK_INFLAMMATORY_RESPONSE","GOBP_RESPONSE_TO_STEROID_HORMONE")
 
 heatmap_genes <- list(
-  gr_response_genes <- c("FKBP5", "TSC22D3", "PER1", "ZBTB16"),
-  anti_inflam_genes <- c("DUSP1", "SOCS1", "MT2A")
+  gr_response_genes = c("FKBP5", "TSC22D3", "PER1", "ZBTB16"),
+  anti_inflam_genes = c("DUSP1", "SOCS1", "MT2A")
 )
 
 heatmap_pathways <- c(
@@ -279,7 +279,7 @@ patchwork::wrap_plots(boxplots, nrows = round(length(boxplots)/2), guides = "col
 ```
 ## Genes Heatmap
 
-On the heatmaps, we can tell that the top_genes expressions are higher for the treated samples? It means that these genes are the ones that are involved in the treatment response. 
+On the heatmaps, we can tell that the top_genes expressions are higher for the treated samples. It means that these genes might be involved in the treatment response. 
 
 ```{r}
 #| message: false

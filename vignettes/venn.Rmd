@@ -267,7 +267,7 @@ msigdbr::msigdbr_collections() |>
 
 ### Volcano
 
-The 2 volcano plots show us top 15 differential expressed genes. We 
+The 2 volcano plots show us top 15 differential expressed genes.
 
 ```{r, warning=FALSE}
 #|message: false
