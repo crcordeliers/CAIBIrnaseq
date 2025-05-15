@@ -153,11 +153,6 @@ exp_data <- normalize_gexp(exp_data)
 
 ```{r}
 #| message: false
-heatmap_genes <- list(
-  DNA_repair = c("BRCA1", "BRCA2", "ATM", "ATR", "CHEK1", "CHEK2", "RAD51", "XRCC1"),
-  Metabolism = c("ACLY", "ACACA", "FASN", "G6PD", "HK2", "LDHA", "PDK1"),
-  Cell_Cycle = c("CDK1", "CDK2", "CCND1", "CCNE1", "RB1", "TP53", "E2F1")
-)
 S4Vectors::metadata(exp_data)[["pca_res"]] <- pca_gexp(exp_data)
 annotations <- setdiff(annotation, c("exp_cluster", "path_cluster"))
 plot_pca(exp_data, color = annotation)
