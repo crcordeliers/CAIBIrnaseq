@@ -1,7 +1,6 @@
 ---
 title: "Pathview for KEGG"
 author: "Cordeliers Artificial Intelligence and Bioinformatics"
-date: "`r Sys.Date()`"
 format: 
   html:
     toc: true

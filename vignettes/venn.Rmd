@@ -102,7 +102,7 @@ annot_mac <- getBM(
   mart = mart_mac
 )
 # Correspondance entre gene_id et annot_mac
-match_mac <- match(rowData(macrophage)$gene_id, annot_mac$ensembl_gene_id)
+match_mac <- match(rowData(macrophage)$diffexp_airgene_id, annot_mac$ensembl_gene_id)
 
 # Ajouter les colonnes dans rowData
 rowData(macrophage)$gene_biotype <- annot_mac$gene_biotype[match_mac]
@@ -189,7 +189,7 @@ By statistically testing gene expression differences, this analysis highlights *
 #| message: false
 library(edgeR)
 colData(airway)$dex <- factor(colData(airway)$dex)
-colData(airway)$dex <- factor(colData(airway)$dex, levels = c("untrt", "trt"))
+colData(airway)$dex <- factor(colData(airway)$dex, levels = c("untrt", "trt")) #  change with your conditions' names
 
 
 diffexp_air <- diffExpAnalysis(countData = assays(airway)$counts,
@@ -217,7 +217,7 @@ This diagram show us how much genes are unique to one dataset, and which are in 
 
 ```{r}
 #|message: false
-if(tolower(diffexpMethod) == "limma") {
+if(tolower(diffexpMethod) == "limma") {     # you can change it with 'DESeq2'
   diffexp_air <- diffexp_air |>
     dplyr::rename(
       log2FoldChange = logFC,
@@ -236,7 +236,7 @@ if(tolower(diffexpMethod) == "limma"){
 }
 
 # Exemple : extraction des degs_airgènes DE significatifs
-degs_air <- rownames(diffexp_air[diffexp_air$padj < 0.05, ])
+degs_air <- rownames(diffexp_air[diffexp_air$padj < 0.05, ])    # you can change the threshold 'padj'
 degs_mac <- rownames(diffexp_mac[diffexp_mac$padj < 0.05, ])
 # universe_size <- length(union(degs_air, degs_mac))
 universe_size <- 7000
@@ -248,6 +248,13 @@ plot_venn(degs_air, degs_mac, universe_size,
           title = "DEGs communs et spécifiques")
 
 ```
+
+```{r}
+trt <- airway[,colData(airway)$dex == "trt"]
+```
+
+
+
 
 ## Additional analyses
 ### Collections

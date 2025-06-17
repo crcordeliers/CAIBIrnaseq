@@ -166,7 +166,7 @@ plot_pca(exp_data, color = annotation)
 #| message: false
 library(edgeR)
 colData(exp_data)$dex <- factor(colData(exp_data)$dex)
-colData(exp_data)$dex <- factor(colData(exp_data)$dex, levels = c("untrt", "trt"))
+colData(exp_data)$dex <- factor(colData(exp_data)$dex, levels = c("untrt", "trt"))    # conditions' names 
 
 
 diffexp <- diffExpAnalysis(countData = assays(exp_data)$counts,
@@ -181,7 +181,7 @@ diffexp <- diffExpAnalysis(countData = assays(exp_data)$counts,
 
 ```{r}
 #| message: false
-if(tolower(diffexpMethod) == "limma") {   # for 'limma', the default variables                                    names are different, so we need to rename it
+if(tolower(diffexpMethod) == "limma") {   # for 'limma', the default variables names are different, so we have to rename it
   diffexp <- diffexp |>
     dplyr::rename(
       log2FoldChange = logFC, 
@@ -191,7 +191,7 @@ if(tolower(diffexpMethod) == "limma") {   # for 'limma', the default variables  
 }
 
 diffexp_filtered <- diffexp |>
-    dplyr::filter(padj <= 0.05) |>
+    dplyr::filter(padj <= 0.05) |>    # we filter the diffexp, to keep the values under a given threshold 'padj'. this threshold can be change 
     dplyr::arrange(padj)
 
 # Select the 16 most differentially expressed genes
