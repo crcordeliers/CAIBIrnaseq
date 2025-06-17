@@ -8,7 +8,8 @@ plot_pathway_dotplot(
   exp_data,
   score_name = "resultsORA",
   top_n = 10,
-  maxPval = 0.05
+  maxPval = 0.05,
+  usePval = TRUE
 )
 }
 \arguments{
