@@ -13,24 +13,29 @@ plot_pathway_dotplot(
 )
 }
 \arguments{
-\item{exp_data}{A `SummarizedExperiment` object containing experimental data with pathway analysis results in `metadata()`.}
+\item{exp_data}{A `SummarizedExperiment` object containing pathway analysis results stored in the `metadata()`.}
 
-\item{score_name}{A character string indicating the metadata field where results are stored. Default is `"resultsORA"`.}
+\item{score_name}{A character string indicating the metadata field where pathway results are stored. Default is `"resultsORA"`.}
 
-\item{top_n}{An integer for the number of top pathways to plot. Default is `10`.}
+\item{top_n}{Number of top pathways to display. Default is `10`.}
 
-\item{maxPval}{A numeric for the maximum adjusted p-value to include pathways. Default is `0.05`.}
+\item{maxPval}{Maximum adjusted p-value for filtering pathways (if `usePval = TRUE`). Default is `0.05`.}
+
+\item{usePval}{Logical; whether to filter and rank by adjusted p-values (`TRUE`) or by gene ratio / size (`FALSE`). Default is `TRUE`.}
 }
 \value{
-A `ggplot2` dot plot showing pathway enrichment results.
+A `ggplot2` dot plot object showing pathway enrichment.
 }
 \description{
-Creates a dot plot to visualize pathway analysis results, supporting both ORA and FGSEA formats.
+Creates a dot plot to visualize pathway enrichment analysis results, supporting both ORA and FGSEA formats.
 }
 \details{
-The function supports two result formats:
-- **ORA** (Over-Representation Analysis): expects columns `PAdj`, `GeneRatio`, and `Pathway`.
-- **FGSEA**: expects columns `padj`, `size`, and `pathway`.
+The function supports two types of enrichment results:
+\itemize{
+  \item{ORA (Over-Representation Analysis): requires columns `PAdj`, `GeneRatio`, and `Pathway`}
+  \item{FGSEA: requires columns `padj`, `size`, and `pathway`}
+}
 
-The x-axis shows the -log10 of adjusted p-values, y-axis lists pathways, dot size shows gene ratio.
+When `usePval = TRUE`, the plot will show -log10 adjusted p-values on the x-axis, colored by significance.
+When `usePval = FALSE`, the plot will rank and size pathways by gene ratio or enrichment size.
 }

@@ -1,20 +1,24 @@
 #' Plot Pathway Analysis Results as a Dot Plot
 #'
-#' Creates a dot plot to visualize pathway analysis results, supporting both ORA and FGSEA formats.
+#' Creates a dot plot to visualize pathway enrichment analysis results, supporting both ORA and FGSEA formats.
 #'
-#' @param exp_data A `SummarizedExperiment` object containing experimental data with pathway analysis results in `metadata()`.
-#' @param score_name A character string indicating the metadata field where results are stored. Default is `"resultsORA"`.
-#' @param top_n An integer for the number of top pathways to plot. Default is `10`.
-#' @param maxPval A numeric for the maximum adjusted p-value to include pathways. Default is `0.05`.
+#' @param exp_data A `SummarizedExperiment` object containing pathway analysis results stored in the `metadata()`.
+#' @param score_name A character string indicating the metadata field where pathway results are stored. Default is `"resultsORA"`.
+#' @param top_n Number of top pathways to display. Default is `10`.
+#' @param maxPval Maximum adjusted p-value for filtering pathways (if `usePval = TRUE`). Default is `0.05`.
+#' @param usePval Logical; whether to filter and rank by adjusted p-values (`TRUE`) or by gene ratio / size (`FALSE`). Default is `TRUE`.
 #'
-#' @return A `ggplot2` dot plot showing pathway enrichment results.
+#' @return A `ggplot2` dot plot object showing pathway enrichment.
 #'
 #' @details
-#' The function supports two result formats:
-#' - **ORA** (Over-Representation Analysis): expects columns `PAdj`, `GeneRatio`, and `Pathway`.
-#' - **FGSEA**: expects columns `padj`, `size`, and `pathway`.
+#' The function supports two types of enrichment results:
+#' \itemize{
+#'   \item{ORA (Over-Representation Analysis): requires columns `PAdj`, `GeneRatio`, and `Pathway`}
+#'   \item{FGSEA: requires columns `padj`, `size`, and `pathway`}
+#' }
 #'
-#' The x-axis shows the -log10 of adjusted p-values, y-axis lists pathways, dot size shows gene ratio.
+#' When `usePval = TRUE`, the plot will show -log10 adjusted p-values on the x-axis, colored by significance.
+#' When `usePval = FALSE`, the plot will rank and size pathways by gene ratio or enrichment size.
 #'
 #' @importFrom ggplot2 ggplot aes geom_point scale_x_continuous scale_color_gradient scale_size_continuous scale_y_discrete ggtitle labs theme element_text element_blank element_line
 #' @importFrom dplyr arrange filter slice_head mutate
@@ -24,7 +28,12 @@
 #'
 #' @export
 #'
-plot_pathway_dotplot <- function(exp_data, score_name = "resultsORA", top_n = 10, maxPval = 0.05, usePval = TRUE) {
+plot_pathway_dotplot <- function(exp_data,
+                                 score_name = "resultsORA",
+                                 top_n = 10,
+                                 maxPval = 0.05,
+                                 usePval = TRUE) {
+
   results <- S4Vectors::metadata(exp_data)[[score_name]]
 
   if ("PValue" %in% colnames(results)) {
@@ -35,22 +44,20 @@ plot_pathway_dotplot <- function(exp_data, score_name = "resultsORA", top_n = 10
         dplyr::filter(PAdj < maxPval) |>
         dplyr::slice_head(n = top_n)
     } else {
-      # Pas de filtrage ni tri par p-value, on trie par GeneRatio décroissant
       results <- results |>
-        dplyr::mutate(
-          GeneRatioNum = as.numeric(sub("/.*", "", GeneRatio)) / as.numeric(sub(".*/", "", GeneRatio))
-        ) |>
+        dplyr::mutate(GeneRatioNum = as.numeric(sub("/.*", "", GeneRatio)) / as.numeric(sub(".*/", "", GeneRatio))) |>
         dplyr::arrange(desc(GeneRatioNum)) |>
         dplyr::slice_head(n = top_n)
     }
+
     results <- results |>
       dplyr::mutate(
-        GeneRatioNum = ifelse(exists("GeneRatioNum"), GeneRatioNum,
-                              as.numeric(sub("/.*", "", GeneRatio)) / as.numeric(sub(".*/", "", GeneRatio))),
+        GeneRatioNum = if (!"GeneRatioNum" %in% colnames(.)) as.numeric(sub("/.*", "", GeneRatio)) / as.numeric(sub(".*/", "", GeneRatio)) else GeneRatioNum,
         Pathway = factor(Pathway, levels = rev(Pathway)),
         Size = GeneRatioNum,
-        logpadj = ifelse(usePval, -log10(PAdj), NA_real_)
+        logpadj = if (usePval) -log10(PAdj) else NA_real_
       )
+
   } else if ("pval" %in% colnames(results)) {
     # FGSEA format
     if (usePval) {
@@ -59,39 +66,44 @@ plot_pathway_dotplot <- function(exp_data, score_name = "resultsORA", top_n = 10
         dplyr::filter(padj < maxPval) |>
         dplyr::slice_head(n = top_n)
     } else {
-      # Pas de filtrage ni tri par p-value, on trie par size décroissant
       results <- results |>
         dplyr::arrange(desc(size)) |>
         dplyr::slice_head(n = top_n)
     }
+
     results <- results |>
       dplyr::mutate(
-        GeneRatioNum = ifelse(usePval, size / max(size), size / max(size)),
+        GeneRatioNum = size / max(size),
         Pathway = factor(pathway, levels = rev(pathway)),
         Size = GeneRatioNum,
-        logpadj = ifelse(usePval, -log10(padj), NA_real_)
+        logpadj = if (usePval) -log10(padj) else NA_real_
       )
+
   } else {
     stop("Unsupported results format: expected columns `PAdj` or `padj`.")
   }
 
   if (usePval) {
     p <- ggplot2::ggplot(results, ggplot2::aes(x = logpadj, y = Pathway, size = Size, color = logpadj)) +
-      ggplot2::scale_x_continuous(labels = function(x) 10^-x, breaks = scales::pretty_breaks(n = 5)) +
+      ggplot2::scale_x_continuous(
+        name = "Adjusted p-value",
+        labels = function(x) signif(10^-x, 2),
+        breaks = scales::pretty_breaks(n = 5)
+      ) +
       ggplot2::scale_color_gradient(
+        name = "Adjusted p-value",
         low = "#df6664", high = "#387eb9",
-        labels = function(x) 10^-x,
+        labels = function(x) signif(10^-x, 2),
         breaks = scales::pretty_breaks(n = 6),
         limits = c(-log10(maxPval), max(results$logpadj, na.rm = TRUE))
-      ) +
-      ggplot2::labs(x = "Adjusted p-value", color = "Adjusted p-value")
+      )
   } else {
     p <- ggplot2::ggplot(results, ggplot2::aes(x = Size, y = Pathway, size = Size)) +
       ggplot2::geom_point(color = "#387eb9") +
       ggplot2::labs(x = "Gene Ratio", color = NULL)
   }
 
-  p +
+  p <- p +
     ggplot2::geom_point() +
     ggplot2::scale_size_continuous(range = c(2, 10)) +
     ggplot2::scale_y_discrete(labels = function(x) stringr::str_wrap(stringr::str_replace_all(x, "_", " "), width = 30)) +
@@ -106,5 +118,6 @@ plot_pathway_dotplot <- function(exp_data, score_name = "resultsORA", top_n = 10
       panel.background = ggplot2::element_blank(),
       panel.grid.major = ggplot2::element_line(colour = "gray90")
     )
-}
 
+  return(p)
+}
