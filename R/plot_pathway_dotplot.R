@@ -35,16 +35,21 @@ plot_pathway_dotplot <- function(exp_data, score_name = "resultsORA", top_n = 10
         dplyr::filter(PAdj < maxPval) |>
         dplyr::slice_head(n = top_n)
     } else {
+      # Pas de filtrage ni tri par p-value, on trie par GeneRatio décroissant
       results <- results |>
-        dplyr::arrange(desc(PAdj)) |>
+        dplyr::mutate(
+          GeneRatioNum = as.numeric(sub("/.*", "", GeneRatio)) / as.numeric(sub(".*/", "", GeneRatio))
+        ) |>
+        dplyr::arrange(desc(GeneRatioNum)) |>
         dplyr::slice_head(n = top_n)
     }
     results <- results |>
       dplyr::mutate(
-        GeneRatioNum = as.numeric(sub("/.*", "", GeneRatio)) / as.numeric(sub(".*/", "", GeneRatio)),
+        GeneRatioNum = ifelse(exists("GeneRatioNum"), GeneRatioNum,
+                              as.numeric(sub("/.*", "", GeneRatio)) / as.numeric(sub(".*/", "", GeneRatio))),
         Pathway = factor(Pathway, levels = rev(Pathway)),
         Size = GeneRatioNum,
-        logpadj = -log10(PAdj)
+        logpadj = ifelse(usePval, -log10(PAdj), NA_real_)
       )
   } else if ("pval" %in% colnames(results)) {
     # FGSEA format
@@ -54,16 +59,17 @@ plot_pathway_dotplot <- function(exp_data, score_name = "resultsORA", top_n = 10
         dplyr::filter(padj < maxPval) |>
         dplyr::slice_head(n = top_n)
     } else {
+      # Pas de filtrage ni tri par p-value, on trie par size décroissant
       results <- results |>
-        dplyr::arrange(desc(padj)) |>
+        dplyr::arrange(desc(size)) |>
         dplyr::slice_head(n = top_n)
     }
     results <- results |>
       dplyr::mutate(
-        GeneRatioNum = size / max(size),
+        GeneRatioNum = ifelse(usePval, size / max(size), size / max(size)),
         Pathway = factor(pathway, levels = rev(pathway)),
         Size = GeneRatioNum,
-        logpadj = -log10(padj)
+        logpadj = ifelse(usePval, -log10(padj), NA_real_)
       )
   } else {
     stop("Unsupported results format: expected columns `PAdj` or `padj`.")
@@ -76,7 +82,7 @@ plot_pathway_dotplot <- function(exp_data, score_name = "resultsORA", top_n = 10
         low = "#df6664", high = "#387eb9",
         labels = function(x) 10^-x,
         breaks = scales::pretty_breaks(n = 6),
-        limits = c(-log10(maxPval), max(results$logpadj))
+        limits = c(-log10(maxPval), max(results$logpadj, na.rm = TRUE))
       ) +
       ggplot2::labs(x = "Adjusted p-value", color = "Adjusted p-value")
   } else {
@@ -101,3 +107,4 @@ plot_pathway_dotplot <- function(exp_data, score_name = "resultsORA", top_n = 10
       panel.grid.major = ggplot2::element_line(colour = "gray90")
     )
 }
+
