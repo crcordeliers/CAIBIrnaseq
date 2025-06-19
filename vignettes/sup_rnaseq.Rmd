@@ -153,7 +153,7 @@ exp_data <- normalize_gexp(exp_data)
 
 ```{r}
 #| message: false
-S4Vectors::metadata(exp_data)[["pca_res"]] <- pca_gexp(exp_data)
+metadata(exp_data)[["pca_res"]] <- pca_gexp(exp_data)
 annotations <- setdiff(annotation, c("exp_cluster", "path_cluster"))
 plot_pca(exp_data, color = annotation)
 ```

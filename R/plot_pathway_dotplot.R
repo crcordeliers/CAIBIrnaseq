@@ -6,7 +6,6 @@
 #' @param score_name A character string indicating the metadata field where pathway results are stored. Default is `"resultsORA"`.
 #' @param top_n Number of top pathways to display. Default is `10`.
 #' @param maxPval Maximum adjusted p-value for filtering pathways (if `usePval = TRUE`). Default is `0.05`.
-#' @param usePval Logical; whether to filter and rank by adjusted p-values (`TRUE`) or by gene ratio / size (`FALSE`). Default is `TRUE`.
 #'
 #' @return A `ggplot2` dot plot object showing pathway enrichment.
 #'
@@ -29,82 +28,76 @@
 #' @export
 #'
 plot_pathway_dotplot <- function(exp_data,
-                                 score_name = "resultsORA",
+                                 score_name,
                                  top_n = 10,
-                                 maxPval = 0.05,
-                                 usePval = TRUE) {
+                                 maxPval = 0.05) {
 
-  results <- S4Vectors::metadata(exp_data)[[score_name]]
+  results <- metadata(exp_data)[[score_name]]
 
-  if ("PValue" %in% colnames(results)) {
+  results_type <- case_when(
+    "PValue" %in% colnames(results) ~ "ORA",
+    "pval" %in% colnames(results) ~ "GSEA",
+    TRUE ~ NA_character_
+  )
+
+  if (results_type == "ORA") {
+    message("Plotting ORA-type results...")
+
     # ORA format
-    if (usePval) {
-      results <- results |>
-        dplyr::arrange(PAdj) |>
-        dplyr::filter(PAdj < maxPval) |>
-        dplyr::slice_head(n = top_n)
-    } else {
-      results <- results |>
-        dplyr::mutate(GeneRatioNum = as.numeric(sub("/.*", "", GeneRatio)) / as.numeric(sub(".*/", "", GeneRatio))) |>
-        dplyr::arrange(desc(GeneRatioNum)) |>
-        dplyr::slice_head(n = top_n)
-    }
+    results <- results |>
+      dplyr::arrange(PAdj) |>
+      dplyr::filter(PAdj < maxPval) |>
+      dplyr::slice_head(n = top_n)
 
     results <- results |>
       dplyr::mutate(
         GeneRatioNum = if (!"GeneRatioNum" %in% colnames(.)) as.numeric(sub("/.*", "", GeneRatio)) / as.numeric(sub(".*/", "", GeneRatio)) else GeneRatioNum,
         Pathway = factor(Pathway, levels = rev(Pathway)),
         Size = GeneRatioNum,
-        logpadj = if (usePval) -log10(PAdj) else NA_real_
+        logpadj = -log10(PAdj)
+      )
+    p <- ggplot(results, aes(x = log10padj, y = Pathway, size = Size, fill = logpadj)) +
+      ggplot2::scale_x_continuous(
+        name = "Adjusted p-value",
+        labels = function(x) signif(10^-x, 2),
+        breaks = scales::pretty_breaks(n = 5)
       )
 
-  } else if ("pval" %in% colnames(results)) {
+  } else if (results_type == "GSEA") {
+    message("Plotting GSEA-type results...")
+
     # FGSEA format
-    if (usePval) {
-      results <- results |>
-        dplyr::arrange(padj) |>
-        dplyr::filter(padj < maxPval) |>
-        dplyr::slice_head(n = top_n)
-    } else {
-      results <- results |>
-        dplyr::arrange(desc(size)) |>
-        dplyr::slice_head(n = top_n)
-    }
+    results <- results |>
+      dplyr::arrange(NES) |>
+      dplyr::filter(padj < maxPval) |>
+      dplyr::slice_head(n = top_n)
 
     results <- results |>
       dplyr::mutate(
         GeneRatioNum = lengths(leadingEdge) / size,
         Pathway = factor(pathway, levels = rev(pathway)),
         Size = GeneRatioNum,
-        logpadj = if (usePval) -log10(padj) else NA_real_
+        logpadj = -log10(padj)
       )
 
-  } else {
-    stop("Unsupported results format: expected columns `PAdj` or `padj`.")
-  }
-
-  if (usePval) {
-    p <- ggplot2::ggplot(results, ggplot2::aes(x = logpadj, y = Pathway, size = Size, color = logpadj)) +
+    p <- ggplot(results, aes(x = NES, y = Pathway, size = Size, fill = logpadj)) +
       ggplot2::scale_x_continuous(
-        name = "Adjusted p-value",
-        labels = function(x) signif(10^-x, 2),
-        breaks = scales::pretty_breaks(n = 5)
+        name = "Normalized Enrichment Score (NES)",
+        expand = c(0.1,0.1)
       ) +
-      ggplot2::scale_color_gradient(
-        name = "Adjusted p-value",
-        low = "#df6664", high = "#387eb9",
-        labels = function(x) signif(10^-x, 2),
-        breaks = scales::pretty_breaks(n = 6),
-        limits = c(-log10(maxPval), max(results$logpadj, na.rm = TRUE))
-      )
+      geom_segment(aes(xend=0, yend=Pathway), size = 0.5, color = "grey", lty = "dotted")
+
   } else {
-    p <- ggplot2::ggplot(results, ggplot2::aes(x = Size, y = Pathway, size = Size)) +
-      ggplot2::geom_point(color = "#387eb9") +
-      ggplot2::labs(x = "Gene Ratio", color = NULL)
+    stop("Unsupported results type format: expected columns `PAdj` or `padj`.")
   }
 
-  p <- p +
-    ggplot2::geom_point() +
+  p <- p + ggplot2::scale_fill_distiller(
+    name = "Adjusted p-value",
+    palette = "Reds", direction = 1,
+    labels = function(x) signif(10^-x, 2),
+    limits = c(-log10(maxPval), max(results$logpadj, na.rm = TRUE))) +
+    ggplot2::geom_vline(xintercept = 0, lty = "dashed") +
+    ggplot2::geom_point(pch = 21, color = "black") +
     ggplot2::scale_size_continuous(range = c(2, 10)) +
     ggplot2::scale_y_discrete(labels = function(x) stringr::str_wrap(stringr::str_replace_all(x, "_", " "), width = 30)) +
     ggplot2::ggtitle("Pathway Analysis") +
@@ -112,12 +105,14 @@ plot_pathway_dotplot <- function(exp_data,
     ggplot2::theme(
       plot.title = ggplot2::element_text(size = 12, face = "bold"),
       axis.text.y = ggplot2::element_text(size = 10),
-      axis.text.x = ggplot2::element_text(size = 10, angle = ifelse(usePval, 45, 0), hjust = 1),
+      axis.text.x = ggplot2::element_text(size = 10, angle = 45, hjust = 1),
       axis.title.x = ggplot2::element_text(size = 12),
       axis.title.y = ggplot2::element_text(size = 12),
       panel.background = ggplot2::element_blank(),
       panel.grid.major = ggplot2::element_line(colour = "gray90")
     )
+
+
 
   return(p)
 }
