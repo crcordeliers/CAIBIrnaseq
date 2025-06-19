@@ -73,7 +73,7 @@ plot_pathway_dotplot <- function(exp_data,
 
     results <- results |>
       dplyr::mutate(
-        GeneRatioNum = size / max(size),
+        GeneRatioNum = lengths(leadingEdge) / size,
         Pathway = factor(pathway, levels = rev(pathway)),
         Size = GeneRatioNum,
         logpadj = if (usePval) -log10(padj) else NA_real_
