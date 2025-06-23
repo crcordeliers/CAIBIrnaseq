@@ -260,8 +260,6 @@ The returned plot will give us information about the pathways that are activated
 
 ```{r}
 progeny_scores <- score_progeny(exp_data, species = "Homo sapiens")
-
-
 ```
 
 ```{r, warning=FALSE}

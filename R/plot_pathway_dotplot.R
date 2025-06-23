@@ -34,29 +34,34 @@ plot_pathway_dotplot <- function(exp_data,
 
   results <- metadata(exp_data)[[score_name]]
 
-  results_type <- case_when(
-    "PValue" %in% colnames(results) ~ "ORA",
-    "pval" %in% colnames(results) ~ "GSEA",
+  results_type <- dplyr::case_when(
+    "PAdj" %in% colnames(results) ~ "ORA",
+    "padj" %in% colnames(results) ~ "GSEA",
     TRUE ~ NA_character_
   )
 
   if (results_type == "ORA") {
     message("Plotting ORA-type results...")
 
-    # ORA format
-    results <- results |>
-      dplyr::arrange(PAdj) |>
-      dplyr::filter(PAdj < maxPval) |>
+    results <- results %>%
+      dplyr::arrange(PAdj) %>%
+      dplyr::filter(PAdj < maxPval) %>%
       dplyr::slice_head(n = top_n)
 
-    results <- results |>
+    # Créer GeneRatioNum s'il n'existe pas
+    if (!"GeneRatioNum" %in% colnames(results)) {
+      results$GeneRatioNum <- as.numeric(sub("/.*", "", results$GeneRatio)) /
+        as.numeric(sub(".*/", "", results$GeneRatio))
+    }
+
+    results <- results %>%
       dplyr::mutate(
-        GeneRatioNum = if (!"GeneRatioNum" %in% colnames(.)) as.numeric(sub("/.*", "", GeneRatio)) / as.numeric(sub(".*/", "", GeneRatio)) else GeneRatioNum,
         Pathway = factor(Pathway, levels = rev(Pathway)),
         Size = GeneRatioNum,
         logpadj = -log10(PAdj)
       )
-    p <- ggplot(results, aes(x = log10padj, y = Pathway, size = Size, fill = logpadj)) +
+
+    p <- ggplot2::ggplot(results, aes(x = logpadj, y = Pathway, size = Size, fill = logpadj)) +
       ggplot2::scale_x_continuous(
         name = "Adjusted p-value",
         labels = function(x) signif(10^-x, 2),
@@ -66,13 +71,10 @@ plot_pathway_dotplot <- function(exp_data,
   } else if (results_type == "GSEA") {
     message("Plotting GSEA-type results...")
 
-    # FGSEA format
-    results <- results |>
-      dplyr::arrange(NES) |>
-      dplyr::filter(padj < maxPval) |>
-      dplyr::slice_head(n = top_n)
-
-    results <- results |>
+    results <- results %>%
+      dplyr::arrange(NES) %>%
+      dplyr::filter(padj < maxPval) %>%
+      dplyr::slice_head(n = top_n) %>%
       dplyr::mutate(
         GeneRatioNum = lengths(leadingEdge) / size,
         Pathway = factor(pathway, levels = rev(pathway)),
@@ -80,23 +82,25 @@ plot_pathway_dotplot <- function(exp_data,
         logpadj = -log10(padj)
       )
 
-    p <- ggplot(results, aes(x = NES, y = Pathway, size = Size, fill = logpadj)) +
+    p <- ggplot2::ggplot(results, aes(x = NES, y = Pathway, size = Size, fill = logpadj)) +
       ggplot2::scale_x_continuous(
         name = "Normalized Enrichment Score (NES)",
-        expand = c(0.1,0.1)
+        expand = c(0.1, 0.1)
       ) +
-      geom_segment(aes(xend=0, yend=Pathway), size = 0.5, color = "grey", lty = "dotted")
+      ggplot2::geom_segment(aes(xend = 0, yend = Pathway), size = 0.5, color = "grey", linetype = "dotted")
 
   } else {
     stop("Unsupported results type format: expected columns `PAdj` or `padj`.")
   }
 
-  p <- p + ggplot2::scale_fill_distiller(
-    name = "Adjusted p-value",
-    palette = "Reds", direction = 1,
-    labels = function(x) signif(10^-x, 2),
-    limits = c(-log10(maxPval), max(results$logpadj, na.rm = TRUE))) +
-    ggplot2::geom_vline(xintercept = 0, lty = "dashed") +
+  p <- p +
+    ggplot2::scale_fill_distiller(
+      name = "Adjusted p-value",
+      palette = "Reds", direction = 1,
+      labels = function(x) signif(10^-x, 2),
+      limits = c(-log10(maxPval), max(results$logpadj, na.rm = TRUE))
+    ) +
+    ggplot2::geom_vline(xintercept = 0, linetype = "dashed") +
     ggplot2::geom_point(pch = 21, color = "black") +
     ggplot2::scale_size_continuous(range = c(2, 10)) +
     ggplot2::scale_y_discrete(labels = function(x) stringr::str_wrap(stringr::str_replace_all(x, "_", " "), width = 30)) +
@@ -111,8 +115,6 @@ plot_pathway_dotplot <- function(exp_data,
       panel.background = ggplot2::element_blank(),
       panel.grid.major = ggplot2::element_line(colour = "gray90")
     )
-
-
 
   return(p)
 }

@@ -198,7 +198,7 @@ diffexp_filtered <- diffexp |>
 top_de_genes <- rownames(diffexp_filtered)[1:16]
 ```
 
-##Volcano plot
+## Volcano plot
 
 A **volcano plot** is a graphical tool used to visualize the results of differential expression analysis. It plots the statistical significance on the y-axis against the magnitude of change on the x-axis for each gene.
 
