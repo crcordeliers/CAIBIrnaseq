@@ -249,6 +249,7 @@ The resulting `dot plot` summarizes the most enriched biological pathways across
 #| message: false
 plot_pathway_dotplot(exp_data, score_name = "pathwayEnrichment")
 ```
+
 ### Boxplots 
 
 **Boxplots** are valuable tools in biology for visualizing the distribution of gene expression or other quantitative variables across experimental conditions. They allow quick comparisons between groups by summarizing key statistics
@@ -277,6 +278,7 @@ boxplots <- lapply(heatmap_pathways, function(path) {
 #| message: false
 patchwork::wrap_plots(boxplots, nrows = round(length(boxplots)/2), guides = "collect")
 ```
+
 ## Genes Heatmap
 
 On the heatmaps, we can tell that the top_genes expressions are higher for the treated samples. It means that these genes might be involved in the treatment response. 
