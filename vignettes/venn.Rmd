@@ -102,7 +102,7 @@ annot_mac <- getBM(
   mart = mart_mac
 )
 # Correspondance entre gene_id et annot_mac
-match_mac <- match(rowData(macrophage)$diffexp_airgene_id, annot_mac$ensembl_gene_id)
+match_mac <- match(rowData(macrophage)$gene_id, annot_mac$ensembl_gene_id)
 
 # Ajouter les colonnes dans rowData
 rowData(macrophage)$gene_biotype <- annot_mac$gene_biotype[match_mac]
