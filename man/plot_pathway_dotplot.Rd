@@ -4,13 +4,7 @@
 \alias{plot_pathway_dotplot}
 \title{Plot Pathway Analysis Results as a Dot Plot}
 \usage{
-plot_pathway_dotplot(
-  exp_data,
-  score_name = "resultsORA",
-  top_n = 10,
-  maxPval = 0.05,
-  usePval = TRUE
-)
+plot_pathway_dotplot(exp_data, score_name, top_n = 10, maxPval = 0.05)
 }
 \arguments{
 \item{exp_data}{A `SummarizedExperiment` object containing pathway analysis results stored in the `metadata()`.}
@@ -20,8 +14,6 @@ plot_pathway_dotplot(
 \item{top_n}{Number of top pathways to display. Default is `10`.}
 
 \item{maxPval}{Maximum adjusted p-value for filtering pathways (if `usePval = TRUE`). Default is `0.05`.}
-
-\item{usePval}{Logical; whether to filter and rank by adjusted p-values (`TRUE`) or by gene ratio / size (`FALSE`). Default is `TRUE`.}
 }
 \value{
 A `ggplot2` dot plot object showing pathway enrichment.
