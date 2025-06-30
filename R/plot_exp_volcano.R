@@ -7,6 +7,9 @@
 #'   - `log2FoldChange`: The log2 fold change values for each gene.
 #'   - `padj`: The adjusted p-value for each gene.
 #' @param nb The number of genes that have an annotation
+#' @param color_up Color used for upregulated genes (default is "#0072B2").
+#' @param color_down Color used for downregulated genes (default is "#D55E00").
+#' @param color_ns Color used for non-significant genes (default is "gray80").
 #'
 #' @return A `ggplot` object representing the volcano plot.
 #'
@@ -16,7 +19,10 @@
 #' @importFrom forcats fct_rev
 #' @export
 #'
-plot_exp_volcano <- function(diffexp, nb = 10, title = "Volcano Plot of Differential Expression") {
+plot_exp_volcano <- function(diffexp, nb = 10, title = "Volcano Plot of Differential Expression",
+                             color_up = "#0072B2",
+                             color_down = "#D55E00",
+                             color_ns = "gray80") {
   # Vérification des colonnes requises
   required_cols <- c("log2FoldChange", "padj")
   if (!all(required_cols %in% colnames(diffexp))) {
@@ -44,10 +50,14 @@ plot_exp_volcano <- function(diffexp, nb = 10, title = "Volcano Plot of Differen
   # Ajouter une colonne pour les labels
   diffexp$label <- ifelse(diffexp$gene %in% top_genes$gene, diffexp$gene, NA)
 
-  # Palette de couleurs personnalisée
-  color_palette <- c("Upregulated" = "#0072B2", "Downregulated" = "#D55E00", "Not Significant" = "gray80")
+  # Palette personnalisée depuis les paramètres
+  color_palette <- c(
+    "Upregulated" = color_up,
+    "Downregulated" = color_down,
+    "Not Significant" = color_ns
+  )
 
-  # Définir les limites élargies pour dézoomer
+  # Définir les limites élargies
   x_margin <- 2
   x_range <- range(diffexp$log2FoldChange, na.rm = TRUE)
   x_limits <- c(floor(x_range[1]) - x_margin, ceiling(x_range[2]) + x_margin)
@@ -55,8 +65,8 @@ plot_exp_volcano <- function(diffexp, nb = 10, title = "Volcano Plot of Differen
   y_range <- -log10(diffexp$padj)
   y_limit <- ceiling(max(y_range, na.rm = TRUE)) + 1
 
-  # Construction du plot
-  vplot<- ggplot2::ggplot(diffexp, ggplot2::aes(
+  # Construction du graphique
+  vplot <- ggplot2::ggplot(diffexp, ggplot2::aes(
     x = log2FoldChange,
     y = -log10(padj),
     color = Significance
@@ -96,5 +106,6 @@ plot_exp_volcano <- function(diffexp, nb = 10, title = "Volcano Plot of Differen
       legend.title = ggplot2::element_text(face = "bold"),
       plot.title = ggplot2::element_text(face = "bold", hjust = 0.5)
     )
-  return (vplot)
+
+  return(vplot)
 }

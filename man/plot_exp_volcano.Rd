@@ -7,7 +7,10 @@
 plot_exp_volcano(
   diffexp,
   nb = 10,
-  title = "Volcano Plot of Differential Expression"
+  title = "Volcano Plot of Differential Expression",
+  color_up = "#0072B2",
+  color_down = "#D55E00",
+  color_ns = "gray80"
 )
 }
 \arguments{
@@ -16,6 +19,12 @@ plot_exp_volcano(
 - `padj`: The adjusted p-value for each gene.}
 
 \item{nb}{The number of genes that have an annotation}
+
+\item{color_up}{Color used for upregulated genes (default is "#0072B2").}
+
+\item{color_down}{Color used for downregulated genes (default is "#D55E00").}
+
+\item{color_ns}{Color used for non-significant genes (default is "gray80").}
 }
 \value{
 A `ggplot` object representing the volcano plot.
