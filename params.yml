@@ -1,5 +1,5 @@
 project: Mouse STING KO
-data_file: /home/marie-christian/1_PACKAGE/SUP/data/MAIT_counts.xls
+data_file: 
 use_symbol: true
 show_code: false
 species: Mus musculus
