@@ -1,66 +1,66 @@
-#' Differential Expression Analysis
+#' Differential expression analysis (DESeq2 wrapper)
 #'
-#' Performs differential expression analysis using DESeq2 on a given count matrix and sample information.
+#' @description
+#' Performs a DESeq2-based differential expression workflow on the provided
+#' expression data. Automatically constructs the design formula if needed,
+#' runs DESeq, extracts results for one or more contrasts, optionally applies
+#' LFC shrinkage, and returns sorted tables.
 #'
-#' @param countData A matrix or data frame of raw count data. Rows represent genes, and columns represent samples.
-#' @param sampleInfo A data frame containing sample metadata. Must include a `condition` column specifying the experimental conditions.
-#' @param method A string specifying the method for differential expression analysis. Currently supports only `"DESeq2"`. Default is `"DESeq2"`.
-#' @param cutoff An integer specifying the minimum number of counts required across all samples for a gene to be included in the analysis. Default is `10`.
-#' @param annotation ee
-
+#' @param exp_data A count matrix, SummarizedExperiment containing raw counts
+#' and colData for samples.
+#' @param design A string or formula (without “~”) specifying the model design
+#' (e.g. `"condition"` or `~ condition + batch`). If no leading `~` is found,
+#'  it is added automatically.
+#' @param lfcShrink Logical; if TRUE (default), performs log₂ fold‑change
+#' shrinkage on each result table via DESeq2::lfcShrink.
+#' @param contrasts Character vector of named results to extract (as returned
+#' by DESeq2::resultsNames). If NULL (default), all names except the intercept
+#' are used.
+#'
+#' @return
+#' A named list of data.frames (one per contrast), each sorted by adjusted
+#' p‑value then log₂ fold change. If only one contrast is specified, returns
+#' a single (unnamed) data.frame.
+#'
 #' @details
-#' This function performs differential expression analysis using the DESeq2 package. It filters genes with low counts, estimates size factors for normalization, and performs the DESeq2 analysis pipeline. Log fold-change shrinkage is applied using the `lfcShrink` function.
+#' - Internally builds or coerces a DESeqDataSet from `exp_data` and `design`.
+#' - Runs DESeq2::DESeq on the dataset.
+#' - For each contrast, retrieves results with DESeq2::results and optionally
+#'   applies shrinkage.
 #'
-#' @return A data frame containing the results of the differential expression analysis, including adjusted p-values, log fold changes, and other statistics.
-#'
-#' @importFrom DESeq2 DESeqDataSetFromMatrix DESeq results lfcShrink resultsNames
-#' @importFrom BiocGenerics estimateSizeFactors counts
-#' @importFrom SummarizedExperiment colData
-#'
+#' @importFrom stringr str_detect
+#' @importFrom DESeq2 DESeqDataSet DESeq results lfcShrink resultsNames
 #' @export
-diffExpAnalysis <- function(countData, sampleInfo, method = "DESeq2", cutoff = 10, annotation) {
-  # DESeq2 Method
-  if (tolower(method) == "deseq2") {
-    # Create DESeqDataSet object
-    dds <- DESeq2::DESeqDataSetFromMatrix(countData = countData,
-                                          colData = sampleInfo,
-                                          design = as.formula(paste('~', annotation)))
-
-    keep <- rowSums(BiocGenerics::counts(dds)) >= cutoff
-    dds <- dds[keep,]
-
-    dds <- BiocGenerics::estimateSizeFactors(dds)
-
-    # Perform DESeq2 analysis
-    dds <- DESeq2::DESeq(dds)
-    res <- DESeq2::results(dds)
-    res_shrink <- DESeq2::lfcShrink(dds, coef = tail(DESeq2::resultsNames(dds), 1))
-
-    return(as.data.frame(res_shrink))
+diffExpAnalysis <- function(exp_data, design, lfcShrink = TRUE, contrasts = NULL) {
+  if(!str_detect(design, "~")) {
+    design <- paste0("~", design)
   }
+  # Apply DESeq model
+  ddsSE <- DESeqDataSet(exp_data, design = as.formula(design))
+  ddsSE <- DESeq(ddsSE)
 
-  # Limma-Voom Method
-  else if (tolower(method) == "limma") {
-    # Create DGEList object for Limma
-    dge <- edgeR::DGEList(counts = countData)
-    dge <- edgeR::calcNormFactors(dge)
-    drop <- which(apply(edgeR::cpm(dge), 1, max) < cutoff)
-    dge <- dge[-drop,]
-
-    # Build design matrix using the specified annotation variable
-    design <- model.matrix(as.formula(paste("~", annotation)), data = sampleInfo)
-
-    v <- limma::voom(dge, design = design, plot = TRUE)
-    fit <- limma::lmFit(v, design)
-    fit <- limma::eBayes(fit)
-
-    top_table <- limma::topTable(fit, coef = 2, number = Inf, sort.by = "P")
-
-    return(top_table)
+  if(is.null(contrasts)) {
+    contrasts <- resultsNames(ddsSE)[-1]
   }
+  # Get results for all contrasts, applying shrink
+  results <- lapply(contrasts, function(contrast) {
+    res <- results(ddsSE,
+                   name = contrast)
+    if(lfcShrink) {
+      res <- lfcShrink(ddsSE, coef = contrast, res = res)
+    }
+    res <- res |>
+      as.data.frame() |>
+      arrange(padj, log2FoldChange)
 
-  else {
-    stop("Invalid method. Choose either 'DESeq2' or 'Limma'.")
+    return(res)
+  })
+  names(results) <- contrasts
+
+  if(length(results) == 1) {
+    message("Retuning condition = ", names(results)[1])
+    results <- results[[1]]
   }
+  return(results)
 }
 

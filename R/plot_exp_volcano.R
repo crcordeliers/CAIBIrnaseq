@@ -35,7 +35,7 @@ plot_exp_volcano <- function(diffexp, nb = 10, title = "Volcano Plot of Differen
   }
 
   # Définir les groupes de significativité
-  diffexp$Significance <- dplyr::case_when(
+  diffexp$Significance <- case_when(
     diffexp$padj < 0.05 & diffexp$log2FoldChange > 1 ~ "Upregulated",
     diffexp$padj < 0.05 & diffexp$log2FoldChange < -1 ~ "Downregulated",
     TRUE ~ "Not Significant"
@@ -43,9 +43,9 @@ plot_exp_volcano <- function(diffexp, nb = 10, title = "Volcano Plot of Differen
 
   # Sélection des top nb gènes
   top_genes <- diffexp |>
-    dplyr::filter(Significance != "Not Significant") |>
-    dplyr::arrange(padj) |>
-    dplyr::slice_head(n = nb)
+    filter(Significance != "Not Significant") |>
+    arrange(padj) |>
+    slice_head(n = nb)
 
   # Ajouter une colonne pour les labels
   diffexp$label <- ifelse(diffexp$gene %in% top_genes$gene, diffexp$gene, NA)
@@ -66,14 +66,14 @@ plot_exp_volcano <- function(diffexp, nb = 10, title = "Volcano Plot of Differen
   y_limit <- ceiling(max(y_range, na.rm = TRUE)) + 1
 
   # Construction du graphique
-  vplot <- ggplot2::ggplot(diffexp, ggplot2::aes(
+  vplot <- ggplot(diffexp, aes(
     x = log2FoldChange,
     y = -log10(padj),
     color = Significance
   )) +
-    ggplot2::geom_point(alpha = 0.7, size = 1.5) +
-    ggrepel::geom_text_repel(
-      ggplot2::aes(label = label),
+    geom_point(alpha = 0.7, size = 1.5) +
+    geom_text_repel(
+      aes(label = label),
       size = 2.5,
       color = "black",
       max.overlaps = 100,
@@ -81,30 +81,30 @@ plot_exp_volcano <- function(diffexp, nb = 10, title = "Volcano Plot of Differen
       max.iter = 10000,
       seed = 42
     ) +
-    ggplot2::geom_hline(
+    geom_hline(
       yintercept = -log10(0.05),
       linetype = "dashed",
       color = "gray"
     ) +
-    ggplot2::geom_vline(
+    geom_vline(
       xintercept = c(-1, 1),
       linetype = "dashed",
       color = "gray"
     ) +
-    ggplot2::scale_color_manual(values = color_palette) +
-    ggplot2::scale_x_continuous(limits = x_limits) +
-    ggplot2::scale_y_continuous(limits = c(0, y_limit)) +
-    ggplot2::labs(
+    scale_color_manual(values = color_palette) +
+    scale_x_continuous(limits = x_limits) +
+    scale_y_continuous(limits = c(0, y_limit)) +
+    labs(
       title = title,
-      x = "Log2 Fold Change",
-      y = "-Log10 Adjusted p-value",
+      x = expression(log[2]~Fold~Change),
+      y = expression(-log[10]~adjusted~italic(p)-value),
       color = "Regulation"
     ) +
-    ggplot2::theme_minimal(base_size = 14) +
-    ggplot2::theme(
+    theme_minimal(base_size = 10) +
+    theme(
       legend.position = "right",
-      legend.title = ggplot2::element_text(face = "bold"),
-      plot.title = ggplot2::element_text(face = "bold", hjust = 0.5)
+      legend.title = element_text(face = "bold"),
+      plot.title = element_text(face = "bold", hjust = 0.5)
     )
 
   return(vplot)

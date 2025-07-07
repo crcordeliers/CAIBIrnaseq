@@ -2,33 +2,39 @@
 % Please edit documentation in R/diffExpAnalysis.R
 \name{diffExpAnalysis}
 \alias{diffExpAnalysis}
-\title{Differential Expression Analysis}
+\title{Differential expression analysis (DESeq2 wrapper)}
 \usage{
-diffExpAnalysis(
-  countData,
-  sampleInfo,
-  method = "DESeq2",
-  cutoff = 10,
-  annotation
-)
+diffExpAnalysis(exp_data, design, lfcShrink = TRUE, contrasts = NULL)
 }
 \arguments{
-\item{countData}{A matrix or data frame of raw count data. Rows represent genes, and columns represent samples.}
+\item{exp_data}{A count matrix, SummarizedExperiment containing raw counts
+and colData for samples.}
 
-\item{sampleInfo}{A data frame containing sample metadata. Must include a `condition` column specifying the experimental conditions.}
+\item{design}{A string or formula (without “~”) specifying the model design
+(e.g. `"condition"` or `~ condition + batch`). If no leading `~` is found,
+ it is added automatically.}
 
-\item{method}{A string specifying the method for differential expression analysis. Currently supports only `"DESeq2"`. Default is `"DESeq2"`.}
+\item{lfcShrink}{Logical; if TRUE (default), performs log₂ fold‑change
+shrinkage on each result table via DESeq2::lfcShrink.}
 
-\item{cutoff}{An integer specifying the minimum number of counts required across all samples for a gene to be included in the analysis. Default is `10`.}
-
-\item{annotation}{ee}
+\item{contrasts}{Character vector of named results to extract (as returned
+by DESeq2::resultsNames). If NULL (default), all names except the intercept
+are used.}
 }
 \value{
-A data frame containing the results of the differential expression analysis, including adjusted p-values, log fold changes, and other statistics.
+A named list of data.frames (one per contrast), each sorted by adjusted
+p‑value then log₂ fold change. If only one contrast is specified, returns
+a single (unnamed) data.frame.
 }
 \description{
-Performs differential expression analysis using DESeq2 on a given count matrix and sample information.
+Performs a DESeq2-based differential expression workflow on the provided
+expression data. Automatically constructs the design formula if needed,
+runs DESeq, extracts results for one or more contrasts, optionally applies
+LFC shrinkage, and returns sorted tables.
 }
 \details{
-This function performs differential expression analysis using the DESeq2 package. It filters genes with low counts, estimates size factors for normalization, and performs the DESeq2 analysis pipeline. Log fold-change shrinkage is applied using the `lfcShrink` function.
+- Internally builds or coerces a DESeqDataSet from `exp_data` and `design`.
+- Runs DESeq2::DESeq on the dataset.
+- For each contrast, retrieves results with DESeq2::results and optionally
+  applies shrinkage.
 }

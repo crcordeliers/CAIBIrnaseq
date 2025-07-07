@@ -12,8 +12,8 @@ plot_pca(
   pcs = c(1, 2),
   res_name = "pca_res",
   id_name = "sample_id",
+  ellipses = FALSE,
   point_size = 2,
-  color_in = c("color", "fill")[1],
   out = c("plotly", "ggplot")[1]
 )
 }
@@ -32,9 +32,9 @@ plot_pca(
 
 \item{id_name}{A character string specifying the column name in `colData(exp_data)` containing sample identifiers. Default is `"sample_id"`.}
 
-\item{point_size}{A numeric value specifying the size of the points in the plot. Default is `2`.}
+\item{ellipses}{if TRUE, `stat_ellipse` is added to the points, representing the 95% confidence-interval ellipse for each group in `color`.}
 
-\item{color_in}{A character string indicating whether the color aesthetic should be applied to `"color"` (border) or `"fill"` (interior). Default is `"color"`.}
+\item{point_size}{A numeric value specifying the size of the points in the plot. Default is `2`.}
 
 \item{out}{A character string indicating the output type: `"plotly"` (interactive Plotly plot) or `"ggplot"` (static ggplot). Default is `"plotly"`.}
 }

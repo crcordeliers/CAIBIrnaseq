@@ -71,7 +71,7 @@ pca_gexp <- function(exp_data, assay = "norm", filter = TRUE, n_hvg = 2000, cent
   }
 
   # PCA
-  pca_res <- stats::prcomp(t(gexp[gkeep,]), center = center, scale. = scale)
+  pca_res <- prcomp(t(gexp[gkeep,]), center = center, scale. = scale)
 
   return(pca_res)
 }

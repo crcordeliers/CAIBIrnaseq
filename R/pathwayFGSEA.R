@@ -33,23 +33,17 @@ pathwayFGSEA <- function(diffexp, pathwayCollection) {
     stop("The 'pathwayCollection' data frame must contain 'pathway' and 'gene_symbol' columns.")
   }
 
-  # Tri par ordre décroissant de log2FoldChange
   diffexp <- diffexp |>
     dplyr::arrange(desc(log2FoldChange))
 
-  # Création du vecteur de statistiques avec log2FoldChange
   stat <- as.numeric(diffexp$log2FoldChange)
   names(stat) <- rownames(diffexp)
 
-  # Création de la liste des ensembles de gènes pour chaque voie
   pathwayList <- split(pathwayCollection$gene_symbol, pathwayCollection$pathway)
 
-  # Affichage du message de début si verbose est activé
   message("Running FGSEA analysis...")
 
-  # Exécution de FGSEA
   result <- fgsea::fgseaMultilevel(pathways = pathwayList, stats = stat)
 
-  # Retourner les résultats
   return(result)
 }
