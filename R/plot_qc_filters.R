@@ -33,38 +33,38 @@ plot_qc_filters <- function(gexp,
                             out = c("plotly", "ggplot")[1]) {
 
   # Ensure gexp is a SummarizedExperiment object
-  if (!"SummarizedExperiment" %in% class(gexp)) {
-    stop("gexp must be a SummarizedExperiment object")
+  if (!inherits(gexp, "SummarizedExperiment")) {
+    stop("gexp must be a `SummarizedExperiment` object")
   }
 
   # Extract the QC data from colData
   qc_table <- SummarizedExperiment::colData(gexp) |>
     as.data.frame() |>
-    dplyr::mutate(qc_status = dplyr::case_when(
+    mutate(qc_status = case_when(
       nfeats < min_nfeats ~ "QC fail",
       ncounts < min_ncounts ~ "QC fail",
       TRUE ~ "QC pass"
     ))
 
   # Create the plot
-  plt_qc1 <- ggplot2::ggplot(qc_table, aes(nfeats, ncounts, label = sample_id)) +
-    ggplot2::geom_vline(xintercept = min_nfeats, linetype = "dashed") +
-    ggplot2::geom_hline(yintercept = min_ncounts, linetype = "dashed") +
-    ggplot2::geom_point(aes(color = qc_status)) +
-    ggrepel::geom_text_repel(aes(label = dplyr::if_else(qc_status == "QC fail", sample_id, NA)),
+  plt_qc1 <- ggplot(qc_table, aes(nfeats, ncounts, label = sample_id)) +
+    geom_vline(xintercept = min_nfeats, linetype = "dashed") +
+    geom_hline(yintercept = min_ncounts, linetype = "dashed") +
+    geom_point(aes(color = qc_status)) +
+    ggrepel::geom_text_repel(aes(label = if_else(qc_status == "QC fail", sample_id, NA)),
                     min.segment.length = 0.1, size = 3) +
-    ggplot2::scale_x_continuous(limits = c(0, max(colData(gexp)$nfeats, 6000)),
-                       expand = ggplot2::expansion(c(0,0.1))) +
-    ggplot2::scale_y_continuous(limits = c(0, max(max(colData(gexp)$ncounts), 5.1e6)),
-                       expand = ggplot2::expansion(c(0,0.1))) +
-    ggplot2::scale_color_manual(values = c("QC pass" = "black", "QC fail" = "red")) +
-    ggplot2::labs(x = "Number of genes with non-zero counts", y = "Total number of counts",
+    scale_x_continuous(limits = c(0, max(colData(gexp)$nfeats, 6000)),
+                       expand = expansion(c(0,0.1))) +
+    scale_y_continuous(limits = c(0, max(max(colData(gexp)$ncounts), 5.1e6)),
+                       expand = expansion(c(0,0.1))) +
+    scale_color_manual(values = c("QC pass" = "black", "QC fail" = "red")) +
+    labs(x = "Number of genes with non-zero counts", y = "Total number of counts",
          color = "QC status")
 
   # Save the plot if fname is not null
   if (!is.null(fname)) {
     dir.create(dirname(fname), showWarnings = FALSE, recursive = TRUE)
-    ggplot2::ggsave(fname, plt_qc1, create.dir = TRUE)
+    ggsave(fname, plt_qc1, create.dir = TRUE)
   }
 
   # Convert to plotly if desired

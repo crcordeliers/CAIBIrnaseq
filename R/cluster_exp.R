@@ -59,7 +59,7 @@ cluster_exp <- function(exp_data, k, genes = NULL,
   }
 
   # Extract normalized expression data for the selected genes
-  gexp <- SummarizedExperiment::assays(exp_data)[["norm"]][genes, ]
+  gexp <- assays(exp_data)[["norm"]][genes, ]
 
   # Perform hierarchical clustering based on the expression data
   clust_res <- cluster_k_hc(gexp,
@@ -70,9 +70,9 @@ cluster_exp <- function(exp_data, k, genes = NULL,
                             hc_method = hc_method)
 
   # Add clustering results to colData
-  sample_annot <- SummarizedExperiment::colData(exp_data)
+  sample_annot <- colData(exp_data)
   sample_annot[["exp_cluster"]] <- factor(clust_res)
-  SummarizedExperiment::colData(exp_data) <- sample_annot
+  colData(exp_data) <- sample_annot
 
   return(exp_data)
 }

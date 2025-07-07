@@ -18,26 +18,18 @@
 #'@importFrom DESeq2 rlog vst
 #'@importFrom SummarizedExperiment assays
 normalize_gexp <- function(exp_data) {
-  # Extract the counts data from the SummarizedExperiment object
-  counts <- SummarizedExperiment::assays(exp_data)[["counts"]]
-
-  # Check if the counts assay is available
+  counts <- assays(exp_data)[["counts"]]
   if (is.null(counts)) {
     stop("No 'counts' assay found in the SummarizedExperiment object.")
   }
-
-  # Check the number of samples (columns)
   if (ncol(counts) < 30) {
     message("- Less than 30 samples -> Performing `rlog` normalization...")
-    norm <- DESeq2::rlog(counts)  # Apply rlog normalization for small sample sizes
+    norm <- rlog(counts)
   } else {
     message("- Performing `vst` normalization...")
-    norm <- DESeq2::vst(counts)   # Apply vst normalization for large sample sizes
+    norm <- vst(counts)
   }
+  assays(exp_data)[["norm"]] <- norm
 
-  # Store the normalized data in a new assay in the SummarizedExperiment object
-  SummarizedExperiment::assays(exp_data)[["norm"]] <- norm
-
-  # Return the modified SummarizedExperiment object with the normalized data
-  return(exp_data)
+    return(exp_data)
 }
