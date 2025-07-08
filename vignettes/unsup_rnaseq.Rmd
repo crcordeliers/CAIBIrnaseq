@@ -121,7 +121,7 @@ You should have these variables (with these exact same names):
   - **gene_description** : A brief textual summary of the gene’s function or characteristics. 
   - **gene_biotype** : A classification of the gene based on its biological function or transcript type, such as protein_coding, lncRNA, or pseudogene.  
 
-If you are using the notebook that Clarice GROENEVELD created to convert a .xsl file into a .RDS one, you can SKIP the next cell. 
+If you are using the notebook that Clarice GROENEVELD created to convert a .xls file into a .RDS one, you can SKIP the next cell. 
 If not, you should look at how your dataset is defined. You might need to run some command line as the following ones: 
 
 ``` {r}
