@@ -45,5 +45,9 @@ pathwayFGSEA <- function(diffexp, pathwayCollection) {
 
   result <- fgsea::fgseaMultilevel(pathways = pathwayList, stats = stat)
 
+  result <- result |>
+    arrange(padj, NES) |>
+    as_tibble()
+
   return(result)
 }

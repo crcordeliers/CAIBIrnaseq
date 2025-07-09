@@ -9,7 +9,7 @@
 #' @param pathways A data frame with at least two columns: one indicating
 #' pathway names (e.g., 'pathway') and one with gene identifiers.
 #' @param id_col Character. The column name in `pathways` that matches gene identifiers in `diffexp_result`.
-#' @param pcutoff Numeric. Adjusted p-value threshold to filter significant pathways (default = 0.05).
+#' @param pcutoff adjusted p-value to be used to filter differentially expressed genes.
 #'
 #' @return A data frame of enriched pathways with columns:
 #' \describe{
@@ -30,12 +30,23 @@ pathwayORA <- function(diffexp_result, pathways,
                        id_col = "gene_symbol",
                        pcutoff = 0.05) {
 
-  gene_ids <- rownames(diffexp_result)
+  message("--- Running Overrepresentation Analysis")
 
-  if (!any(gene_ids %in% pathways[[id_col]])) {
+  gene_ids <- rownames(diffexp_result)
+  gene_ids <- gene_ids[gene_ids %in% pathways[[id_col]]]
+
+  if (length(gene_ids) == 0) {
     stop("`exp_data` uses unknown gene annotation.
          Try either using ensembl_gene_id or gene_name/gene_symbol.")
   }
+
+  genes <- diffexp_result |>
+    rownames_to_column("genes") |>
+    filter(padj < pcutoff, genes %in% gene_ids) |>
+    pull(genes)
+
+  message("Found ", length(genes), " differentially expressed genes...")
+
 
   # Generate gene set lists
   gene_sets <- split(pathways[[id_col]], pathways$pathway)
@@ -46,7 +57,6 @@ pathwayORA <- function(diffexp_result, pathways,
   # Perform Over-representation Analysis
   enrich_res <- lapply(names(gene_sets), function(id) {
     path <- gene_sets[[id]]
-    genes <- rownames(diffexp_result)
     ginpath <- sum(genes %in% path)
     gopath <- length(genes) - ginpath
     opath <- length(path) - ginpath
@@ -55,25 +65,26 @@ pathwayORA <- function(diffexp_result, pathways,
 
     ctg <- matrix(c(ginpath, opath, gopath, rest), nrow = 2)
     if (any(!is.finite(ctg)) || any(ctg < 0)) {
-      stop("La matrice ctg contient des valeurs non valides.")
+      stop("The resulting contingency matrix is invalid")
     }
 
     pfish <- fisher.test(ctg, alternative = "greater")$p.value
 
     data.frame(
-      Pathway = id,
-      PValue = pfish,
-      GeneRatio = paste0(ginpath, '/', length(genes)),
-      BgRatio = paste0(opath, '/', univ - length(path)),
-      Genes = paste(genes[genes %in% path], collapse = ", ")
+      pathway = id,
+      pval = pfish,
+      geneRatio = paste0(ginpath, '/', length(genes)),
+      bgRatio = paste0(opath, '/', univ - length(path)),
+      geneHits = paste(genes[genes %in% path], collapse = ", ")
     )
   }) %>% bind_rows()
 
   # Adjust p-values and filter
   enrich_res <- enrich_res %>%
-    mutate(PAdj = p.adjust(PValue, method = "BH")) %>%
-    arrange(PAdj) %>%
-    filter(PAdj < pcutoff)
+    mutate(padj = p.adjust(pval, method = "BH")) %>%
+    relocate(padj, .after = pval) %>%
+    arrange(padj) %>%
+    tibble()
 
   return(enrich_res)
 }

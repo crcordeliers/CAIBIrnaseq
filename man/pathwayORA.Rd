@@ -15,7 +15,7 @@ pathway names (e.g., 'pathway') and one with gene identifiers.}
 
 \item{id_col}{Character. The column name in `pathways` that matches gene identifiers in `diffexp_result`.}
 
-\item{pcutoff}{Numeric. Adjusted p-value threshold to filter significant pathways (default = 0.05).}
+\item{pcutoff}{adjusted p-value to be used to filter differentially expressed genes.}
 }
 \value{
 A data frame of enriched pathways with columns:

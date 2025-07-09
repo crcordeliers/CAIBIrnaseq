@@ -214,8 +214,16 @@ The differentially expressed genes (DEGs) can be checked directly from the resul
 Here, we show the top 10:
 
 ```{r}
+#| eval: false
 diffexp |>
   slice(1:15)
+```
+
+```{r}
+#| echo: false
+diffexp |>
+  slice(1:15) |>
+  kableExtra::kbl() |> kableExtra::kable_styling() |> kableExtra::scroll_box(height = "200px")
 ```
 
 The most important values are `log2FoldChange` and `padj` (you may see the 
@@ -240,19 +248,29 @@ Pathway collections available in the MSIGdb can be specified in the parameters. 
 msigdbr::msigdbr_collections() |> kableExtra::kbl() |> kableExtra::kable_styling() |> kableExtra::scroll_box(height = "300px")
 ```
 
+For scoring pathways, you can use two scoring methods:
+- **Overrepresentation Analysis (ORA)** treats your significant hits (e.g. DE genes above a chosen cutoff) as a "bag" and asks whether any known pathway is represented more often in that bag than you'd expect by chance—typically via a Fisher's exact or hypergeometric test against all measured genes. It's extremely fast and easy to interpret, but hinges on where you set your significance cutoff.
+
+**(Fast) Gene Set Enrichment Analysis (FGSEA)** avoids that arbitrary cutoff by taking a ranked list of all genes (for example, sorted by fold‑change) and "walking" down it to see if members of each pathway accumulate at the top or bottom. You end up with an enrichment score for each pathway, and statistical significance comes from permuting phenotype labels. GSEA is more sensitive to coordinated, subtle shifts across a pathway.
+
 ```{r}
 #| message: false
+#| warning: false
 pathways <- get_annotation_collection(collections, 
                                       species = species)
 
-pathwayResult <- pathwayAnalysis(diffexp_filtered,
+pathwayResult <- pathwayAnalysis(diffexp, 
                               pathways = pathways,
-                              method = pathwayMethod, species = species) |> as.data.frame()
-rownames(pathwayResult) <- pathwayResult$pathway
-metadata(exp_data)[["pathwayEnrichment"]] <- pathwayResult
-pathwayResult_sorted <- pathwayResult[order(pathwayResult$PValue), ]
+                              method = "ora", 
+                              species = species)
 
-top10_pathways <- head(pathwayResult_sorted, 10)
+pathwayResult2 <- pathwayAnalysis(diffexp, 
+                              pathways = pathways,
+                              method = "fgsea", 
+                              species = species)
+metadata(exp_data)[["pathwayEnrichment"]] <- pathwayResult
+metadata(exp_data)[["pathwayEnrichment2"]] <- pathwayResult2
+
 ```
 
 ### Dot Plot

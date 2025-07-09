@@ -34,35 +34,31 @@ plot_pathway_dotplot <- function(exp_data,
 
   results <- metadata(exp_data)[[score_name]]
 
-  results_type <- dplyr::case_when(
-    "PAdj" %in% colnames(results) ~ "ORA",
-    "padj" %in% colnames(results) ~ "GSEA",
+  results_type <- case_when(
+    "geneHits" %in% colnames(results) ~ "ORA",
+    "leadingEdge" %in% colnames(results) ~ "GSEA",
     TRUE ~ NA_character_
   )
 
   if (results_type == "ORA") {
     message("Plotting ORA-type results...")
 
-    results <- results %>%
-      dplyr::arrange(PAdj) %>%
-      dplyr::filter(PAdj < maxPval) %>%
-      dplyr::slice_head(n = top_n)
-
-    # Créer GeneRatioNum s'il n'existe pas
-    if (!"GeneRatioNum" %in% colnames(results)) {
-      results$GeneRatioNum <- as.numeric(sub("/.*", "", results$GeneRatio)) /
-        as.numeric(sub(".*/", "", results$GeneRatio))
-    }
+    results <- results |>
+      arrange(padj) |>
+      filter(padj < maxPval) |>
+      slice(1:top_n) |>
+      rowwise() |>
+      mutate(geneRatioNum = .fraction_to_decimal(geneRatio)) |>
+      ungroup()
 
     results <- results %>%
-      dplyr::mutate(
-        Pathway = factor(Pathway, levels = rev(Pathway)),
-        Size = GeneRatioNum,
-        logpadj = -log10(PAdj)
+      mutate(
+        pathway = factor(pathway, levels = rev(pathway)),
+        logpadj = -log10(padj)
       )
 
-    p <- ggplot2::ggplot(results, aes(x = logpadj, y = Pathway, size = Size, fill = logpadj)) +
-      ggplot2::scale_x_continuous(
+    p <- ggplot(results, aes(x = logpadj, y = pathway, size = geneRatioNum, fill = logpadj)) +
+      scale_x_continuous(
         name = "Adjusted p-value",
         labels = function(x) signif(10^-x, 2),
         breaks = scales::pretty_breaks(n = 5)
@@ -72,49 +68,56 @@ plot_pathway_dotplot <- function(exp_data,
     message("Plotting GSEA-type results...")
 
     results <- results %>%
-      dplyr::arrange(NES) %>%
-      dplyr::filter(padj < maxPval) %>%
-      dplyr::slice_head(n = top_n) %>%
-      dplyr::mutate(
-        GeneRatioNum = lengths(leadingEdge) / size,
-        Pathway = factor(pathway, levels = rev(pathway)),
-        Size = GeneRatioNum,
-        logpadj = -log10(padj)
-      )
+      arrange(padj) |>
+      filter(padj < maxPval) %>%
+      slice(1:top_n) %>%
+      arrange(NES) %>%
+      mutate(
+        geneRatioNum = lengths(leadingEdge) / size,
+        pathway = factor(pathway, levels = pathway),
+        logpadj = -log10(padj))
 
-    p <- ggplot2::ggplot(results, aes(x = NES, y = Pathway, size = Size, fill = logpadj)) +
-      ggplot2::scale_x_continuous(
+    p <- ggplot(results, aes(x = NES, y = pathway, size = geneRatioNum, fill = logpadj)) +
+      scale_x_continuous(
         name = "Normalized Enrichment Score (NES)",
         expand = c(0.1, 0.1)
       ) +
-      ggplot2::geom_segment(aes(xend = 0, yend = Pathway), size = 0.5, color = "grey", linetype = "dotted")
+      geom_vline(xintercept = 0, linetype = "dashed")
 
   } else {
-    stop("Unsupported results type format: expected columns `PAdj` or `padj`.")
+    stop("Unsupported results type format: expected columns `geneRatio` or `leadingEdge`.")
   }
 
   p <- p +
-    ggplot2::scale_fill_distiller(
+    scale_fill_distiller(
       name = "Adjusted p-value",
       palette = "Reds", direction = 1,
       labels = function(x) signif(10^-x, 2),
       limits = c(-log10(maxPval), max(results$logpadj, na.rm = TRUE))
     ) +
-    ggplot2::geom_vline(xintercept = 0, linetype = "dashed") +
-    ggplot2::geom_point(pch = 21, color = "black") +
-    ggplot2::scale_size_continuous(range = c(2, 10)) +
-    ggplot2::scale_y_discrete(labels = function(x) stringr::str_wrap(stringr::str_replace_all(x, "_", " "), width = 30)) +
-    ggplot2::ggtitle("Pathway Analysis") +
-    ggplot2::labs(y = "Pathway", size = "Gene Ratio") +
-    ggplot2::theme(
-      plot.title = ggplot2::element_text(size = 12, face = "bold"),
-      axis.text.y = ggplot2::element_text(size = 10),
-      axis.text.x = ggplot2::element_text(size = 10, angle = 45, hjust = 1),
-      axis.title.x = ggplot2::element_text(size = 12),
-      axis.title.y = ggplot2::element_text(size = 12),
-      panel.background = ggplot2::element_blank(),
-      panel.grid.major = ggplot2::element_line(colour = "gray90")
+    geom_segment(aes(xend = 0, yend = pathway), size = 0.5, color = "grey", linetype = "dotted") +
+    geom_point(pch = 21, color = "black") +
+    scale_size_continuous(range = c(2, 10)) +
+    scale_y_discrete(labels = function(x) stringr::str_wrap(stringr::str_replace_all(x, "_", " "), width = 30)) +
+    ggtitle("Pathway Analysis") +
+    labs(y = "Pathway", size = "Gene Ratio") +
+    theme(
+      plot.title = element_text(size = 12, face = "bold"),
+      axis.text.y = element_text(size = 10),
+      axis.text.x = element_text(size = 10, angle = 45, hjust = 1),
+      axis.title.x = element_text(size = 12),
+      axis.title.y = element_text(size = 12),
+      panel.background = element_blank(),
+      panel.grid.major = element_line(colour = "gray90")
     )
 
   return(p)
 }
+
+#' @importFrom stringr str_split
+.fraction_to_decimal <- function(fraction) {
+  num_denum <- str_split_fixed(fraction, "/", 2) |>
+    as.numeric()
+  return(num_denum[1]/num_denum[2])
+}
+
