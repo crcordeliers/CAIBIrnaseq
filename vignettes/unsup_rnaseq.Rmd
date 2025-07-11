@@ -151,7 +151,8 @@ Most datasets use ensembl gene ID by default after alignment, so this step rebas
 
 ```{r rebase_gexp}
 #| message: false
-exp_data <- rebase_gexp(exp_data, annotation = "gene_name")
+exp_data <- rebase_gexp(exp_data, keep_cols = c("gene_name", "gene_id", 
+                                                "gene_biotype", "gene_length_kb"))
 ```
 
 ### Filter
