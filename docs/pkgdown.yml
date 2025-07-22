@@ -1,5 +1,5 @@
-pandoc: '3.4'
-pkgdown: 2.1.2
+pandoc: '3.2'
+pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   installation: installation.html
@@ -7,7 +7,7 @@ articles:
   sup_rnaseq: sup_rnaseq.html
   unsup_rnaseq: unsup_rnaseq.html
   venn: venn.html
-last_built: 2025-07-15T09:08Z
+last_built: 2025-07-22T13:21Z
 urls:
   reference: https://crcordeliers.github.io/CAIBIrnaseq/reference
   article: https://crcordeliers.github.io/CAIBIrnaseq/articles

@@ -14,7 +14,7 @@ For the supervised and unsupervised analyses, we are using an open dataset which
 
 Here is an example of how the **supervised** part of the `CAIBIrnaseq` package can be use. If you want to use this notebook for your projects, it is available [here](https://github.com/crcordeliers/CAIBIrnaseq/blob/dev/vignettes/unsup_rnaseq.Rmd)
 
-First, we need to import the required packages :
+First, we need to import the required packages :  
 
 ```{r dependencies}
 #| message: false
