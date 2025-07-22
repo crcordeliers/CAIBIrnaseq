@@ -6,7 +6,6 @@ format:
   html:
     toc: true
     embed-resources: true
-editor: source
 ---
 <img src="../man/figures/CAIBI.png" align="right" alt="" width="120" />
 
@@ -116,12 +115,14 @@ Most datasets use ensembl gene ID by default after alignment, so this step rebas
 
 ```{r}
 #| message: false
-airway <- rebase_gexp(airway, annotation = "gene_name")
+airway <- rebase_gexp(airway, keep_cols = c("gene_name", "gene_id", 
+                                                "gene_biotype", "gene_length_kb"))
 ```
 
 ```{r}
 #| message: false
-macrophage <- rebase_gexp(macrophage, annotation = "SYMBOL") # or gene_name if you renamed the variable 
+macrophage <- rebase_gexp(macrophage, keep_cols = c("gene_name", "gene_id", 
+                                                "gene_biotype", "gene_length_kb"))
 ```
 
 ## Filter
@@ -189,22 +190,14 @@ By statistically testing gene expression differences, this analysis highlights *
 #| message: false
 library(edgeR)
 colData(airway)$dex <- factor(colData(airway)$dex)
-colData(airway)$dex <- factor(colData(airway)$dex, levels = c("untrt", "trt")) #  change with your conditions' names
 
-
-diffexp_air <- diffExpAnalysis(countData = assays(airway)$counts,
-                                          sampleInfo = colData(airway),
-                                          method = diffexpMethod, cutoff = 10,
-                                          annotation = annotation_air)
+colData(airway)$dex <- factor(colData(airway)$dex, levels = c("untrt", "trt"))
+diffexp_air <- diffExpAnalysis(airway, design = annotation_air, contrasts = "dex_trt_vs_untrt")
 
 colData(macrophage)$condition_name <- factor(colData(macrophage)$condition_name)
 colData(macrophage)$condition_name <- factor(colData(macrophage)$condition_name, levels = c("IFNg", "naive"))
 
-
-diffexp_mac <- diffExpAnalysis(countData = assays(macrophage)$counts,
-                                          sampleInfo = colData(macrophage),
-                                          method = diffexpMethod, cutoff = 10,
-                                          annotation = annotation_mac)
+diffexp_mac <- diffExpAnalysis(macrophage, design = annotation_mac, contrasts = "condition_name_naive_vs_IFNg")
 ```
 
 ## Venn Diagram
@@ -217,29 +210,11 @@ This diagram show us how much genes are unique to one dataset, and which are in 
 
 ```{r}
 #|message: false
-if(tolower(diffexpMethod) == "limma") {     # you can change it with 'DESeq2'
-  diffexp_air <- diffexp_air |>
-    dplyr::rename(
-      log2FoldChange = logFC,
-      pvalue = P.Value,
-      padj = adj.P.Val
-    )
-}
-
-if(tolower(diffexpMethod) == "limma"){
-  diffexp_mac <- diffexp_mac |>
-    dplyr::rename(
-      log2FoldChange = logFC,
-      pvalue = P.Value,
-      padj = adj.P.Val
-    )
-}
-
 # Exemple : extraction des degs_airgènes DE significatifs
 degs_air <- rownames(diffexp_air[diffexp_air$padj < 0.05, ])    # you can change the threshold 'padj'
 degs_mac <- rownames(diffexp_mac[diffexp_mac$padj < 0.05, ])
 # universe_size <- length(union(degs_air, degs_mac))
-universe_size <- 7000
+universe_size <- length(unique(rownames(diffexp_air)))
 
 # Diagramme de Venn
 plot_venn(degs_air, degs_mac, universe_size,

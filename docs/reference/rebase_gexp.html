@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">CAIBIrnaseq</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.0.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -57,7 +57,12 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">rebase_gexp</span><span class="op">(</span><span class="va">exp_data</span>, annotation <span class="op">=</span> <span class="st">"gene_name"</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">rebase_gexp</span><span class="op">(</span></span>
+<span>  <span class="va">exp_data</span>,</span>
+<span>  gene_id <span class="op">=</span> <span class="st">"gene_id"</span>,</span>
+<span>  new_gene_id <span class="op">=</span> <span class="st">"gene_name"</span>,</span>
+<span>  keep_cols <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -65,23 +70,42 @@
 
 
 <dl><dt id="arg-exp-data">exp_data<a class="anchor" aria-label="anchor" href="#arg-exp-data"></a></dt>
-<dd><p>A `SummarizedExperiment` object containing the gene expression data.</p></dd>
+<dd><p>A `SummarizedExperiment` object containing the gene expression
+data.</p></dd>
 
 
-<dt id="arg-annotation">annotation<a class="anchor" aria-label="anchor" href="#arg-annotation"></a></dt>
-<dd><p>A character string specifying the column in the gene annotation to use as the main identifier. Default is `"gene_name"`.</p></dd>
+<dt id="arg-gene-id">gene_id<a class="anchor" aria-label="anchor" href="#arg-gene-id"></a></dt>
+<dd><p>A character string specifying the column in the gene annotation
+with the old main annotation. Default is `"gene_id"`.</p></dd>
+
+
+<dt id="arg-new-gene-id">new_gene_id<a class="anchor" aria-label="anchor" href="#arg-new-gene-id"></a></dt>
+<dd><p>A character string specifying the column in the gene annotation
+to use as the main identifier. Default is `"gene_name"`.</p></dd>
+
+
+<dt id="arg-keep-cols">keep_cols<a class="anchor" aria-label="anchor" href="#arg-keep-cols"></a></dt>
+<dd><p>A character vector specifying columns to keep in the new
+annotation. If `NULL`, all original columns are kept and aggregated as follows:
+- For numeric variables, the mean is kept for multimapping resolution
+- For character variables, all values are kept in a long string</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A `SummarizedExperiment` object with rebased gene expression data. The output includes updated `rowData` with summarized gene-level information, and new `assays` containing rebased `counts` and `tpm` matrices.</p>
+    <p>A `SummarizedExperiment` object with rebased gene expression data.
+The output includes updated `rowData` with summarized gene-level information,
+and new `assays` containing rebased `counts` and `tpm` matrices.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>This function rebases the gene expression data by aggregating counts based on the specified annotation. It also calculates transcripts per million (TPM) using the aggregated data and associated gene lengths.</p>
+    <p>This function rebases the gene expression data by aggregating counts based on
+the specified annotation. It also calculates transcripts per million (TPM)
+using the aggregated data and associated gene lengths.</p>
 <p>The function performs the following steps:
 - Aggregates gene counts and metadata based on the specified annotation.
-- Calculates TPM values using the rebased gene counts and average gene lengths.
+- If `gene_lengths_kb` is available, calculates TPM values using the rebased
+gene counts and average gene lengths.
 - Constructs a new `SummarizedExperiment` object with the rebased data.</p>
     </div>
 

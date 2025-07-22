@@ -6,9 +6,6 @@ format:
     toc: true
     embed-resources: true
     code-fold: show
-editor: source
-  markdown: 
-    wrap: 72
 ---
 
 <img src="../man/figures/CAIBI.png" align="right" width="120"/>

@@ -29,7 +29,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">CAIBIrnaseq</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.0.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -89,7 +89,7 @@ Artificial Intelligence and Bioinformatics</h4>
 
     
     
-<p><img src="../reference/figures/CAIBI.png" align="right" alt="" width="120"></p>
+<p><img src="../reference/figures/CAIBI.png" align="right" width="120"></p>
 <p>For the supervised and unsupervised analyses, we are using an open
 dataset which is given by the <code>airway</code> package. It provides a
 gene expression dataset derived from <strong>human bronchial epithelial
@@ -102,14 +102,18 @@ notebook for your projects, it is available <a href="https://github.com/crcordel
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">airway</span><span class="op">)</span>               <span class="co"># dataset's package  </span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/SummarizedExperiment" class="external-link">SummarizedExperiment</a></span><span class="op">)</span> <span class="co"># Object's type we are using</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://crcordeliers.github.io/CAIBIrnaseq">CAIBIrnaseq</a></span><span class="op">)</span>          <span class="co"># package</span></span></code></pre></div>
+<span><span class="co"># library(CAIBIrnaseq)          # package</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/load_all.html" class="external-link">load_all</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>Before analysing the dataset, we define the variables with the names
-of the genes / pathways we want to analyse.</p>
+of the genes / pathways we want to analyse. This is not mandatory, but
+it can allow someone with limited coding experience to execute the
+notebook without changing the downstream code except for these
+variables.</p>
 <p>These variables will change in function of how your dataset is build
 and which type of data it is.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">annotation</span> <span class="op">&lt;-</span> <span class="st">"dex"</span></span>
-<span><span class="va">diffexpMethod</span> <span class="op">&lt;-</span> <span class="st">"limma"</span> <span class="co"># Either limma or deseq2</span></span>
+<span><span class="va">diffexpMethod</span> <span class="op">&lt;-</span> <span class="st">"deseq2"</span> <span class="co"># Either limma or deseq2</span></span>
 <span><span class="va">species</span> <span class="op">&lt;-</span> <span class="st">"human"</span></span>
 <span><span class="va">pathwayMethod</span> <span class="op">&lt;-</span> <span class="st">"ora"</span>  <span class="co"># Either ORA or fgsea</span></span>
 <span></span>
@@ -150,71 +154,86 @@ convert it in a .RDS file.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">airway</span>, package<span class="op">=</span><span class="st">"airway"</span><span class="op">)</span></span>
 <span><span class="va">exp_data</span> <span class="op">&lt;-</span> <span class="va">airway</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">exp_data</span><span class="op">)</span><span class="op">$</span><span class="va">gene_length_kb</span> <span class="op">&lt;-</span> </span>
+<span>  <span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">exp_data</span><span class="op">)</span><span class="op">$</span><span class="va">gene_seq_end</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">exp_data</span><span class="op">)</span><span class="op">$</span><span class="va">gene_seq_start</span><span class="op">)</span> <span class="op">/</span> <span class="fl">1000</span></span>
 <span></span>
 <span><span class="co"># If you are using your own dataset .RDS file), use this command line : </span></span>
-<span><span class="co"># exp_data &lt;- readRDS(data_file)</span></span></code></pre></div>
+<span><span class="co"># exp_data &lt;- readRDS(data_file)</span></span>
+<span><span class="va">exp_data</span></span></code></pre></div>
+<pre><code><span><span class="co">## class: RangedSummarizedExperiment </span></span>
+<span><span class="co">## dim: 63677 8 </span></span>
+<span><span class="co">## metadata(1): ''</span></span>
+<span><span class="co">## assays(1): counts</span></span>
+<span><span class="co">## rownames(63677): ENSG00000000003 ENSG00000000005 ... ENSG00000273492</span></span>
+<span><span class="co">##   ENSG00000273493</span></span>
+<span><span class="co">## rowData names(11): gene_id gene_name ... symbol gene_length_kb</span></span>
+<span><span class="co">## colnames(8): SRR1039508 SRR1039509 ... SRR1039520 SRR1039521</span></span>
+<span><span class="co">## colData names(9): SampleName cell ... Sample BioSample</span></span></code></pre>
 <p>Even if the datasets are globally build the same way, the names of
 the variables are not exactly the same, so if we want to keep the same
 code, we need to redefine a bit the variables.</p>
 <p>If you want to know what are the used variables in this part, run
-this command line :
-<code>colnames(SummarizedExperiment::rowData(exp_data))</code></p>
-<p>You should have these variables (with these exact same names):<br>
-- <strong>gene_name</strong> : The commonly used symbol or name for the
-gene (e.g., A1BG).<br>
-- <strong>gene_id</strong> : A unique and stable identifier for the
-gene, often from databases like Ensembl.<br>
+this command line</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="fu">SummarizedExperiment</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">exp_data</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">##  [1] "gene_id"          "gene_name"        "entrezid"         "gene_biotype"    </span></span>
+<span><span class="co">##  [5] "gene_seq_start"   "gene_seq_end"     "seq_name"         "seq_strand"      </span></span>
+<span><span class="co">##  [9] "seq_coord_system" "symbol"           "gene_length_kb"</span></span></code></pre>
+<p>You should have these variables (with these exact same names): -
+<strong>gene_id</strong> : A unique and stable identifier for the gene,
+often from databases like Ensembl. - <strong>gene_name</strong> : The
+commonly used symbol or name for the gene (e.g., A1BG).<br>
 - <strong>gene_length_kb</strong> : The length of the gene measured in
-kilobases<br>
-- <strong>gene_description</strong> : A brief textual summary of the
-gene’s function or characteristics. - <strong>gene_biotype</strong> : A
-classification of the gene based on its biological function or
-transcript type, such as protein_coding, lncRNA, or pseudogene.</p>
-<p>If you are using the notebook that Clarice GROENEVELD created to
-convert a .xsl file into a .RDS one, you can SKIP the next cell. If not,
-you should look at how your dataset is defined. You might need to run
-some command line as the following ones:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">exp_data</span><span class="op">)</span><span class="op">$</span><span class="va">gene_length_kb</span> <span class="op">&lt;-</span> </span>
-<span>  <span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">exp_data</span><span class="op">)</span><span class="op">$</span><span class="va">gene_seq_end</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">exp_data</span><span class="op">)</span><span class="op">$</span><span class="va">gene_seq_start</span><span class="op">)</span> <span class="op">/</span> <span class="fl">1000</span></span>
-<span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/Huber-group-EMBL/biomaRt" class="external-link">biomaRt</a></span><span class="op">)</span></span>
-<span><span class="va">mart</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/biomaRt/man/useEnsembl.html" class="external-link">useEnsembl</a></span><span class="op">(</span><span class="st">"ensembl"</span>, dataset <span class="op">=</span> <span class="st">"hsapiens_gene_ensembl"</span><span class="op">)</span></span>
-<span><span class="va">gene_ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">exp_data</span><span class="op">)</span><span class="op">$</span><span class="va">gene_id</span></span>
-<span></span>
-<span><span class="va">annot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/biomaRt/man/getBM.html" class="external-link">getBM</a></span><span class="op">(</span>attributes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ensembl_gene_id"</span>, <span class="st">"description"</span><span class="op">)</span>,</span>
-<span>               filters <span class="op">=</span> <span class="st">"ensembl_gene_id"</span>,</span>
-<span>               values <span class="op">=</span> <span class="va">gene_ids</span>,</span>
-<span>               mart <span class="op">=</span> <span class="va">mart</span><span class="op">)</span></span>
-<span><span class="va">matched</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/match.html" class="external-link">match</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">exp_data</span><span class="op">)</span><span class="op">$</span><span class="va">gene_id</span>, <span class="va">annot</span><span class="op">$</span><span class="va">ensembl_gene_id</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">exp_data</span><span class="op">)</span><span class="op">$</span><span class="va">gene_description</span> <span class="op">&lt;-</span> <span class="va">annot</span><span class="op">$</span><span class="va">description</span><span class="op">[</span><span class="va">matched</span><span class="op">]</span></span></code></pre></div>
+kilobases. Can be obtained from the gene <code>start</code> and
+<code>end</code> positions, as above - <strong>gene_description</strong>
+: A brief textual summary of the gene’s function or characteristics. -
+<strong>gene_biotype</strong> : A classification of the gene based on
+its biological function or transcript type, such as protein_coding,
+lncRNA, or pseudogene.</p>
+<p>If data was generated by CAIBI from an nf-core/RNAseq pipeline, the
+<code>salmon.merged.gene_counts_scaled.rds</code> RDS object included
+with the outputs will already be in the appropriate format.</p>
+<p>If not, you should look at how your dataset is constructed. You might
+need to gene annotation metadata. We suggest using <span class="math display">\[`biomaRt::getBM`\]</span>.</p>
 </div>
 <div class="section level2">
 <h2 id="pre-processing">Pre-processing<a class="anchor" aria-label="anchor" href="#pre-processing"></a>
 </h2>
 <p>Most datasets use ensembl gene ID by default after alignment, so this
 step rebases the expression data to gene names. This ensures consistency
-in naming for downstream analyses.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">exp_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/rebase_gexp.html">rebase_gexp</a></span><span class="op">(</span><span class="va">exp_data</span>, annotation <span class="op">=</span> <span class="st">"gene_name"</span><span class="op">)</span></span></code></pre></div>
+in naming for downstream analyses. This may be skipped if the exp_data
+already uses <code>gene_name</code> or <code>gene_symbol</code> as its
+default ID.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">exp_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/rebase_gexp.html">rebase_gexp</a></span><span class="op">(</span><span class="va">exp_data</span>, keep_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gene_name"</span>, <span class="st">"gene_id"</span>, </span>
+<span>                                                <span class="st">"gene_biotype"</span>, <span class="st">"gene_length_kb"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">exp_data</span></span></code></pre></div>
+<pre><code><span><span class="co">## class: SummarizedExperiment </span></span>
+<span><span class="co">## dim: 56638 8 </span></span>
+<span><span class="co">## metadata(0):</span></span>
+<span><span class="co">## assays(2): counts tpm</span></span>
+<span><span class="co">## rownames(56638): 5S_rRNA 7SK ... snosnR66 yR211F11.2</span></span>
+<span><span class="co">## rowData names(4): gene_name gene_id gene_biotype gene_length_kb</span></span>
+<span><span class="co">## colnames(8): SRR1039508 SRR1039509 ... SRR1039520 SRR1039521</span></span>
+<span><span class="co">## colData names(9): SampleName cell ... Sample BioSample</span></span></code></pre>
 <div class="section level3">
 <h3 id="filter">Filter<a class="anchor" aria-label="anchor" href="#filter"></a>
 </h3>
 <p>Here, we filter out genes expressed in too few samples or with very
 low counts. This removes noise from the data and focuses on meaningful
-gene expressions.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+gene expressions. In this example, only zero-expression genes will be
+filtered, which is appropriate for a lot of analyses.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">exp_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_gexp.html">filter_gexp</a></span><span class="op">(</span><span class="va">exp_data</span>,</span>
 <span>                        min_nsamp <span class="op">=</span> <span class="fl">1</span>, </span>
 <span>                        min_counts <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <p>Visualization of the filtering process to ensure the criteria applied
 align with the dataset’s characteristics:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">exp_data</span><span class="op">)</span><span class="op">$</span><span class="va">sample_id</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">exp_data</span><span class="op">)</span></span>
-<span></span>
 <span><span class="fu"><a href="../reference/plot_qc_filters.html">plot_qc_filters</a></span><span class="op">(</span><span class="va">exp_data</span><span class="op">)</span></span></code></pre></div>
 <div class="plotly html-widget html-fill-item" id="htmlwidget-ac96cb3ee4656e2e9ec3" style="width:700px;height:432.632880098888px;"></div>
-<script type="application/json" data-for="htmlwidget-ac96cb3ee4656e2e9ec3">{"x":{"data":[{"x":[5000,5000],"y":[0,33900036.5],"text":"","type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(0,0,0,1)","dash":"dash"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0,28378.900000000001],"y":[5000000,5000000],"text":"","type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(0,0,0,1)","dash":"dash"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[24483,24384,25517,23006,25341,25799,24513,23867],"y":[20637971,18809481,25348649,15163415,24448408,30818215,19126151,21164133],"text":["sample_id: SRR1039508<br />qc_status: QC pass","sample_id: SRR1039509<br />qc_status: QC pass","sample_id: SRR1039512<br />qc_status: QC pass","sample_id: SRR1039513<br />qc_status: QC pass","sample_id: SRR1039516<br />qc_status: QC pass","sample_id: SRR1039517<br />qc_status: QC pass","sample_id: SRR1039520<br />qc_status: QC pass","sample_id: SRR1039521<br />qc_status: QC pass"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,0,0,1)","opacity":1,"size":5.6692913385826778,"symbol":"circle","line":{"width":1.8897637795275593,"color":"rgba(0,0,0,1)"}},"hoveron":"points","name":"QC pass","legendgroup":"QC pass","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":27.824636418824401,"r":7.3059360730593621,"b":41.778974318367787,"l":54.794520547945211},"plot_bgcolor":"rgba(235,235,235,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0,28378.900000000001],"tickmode":"array","ticktext":["0","10000","20000"],"tickvals":[0,10000,20000],"categoryorder":"array","categoryarray":["0","10000","20000"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"Number of genes with non-zero counts","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0,33900036.5],"tickmode":"array","ticktext":["0e+00","1e+07","2e+07","3e+07"],"tickvals":[0,10000000,20000000,30000000],"categoryorder":"array","categoryarray":["0e+00","1e+07","2e+07","3e+07"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"Total number of counts","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498},"title":{"text":"QC status","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"c987ebf19fc":{"xintercept":{},"type":"scatter"},"c98772325846":{"yintercept":{}},"c9876c6f84e3":{"x":{},"y":{},"label":{},"colour":{}},"c987852904a":{"x":{},"y":{},"label":{}}},"cur_data":"c987ebf19fc","visdat":{"c987ebf19fc":["function (y) ","x"],"c98772325846":["function (y) ","x"],"c9876c6f84e3":["function (y) ","x"],"c987852904a":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<script type="application/json" data-for="htmlwidget-ac96cb3ee4656e2e9ec3">{"x":{"data":[{"x":[24483,24384,25517,23006,25341,25799,24513,23867],"y":[20637971,18809481,25348649,15163415,24448408,30818215,19126151,21164133],"text":["sample_id: SRR1039508<br />qc_status: QC pass","sample_id: SRR1039509<br />qc_status: QC pass","sample_id: SRR1039512<br />qc_status: QC pass","sample_id: SRR1039513<br />qc_status: QC pass","sample_id: SRR1039516<br />qc_status: QC pass","sample_id: SRR1039517<br />qc_status: QC pass","sample_id: SRR1039520<br />qc_status: QC pass","sample_id: SRR1039521<br />qc_status: QC pass"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,0,0,1)","opacity":1,"size":5.6692913385826778,"symbol":"circle","line":{"width":1.8897637795275593,"color":"rgba(0,0,0,1)"}},"hoveron":"points","name":"QC pass","legendgroup":"QC pass","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[5000,5000],"y":[0,33900036.5],"text":"","type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(0,0,0,1)","dash":"dash"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0,28378.900000000001],"y":[5000000,5000000],"text":"","type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(0,0,0,1)","dash":"dash"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":27.824636418824401,"r":7.3059360730593621,"b":41.778974318367787,"l":54.794520547945211},"plot_bgcolor":"rgba(235,235,235,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0,28378.900000000001],"tickmode":"array","ticktext":["0","10000","20000"],"tickvals":[0,10000,20000],"categoryorder":"array","categoryarray":["0","10000","20000"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"Number of genes with non-zero counts","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0,33900036.5],"tickmode":"array","ticktext":["0e+00","1e+07","2e+07","3e+07"],"tickvals":[0,10000000,20000000,30000000],"categoryorder":"array","categoryarray":["0e+00","1e+07","2e+07","3e+07"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"Total number of counts","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498},"title":{"text":"QC status","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"7a6c2b59e6ce":{"x":{},"y":{},"label":{},"colour":{},"type":"scatter"},"7a6c54f0558a":{"xintercept":{}},"7a6c1d1f62b7":{"yintercept":{}},"7a6c768743f3":{"x":{},"y":{},"label":{}}},"cur_data":"7a6c2b59e6ce","visdat":{"7a6c2b59e6ce":["function (y) ","x"],"7a6c54f0558a":["function (y) ","x"],"7a6c1d1f62b7":["function (y) ","x"],"7a6c768743f3":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 </div>
 <div class="section level3">
 <h3 id="normalize">Normalize<a class="anchor" aria-label="anchor" href="#normalize"></a>
@@ -224,7 +243,7 @@ data, making samples comparable by reducing variability due to technical
 differences. For datasets with few samples, <code>rlog</code> is the
 preferred normalization and when more samples are present,
 <code>vst</code> is applied.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">exp_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/normalize_gexp.html">normalize_gexp</a></span><span class="op">(</span><span class="va">exp_data</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
@@ -234,74 +253,457 @@ preferred normalization and when more samples are present,
 <p><strong>Principal component analysis</strong> (PCA) identifies the
 major patterns in the dataset. These patterns help explore similarities
 or differences among samples based on gene expression.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">metadata</span><span class="op">(</span><span class="va">exp_data</span><span class="op">)</span><span class="op">[[</span><span class="st">"pca_res"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pca_gexp.html">pca_gexp</a></span><span class="op">(</span><span class="va">exp_data</span><span class="op">)</span></span>
 <span><span class="va">annotations</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/setops.html" class="external-link">setdiff</a></span><span class="op">(</span><span class="va">annotation</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"exp_cluster"</span>, <span class="st">"path_cluster"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/plot_pca.html">plot_pca</a></span><span class="op">(</span><span class="va">exp_data</span>, color <span class="op">=</span> <span class="va">annotation</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/plot_pca.html">plot_pca</a></span><span class="op">(</span><span class="va">exp_data</span>, color <span class="op">=</span> <span class="va">annotation</span>, ellipses <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Warning: The following aesthetics were dropped during statistical transformation: <span style="color: #00BB00;">label</span>.</span></span>
+<span><span class="co">## <span style="color: #00BBBB;">ℹ</span> This can happen when ggplot fails to infer the correct grouping structure in</span></span>
+<span><span class="co">##   the data.</span></span>
+<span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Did you forget to specify a `group` aesthetic or to convert a numerical</span></span>
+<span><span class="co">##   variable into a factor?</span></span>
+<span><span class="co">## The following aesthetics were dropped during statistical transformation: <span style="color: #00BB00;">label</span>.</span></span>
+<span><span class="co">## <span style="color: #00BBBB;">ℹ</span> This can happen when ggplot fails to infer the correct grouping structure in</span></span>
+<span><span class="co">##   the data.</span></span>
+<span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Did you forget to specify a `group` aesthetic or to convert a numerical</span></span>
+<span><span class="co">##   variable into a factor?</span></span></code></pre>
 <div class="plotly html-widget html-fill-item" id="htmlwidget-e5c8c404fe174e4c81bd" style="width:700px;height:432.632880098888px;"></div>
-<script type="application/json" data-for="htmlwidget-e5c8c404fe174e4c81bd">{"x":{"data":[{"x":[14.839069421975847,24.593807654692181,16.383181911026984,25.967675811227551],"y":[5.0172517058590902,9.0421838417274021,-30.394274516115658,11.425730228598246],"text":["sample_id: SRR1039509<br />dex: trt","sample_id: SRR1039513<br />dex: trt","sample_id: SRR1039517<br />dex: trt","sample_id: SRR1039521<br />dex: trt"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","opacity":1,"size":7.559055118110237,"symbol":"circle","line":{"width":1.8897637795275593,"color":"rgba(248,118,109,1)"}},"hoveron":"points","name":"trt","legendgroup":"trt","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[-21.384638314040082,-19.659551572912438,-20.542436740837015,-20.197108171133014],"y":[10.241576532822902,9.2251012769538185,-31.202632473378614,16.645063403532838],"text":["sample_id: SRR1039508<br />dex: untrt","sample_id: SRR1039512<br />dex: untrt","sample_id: SRR1039516<br />dex: untrt","sample_id: SRR1039520<br />dex: untrt"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,191,196,1)","opacity":1,"size":7.559055118110237,"symbol":"circle","line":{"width":1.8897637795275593,"color":"rgba(0,191,196,1)"}},"hoveron":"points","name":"untrt","legendgroup":"untrt","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[-23.752254020303464,28.335291517490933],"y":[0,0],"text":"","type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(127,127,127,1)","dash":"dash"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0,0],"y":[-33.595017267224186,19.03744819737841],"text":"","type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(127,127,127,1)","dash":"dash"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":27.824636418824401,"r":7.3059360730593621,"b":41.778974318367787,"l":43.105022831050235},"plot_bgcolor":"rgba(255,255,255,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-23.752254020303464,28.335291517490933],"tickmode":"array","ticktext":["-20","-10","0","10","20"],"tickvals":[-20,-10,0,10.000000000000004,20.000000000000004],"categoryorder":"array","categoryarray":["-20","-10","0","10","20"],"nticks":null,"ticks":"outside","tickcolor":"rgba(0,0,0,1)","ticklen":3.6529680365296811,"tickwidth":0.33208800332088001,"showticklabels":true,"tickfont":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(222,222,222,1)","gridwidth":0.33208800332088001,"zeroline":false,"anchor":"y","title":{"text":"PC 1 (24.6%)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-33.595017267224186,19.03744819737841],"tickmode":"array","ticktext":["-30","-20","-10","0","10"],"tickvals":[-30,-20,-10,0,10],"categoryorder":"array","categoryarray":["-30","-20","-10","0","10"],"nticks":null,"ticks":"outside","tickcolor":"rgba(0,0,0,1)","ticklen":3.6529680365296811,"tickwidth":0.33208800332088001,"showticklabels":true,"tickfont":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(222,222,222,1)","gridwidth":0.33208800332088001,"zeroline":false,"anchor":"x","title":{"text":"PC 2 (18.6%)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":"transparent","line":{"color":"rgba(0,0,0,1)","width":0.66417600664176002,"linetype":"solid"},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498},"title":{"text":"dex","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"c987a1a0cce":{"label":{},"x":{},"y":{},"colour":{},"type":"scatter"},"c9876b80f566":{"yintercept":{}},"c987159010cc":{"xintercept":{}}},"cur_data":"c987a1a0cce","visdat":{"c987a1a0cce":["function (y) ","x"],"c9876b80f566":["function (y) ","x"],"c987159010cc":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<script type="application/json" data-for="htmlwidget-e5c8c404fe174e4c81bd">{"x":{"data":[{"x":[14.839069421975847,24.593807654692181,16.383181911026984,25.967675811227551],"y":[5.0172517058590902,9.0421838417274021,-30.394274516115658,11.425730228598246],"text":["sample_id: SRR1039509<br />dex: trt","sample_id: SRR1039513<br />dex: trt","sample_id: SRR1039517<br />dex: trt","sample_id: SRR1039521<br />dex: trt"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","opacity":1,"size":7.559055118110237,"symbol":"circle","line":{"width":1.8897637795275593,"color":"rgba(248,118,109,1)"}},"hoveron":"points","name":"trt","legendgroup":"trt","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[-21.384638314040082,-19.659551572912438,-20.542436740837015,-20.197108171133014],"y":[10.241576532822902,9.2251012769538185,-31.202632473378614,16.645063403532838],"text":["sample_id: SRR1039508<br />dex: untrt","sample_id: SRR1039512<br />dex: untrt","sample_id: SRR1039516<br />dex: untrt","sample_id: SRR1039520<br />dex: untrt"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,191,196,1)","opacity":1,"size":7.559055118110237,"symbol":"circle","line":{"width":1.8897637795275593,"color":"rgba(0,191,196,1)"}},"hoveron":"points","name":"untrt","legendgroup":"untrt","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[-26.320265942093716,45.571677501350052],"y":[0,0],"text":"","type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(127,127,127,1)","dash":"dash"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0,0],"y":[-80.459787593646013,88.165887086030509],"text":"","type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(127,127,127,1)","dash":"dash"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[42.303861890284423,42.146902207904503,41.678402509553734,40.905464773096824,39.839805946729115,38.497580331985546,36.899134700996164,35.068699860161026,33.034023335824642,30.825948750060917,28.477948262802727,26.025615168017001,23.506124335649975,20.957668678492798,18.418880186555317,15.928244305476817,13.523516536400013,11.241150101059604,9.1157433480991248,7.1795152773730866,5.4618171327514879,3.9886874671817161,2.7824574247681184,1.8614122233904737,1.2395139694398836,0.92619000651806971,0.92619000651806971,1.2395139694398836,1.8614122233904702,2.7824574247681149,3.9886874671817161,5.4618171327514879,7.179515277373083,9.1157433480991177,11.241150101059615,13.523516536400013,15.928244305476806,18.41888018655532,20.957668678492794,23.506124335649965,26.025615168017001,28.477948262802723,30.825948750060924,33.034023335824642,35.068699860161018,36.899134700996171,38.497580331985546,39.839805946729115,40.905464773096824,41.678402509553734,42.146902207904503,42.303861890284423],"y":[45.08358960375454,51.186855318000532,56.537365323082987,61.054011341334437,64.668325623133626,67.325518848197618,68.985310675828032,69.622540353816646,69.227548129801306,67.80632168326521,65.380405358419338,61.986573573905432,57.676273360095088,52.514844474551573,46.580528917908822,39.963284864897346,32.763422990113611,25.090085860444255,17.059593445005952,8.793679822983437,0.41764781907821291,-7.9415304595874083,-16.157138391185978,-24.104635734004113,-31.663546529557369,-38.719285395314571,-45.164894522294979,-50.902665046425732,-55.845618215322268,-59.918823897513128,-63.060536446853519,-65.223130703580878,-66.373823943190445,-66.495172829121827,-65.58533783596053,-63.658111134768191,-60.742707517828158,-56.883321532174378,-52.138457535307971,-46.580042828773379,-40.292337313585641,-33.370656196021024,-25.919925106248471,-18.053089532731967,-9.889402683755355,-1.5526177303448725,6.8308881656562743,15.13402960054022,23.230939413910335,30.998876706531355,38.320087467246495,45.083589603754525],"text":"dex: trt","type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(248,118,109,1)","dash":"solid"},"hoveron":"points","name":"trt","legendgroup":"trt","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[-17.691396267213896,-17.711732581577873,-17.772433246873753,-17.87257810289049,-18.010649055692923,-18.184553090378344,-18.391653999048938,-18.628812343036298,-18.892433043591478,-19.17851987961421,-19.482736066291253,-19.800469996333483,-20.126905147241601,-20.457093094877507,-20.786028526530103,-21.108725116353853,-21.420291112985815,-21.716003493509941,-21.99137955967009,-22.242244891006177,-22.464796624813186,-22.655661103663348,-22.81194501661383,-22.931279258851355,-23.011854844906228,-23.052450331028091,-23.052450331028091,-23.011854844906228,-22.931279258851355,-22.81194501661383,-22.655661103663348,-22.464796624813186,-22.242244891006177,-21.99137955967009,-21.716003493509941,-21.420291112985815,-21.108725116353853,-20.786028526530103,-20.457093094877507,-20.126905147241605,-19.800469996333483,-19.482736066291253,-19.17851987961421,-18.892433043591478,-18.628812343036298,-18.391653999048938,-18.184553090378348,-18.010649055692923,-17.87257810289049,-17.772433246873753,-17.711732581577873,-17.691396267213896],"y":[14.687387846172346,23.936959289918086,32.88272275153016,41.389069575739704,49.327052215584182,56.576338945777543,63.027037969006024,68.581363263558003,73.155116919735534,76.678965494338726,79.099491034990038,80.380000841841053,80.501083691499758,79.46090409139039,77.27523010394988,73.977194318874481,69.616791596833338,64.260121198342787,57.988384786354871,50.896655491819196,43.092436701930126,34.694032418359797,25.828753889185236,16.63098970014132,7.2401685806494331,-2.2013541935948844,-11.550454761492469,-20.665410288382326,-29.408047339750929,-37.64583644965299,-45.25390113232222,-52.116910882403502,-58.130829467852507,-63.204492013164909,-67.260986965960583,-70.238821997718375,-72.092856164794782,-72.794984199115262,-72.334562555389425,-70.718570756408184,-67.971505590592741,-64.135009765652867,-59.267240647586071,-53.441988654291698,-46.747558668053138,-39.285431423535535,-31.168725163292223,-22.520480880513553,-13.471797142991802,-4.1598427724673996,5.274222494886172,14.687387846172326],"text":"dex: untrt","type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(0,191,196,1)","dash":"solid"},"hoveron":"points","name":"untrt","legendgroup":"untrt","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":27.824636418824401,"r":7.3059360730593621,"b":41.778974318367787,"l":43.105022831050235},"plot_bgcolor":"rgba(255,255,255,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-26.320265942093716,45.571677501350052],"tickmode":"array","ticktext":["-20","0","20","40"],"tickvals":[-20,0,19.999999999999996,40],"categoryorder":"array","categoryarray":["-20","0","20","40"],"nticks":null,"ticks":"outside","tickcolor":"rgba(0,0,0,1)","ticklen":3.6529680365296811,"tickwidth":0.33208800332088001,"showticklabels":true,"tickfont":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(222,222,222,1)","gridwidth":0.33208800332088001,"zeroline":false,"anchor":"y","title":{"text":"PC 1 (24.6%)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-80.459787593646013,88.165887086030509],"tickmode":"array","ticktext":["-50","0","50"],"tickvals":[-50,0,50],"categoryorder":"array","categoryarray":["-50","0","50"],"nticks":null,"ticks":"outside","tickcolor":"rgba(0,0,0,1)","ticklen":3.6529680365296811,"tickwidth":0.33208800332088001,"showticklabels":true,"tickfont":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(222,222,222,1)","gridwidth":0.33208800332088001,"zeroline":false,"anchor":"x","title":{"text":"PC 2 (18.6%)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":"transparent","line":{"color":"rgba(0,0,0,1)","width":0.66417600664176002,"linetype":"solid"},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498},"title":{"text":"dex","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"7a6c625cc9b7":{"x":{},"y":{},"label":{},"colour":{},"type":"scatter"},"7a6c3b9e1486":{"yintercept":{}},"7a6c5698ecd":{"xintercept":{}},"7a6c72cf9bd4":{"x":{},"y":{},"label":{},"colour":{}}},"cur_data":"7a6c625cc9b7","visdat":{"7a6c625cc9b7":["function (y) ","x"],"7a6c3b9e1486":["function (y) ","x"],"7a6c5698ecd":["function (y) ","x"],"7a6c72cf9bd4":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 </div>
 <div class="section level2">
-<h2 id="diffexp">Diffexp<a class="anchor" aria-label="anchor" href="#diffexp"></a>
+<h2 id="differential-expression">Differential expression<a class="anchor" aria-label="anchor" href="#differential-expression"></a>
 </h2>
-<p><strong>Differential expression analysis</strong> (diffexp) is a
-statistical method used to identify genes whose expression levels
-significantly change between different experimental conditions. These
-changes in gene expression can provide insights into the biological
-processes or pathways affected, and help identify key molecular players
-involved in a condition or phenotype.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioinf.wehi.edu.au/edgeR/" class="external-link">edgeR</a></span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">exp_data</span><span class="op">)</span><span class="op">$</span><span class="va">dex</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">exp_data</span><span class="op">)</span><span class="op">$</span><span class="va">dex</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">exp_data</span><span class="op">)</span><span class="op">$</span><span class="va">dex</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">exp_data</span><span class="op">)</span><span class="op">$</span><span class="va">dex</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"untrt"</span>, <span class="st">"trt"</span><span class="op">)</span><span class="op">)</span>    <span class="co"># conditions' names </span></span>
-<span></span>
-<span></span>
-<span><span class="va">diffexp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/diffExpAnalysis.html">diffExpAnalysis</a></span><span class="op">(</span>countData <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assays</a></span><span class="op">(</span><span class="va">exp_data</span><span class="op">)</span><span class="op">$</span><span class="va">counts</span>,</span>
-<span>                                          sampleInfo <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">exp_data</span><span class="op">)</span>,</span>
-<span>                                          method <span class="op">=</span> <span class="va">diffexpMethod</span>, cutoff <span class="op">=</span> <span class="fl">10</span>,</span>
-<span>                                          annotation <span class="op">=</span> <span class="va">annotation</span><span class="op">)</span></span></code></pre></div>
-<p><img src="sup_rnaseq_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
+<p><strong>Differential expression analysis</strong> is a statistical
+method used to identify genes whose expression levels significantly
+change between different experimental conditions, <em>i.e</em>
+differentially expressed genes (DEGs). These changes in gene expression
+can provide insights into the biological processes or pathways affected,
+and help identify key molecular players involved in a condition or
+phenotype.</p>
 <div class="section level3">
-<h3 id="diffexp-filtering">Diffexp Filtering<a class="anchor" aria-label="anchor" href="#diffexp-filtering"></a>
+<h3 id="design">Design<a class="anchor" aria-label="anchor" href="#design"></a>
 </h3>
-<p><strong>Differential expression filtering</strong> include thresholds
-on adjusted p-values (e.g., padj &lt; 0.05) to ensure statistical
-significance, and log2 fold change (e.g., |log2FC| &gt; 1) to focus on
-genes with meaningful expression differences.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/chartr.html" class="external-link">tolower</a></span><span class="op">(</span><span class="va">diffexpMethod</span><span class="op">)</span> <span class="op">==</span> <span class="st">"limma"</span><span class="op">)</span> <span class="op">{</span>   <span class="co"># for 'limma', the default variables names are different, so we have to rename it</span></span>
-<span>  <span class="va">diffexp</span> <span class="op">&lt;-</span> <span class="va">diffexp</span> <span class="op">|&gt;</span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span></span>
-<span>      log2FoldChange <span class="op">=</span> <span class="va">logFC</span>, </span>
-<span>      pvalue <span class="op">=</span> <span class="va">P.Value</span>,</span>
-<span>      padj <span class="op">=</span> <span class="va">adj.P.Val</span></span>
-<span>    <span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="va">diffexp_filtered</span> <span class="op">&lt;-</span> <span class="va">diffexp</span> <span class="op">|&gt;</span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">padj</span> <span class="op">&lt;=</span> <span class="fl">0.05</span><span class="op">)</span> <span class="op">|&gt;</span>    <span class="co"># we filter the diffexp, to keep the values under a given threshold 'padj'. this threshold can be change </span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">padj</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Select the 16 most differentially expressed genes</span></span>
-<span><span class="va">top_de_genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">diffexp_filtered</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">16</span><span class="op">]</span></span></code></pre></div>
+<p>The differential expression <code>design</code> argument allows us to
+control which variables will be considered sources of biological (or
+technical) variation by the model.</p>
+<p>In our example, we say our only source of variation is the
+<code>annotation</code> variable (which corresponds to the treatment
+column, <code>dex</code>).</p>
+<p>The <code>~</code> symbol may be added before the variable name to
+represent that it’s the independent variable (i.e. the differential
+expressed genes will depend on <code>annotation</code> <em>i.e.</em>
+<code>DEGs ~ annotation</code>.</p>
+<p>However, it is possible to make an additive model by adding variables
+together in the design (e.g. <code>design = "~ var1 + var2"</code>).
+This can be very useful and lead to more accurate and stringent DEGs
+prediction than doing separate analyses for different variables.</p>
+<p>The model can also consider interactions, but this is a more advanced
+topic and should be explored from a statistical point of view.</p>
 </div>
+<div class="section level3">
+<h3 id="constrasts">Constrasts<a class="anchor" aria-label="anchor" href="#constrasts"></a>
+</h3>
+<p>Contrasts are how we tell the model what to compare. For our
+function, contrasts should be defined as a string with exactly three
+elements: the name of a variable in the design formula, the name of the
+numerator level for the fold change, and the name of the denominator
+level for the fold change, separated by <code>_vs_</code>.</p>
+<p>For example: <code>dex_trt_vs_untrt</code> : for variable dex,
+compare treated (<code>trt</code>) vs untreated <code>untrt</code>
+samples.</p>
+<ul>
+<li>Variable: <code>dex</code>
+</li>
+<li>Numerator: <code>trt</code>
+</li>
+<li>Denominator: <code>untrt</code>
+</li>
+</ul>
+<p>Genes with positive fold-change will be up-regulated in the numerator
+(<code>trt</code>).</p>
+<p>Available contrasts will be built from the levels of the variable,
+where the first level will be used as denominator and all other levels
+as possible numerators.</p>
+<blockquote>
+<p>Warning: Pay attention to the order of levels in the variable as this
+may lead to wrong comparisons where numerator/denominator are inverted.
+It may need to be altered manually, as in our example below.</p>
+</blockquote>
+<blockquote>
+<p>Note: if contrasts are not given, all possible contrasts will be
+returned (with levels in automatic order)</p>
+</blockquote>
 </div>
-<div class="section level2">
-<h2 id="volcano-plot">Volcano plot<a class="anchor" aria-label="anchor" href="#volcano-plot"></a>
-</h2>
+<div class="section level3">
+<h3 id="fitting-the-model">Fitting the model<a class="anchor" aria-label="anchor" href="#fitting-the-model"></a>
+</h3>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">exp_data</span><span class="op">)</span><span class="op">$</span><span class="va">dex</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">exp_data</span><span class="op">)</span><span class="op">$</span><span class="va">dex</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"untrt"</span>, <span class="st">"trt"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">diffexp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/diffExpAnalysis.html">diffExpAnalysis</a></span><span class="op">(</span><span class="va">exp_data</span>, design <span class="op">=</span> <span class="va">annotation</span>, contrasts <span class="op">=</span> <span class="st">"dex_trt_vs_untrt"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="volcano-plot">Volcano plot<a class="anchor" aria-label="anchor" href="#volcano-plot"></a>
+</h3>
 <p>A <strong>volcano plot</strong> is a graphical tool used to visualize
 the results of differential expression analysis. It plots the
 statistical significance on the y-axis against the magnitude of change
 on the x-axis for each gene.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">volcano_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plot_exp_volcano.html">plot_exp_volcano</a></span><span class="op">(</span><span class="va">diffexp</span>, <span class="fl">20</span><span class="op">)</span></span>
-<span><span class="va">volcano_plot</span></span></code></pre></div>
-<p><img src="sup_rnaseq_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
-<p>There is also the possibility to flip this graph by using
-<code>coord_flip</code> of the <code>ggplot2</code> package</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">volcano_plot</span> <span class="op">+</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_flip.html" class="external-link">coord_flip</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="sup_rnaseq_files/figure-html/unnamed-chunk-9-1.png" width="700"></p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">volcano_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plot_exp_volcano.html">plot_exp_volcano</a></span><span class="op">(</span><span class="va">diffexp</span>, <span class="fl">20</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="top-differentially-expressed-genes">Top differentially-expressed genes<a class="anchor" aria-label="anchor" href="#top-differentially-expressed-genes"></a>
+</h3>
+<p>The differentially expressed genes (DEGs) can be checked directly
+from the results.</p>
+<p>Here, we show the top 10:</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">diffexp</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">15</span><span class="op">)</span></span></code></pre></div>
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:200px; ">
+<table class="table table" style="margin-left: auto; margin-right: auto;">
+<thead><tr>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+baseMean
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+log2FoldChange
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+lfcSE
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+pvalue
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+padj
+</th>
+</tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+SPARCL1
+</td>
+<td style="text-align:right;">
+997.4590
+</td>
+<td style="text-align:right;">
+4.588342
+</td>
+<td style="text-align:right;">
+0.2121691
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+STOM
+</td>
+<td style="text-align:right;">
+11193.9381
+</td>
+<td style="text-align:right;">
+1.437605
+</td>
+<td style="text-align:right;">
+0.0849568
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+PER1
+</td>
+<td style="text-align:right;">
+776.6130
+</td>
+<td style="text-align:right;">
+3.158757
+</td>
+<td style="text-align:right;">
+0.2023439
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+PHC2
+</td>
+<td style="text-align:right;">
+2738.0321
+</td>
+<td style="text-align:right;">
+1.375870
+</td>
+<td style="text-align:right;">
+0.0917735
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+MT2A
+</td>
+<td style="text-align:right;">
+3656.3436
+</td>
+<td style="text-align:right;">
+2.184313
+</td>
+<td style="text-align:right;">
+0.1480886
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+DUSP1
+</td>
+<td style="text-align:right;">
+3409.0890
+</td>
+<td style="text-align:right;">
+2.919829
+</td>
+<td style="text-align:right;">
+0.2026634
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+MAOA
+</td>
+<td style="text-align:right;">
+2341.8179
+</td>
+<td style="text-align:right;">
+3.274171
+</td>
+<td style="text-align:right;">
+0.2292011
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ZBTB16
+</td>
+<td style="text-align:right;">
+385.0749
+</td>
+<td style="text-align:right;">
+7.107543
+</td>
+<td style="text-align:right;">
+0.5009888
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+KCTD12
+</td>
+<td style="text-align:right;">
+2649.9218
+</td>
+<td style="text-align:right;">
+-2.474067
+</td>
+<td style="text-align:right;">
+0.1797743
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SAMHD1
+</td>
+<td style="text-align:right;">
+12703.6077
+</td>
+<td style="text-align:right;">
+3.829537
+</td>
+<td style="text-align:right;">
+0.2807915
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NEXN
+</td>
+<td style="text-align:right;">
+5393.2150
+</td>
+<td style="text-align:right;">
+2.008149
+</td>
+<td style="text-align:right;">
+0.1524976
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SLC6A9
+</td>
+<td style="text-align:right;">
+229.6453
+</td>
+<td style="text-align:right;">
+-2.192193
+</td>
+<td style="text-align:right;">
+0.1671431
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+FKBP5
+</td>
+<td style="text-align:right;">
+2564.4337
+</td>
+<td style="text-align:right;">
+3.895135
+</td>
+<td style="text-align:right;">
+0.2988390
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ARHGEF2
+</td>
+<td style="text-align:right;">
+2250.6470
+</td>
+<td style="text-align:right;">
+-1.002539
+</td>
+<td style="text-align:right;">
+0.0825635
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+DNAJB4
+</td>
+<td style="text-align:right;">
+1467.6663
+</td>
+<td style="text-align:right;">
+1.502061
+</td>
+<td style="text-align:right;">
+0.1240173
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The most important values are <code>log2FoldChange</code> and
+<code>padj</code> (you may see the explanation for all outputs by
+checking <code><a href="https://rdrr.io/pkg/DESeq2/man/results.html" class="external-link">? DESeq2::results</a></code>)</p>
+<ul>
+<li>
+<code>log2FoldChange</code>: the effect size estimate. This value
+indicates how much the gene’s expression seems to have changed between
+the comparison and control groups. This value is reported on a
+logarithmic scale to base 2.</li>
+<li>
+<code>padj</code>: Adjusted P-value for multiple testing for the
+gene or transcript.</li>
+</ul>
+<p>We should privilege using the adjusted p-value to account for
+false-discoveries. Fold-changes are shrunk with <code>apeglm</code> by
+default to avoid noise and preserve large differences. (see:
+<code><a href="https://rdrr.io/pkg/DESeq2/man/lfcShrink.html" class="external-link">? DESeq2::lfcShrink</a></code> and the <a href="https://academic.oup.com/bioinformatics/article/35/12/2084/5159452" class="external-link"><code>apeglm</code>
+paper</a>).</p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="pathway-analysis">Pathway analysis<a class="anchor" aria-label="anchor" href="#pathway-analysis"></a>
@@ -311,7 +713,7 @@ parameters. These pathways are scored and ranked by their variance in
 the data. These are the available collections (use
 <code>gs_subcollection</code> as name except for Hallmarks, which should
 be ‘H’).</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">msigdbr</span><span class="fu">::</span><span class="fu"><a href="https://igordot.github.io/msigdbr/reference/msigdbr_collections.html" class="external-link">msigdbr_collections</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">kableExtra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/kbl.html" class="external-link">kbl</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">kableExtra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/kable_styling.html" class="external-link">kable_styling</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">kableExtra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/scroll_box.html" class="external-link">scroll_box</a></span><span class="op">(</span>height <span class="op">=</span> <span class="st">"300px"</span><span class="op">)</span></span></code></pre></div>
 <div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:300px; ">
 <table class="table table" style="margin-left: auto; margin-right: auto;">
@@ -679,24 +1081,42 @@ Hallmark
 </tbody>
 </table>
 </div>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<p>For scoring pathways, you can use two scoring methods: -
+<strong>Overrepresentation Analysis (ORA)</strong> treats your
+significant hits (e.g. DE genes above a chosen cutoff) as a “bag” and
+asks whether any known pathway is represented more often in that bag
+than you’d expect by chance—typically via a Fisher’s exact or
+hypergeometric test against all measured genes. It’s extremely fast and
+easy to interpret, but hinges on where you set your significance
+cutoff.</p>
+<p><strong>(Fast) Gene Set Enrichment Analysis (FGSEA)</strong> avoids
+that arbitrary cutoff by taking a ranked list of all genes (for example,
+sorted by fold‑change) and “walking” down it to see if members of each
+pathway accumulate at the top or bottom. You end up with an enrichment
+score for each pathway, and statistical significance comes from
+permuting phenotype labels. GSEA is more sensitive to coordinated,
+subtle shifts across a pathway.</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pathways</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_annotation_collection.html">get_annotation_collection</a></span><span class="op">(</span><span class="va">collections</span>, </span>
 <span>                                      species <span class="op">=</span> <span class="va">species</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">pathwayResult</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pathwayAnalysis.html">pathwayAnalysis</a></span><span class="op">(</span><span class="va">diffexp_filtered</span>,</span>
+<span><span class="va">pathwayResult</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pathwayAnalysis.html">pathwayAnalysis</a></span><span class="op">(</span><span class="va">diffexp</span>, </span>
 <span>                              pathways <span class="op">=</span> <span class="va">pathways</span>,</span>
-<span>                              method <span class="op">=</span> <span class="va">pathwayMethod</span>, species <span class="op">=</span> <span class="va">species</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">pathwayResult</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">pathwayResult</span><span class="op">$</span><span class="va">pathway</span></span>
-<span><span class="fu">S4Vectors</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Annotated-class.html" class="external-link">metadata</a></span><span class="op">(</span><span class="va">exp_data</span><span class="op">)</span><span class="op">[[</span><span class="st">"pathwayEnrichment"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">pathwayResult</span></span>
-<span><span class="va">pathwayResult_sorted</span> <span class="op">&lt;-</span> <span class="va">pathwayResult</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">pathwayResult</span><span class="op">$</span><span class="va">PValue</span><span class="op">)</span>, <span class="op">]</span></span>
+<span>                              method <span class="op">=</span> <span class="st">"ora"</span>, </span>
+<span>                              species <span class="op">=</span> <span class="va">species</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">top10_pathways</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">pathwayResult_sorted</span>, <span class="fl">10</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">pathwayResult2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pathwayAnalysis.html">pathwayAnalysis</a></span><span class="op">(</span><span class="va">diffexp</span>, </span>
+<span>                              pathways <span class="op">=</span> <span class="va">pathways</span>,</span>
+<span>                              method <span class="op">=</span> <span class="st">"fgsea"</span>, </span>
+<span>                              species <span class="op">=</span> <span class="va">species</span><span class="op">)</span></span>
+<span><span class="fu">metadata</span><span class="op">(</span><span class="va">exp_data</span><span class="op">)</span><span class="op">[[</span><span class="st">"pathwayEnrichment"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">pathwayResult</span></span>
+<span><span class="fu">metadata</span><span class="op">(</span><span class="va">exp_data</span><span class="op">)</span><span class="op">[[</span><span class="st">"pathwayEnrichment2"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">pathwayResult2</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="dot-plot">Dot Plot<a class="anchor" aria-label="anchor" href="#dot-plot"></a>
 </h3>
 <p>The resulting <code>dot plot</code> summarizes the most enriched
 biological pathways across different conditions or samples</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_pathway_dotplot.html">plot_pathway_dotplot</a></span><span class="op">(</span><span class="va">exp_data</span>, score_name <span class="op">=</span> <span class="st">"pathwayEnrichment"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="sup_rnaseq_files/figure-html/unnamed-chunk-11-1.png" width="700"></p>
 </div>
@@ -711,7 +1131,7 @@ test</strong> is made, and the p-value is also printed. The closer the
 value is to 0, the more the genes/pathways are influenced by the
 experimental conditions. We can consider that the experimental
 conditions influence the results when p &lt; 0.05.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"results"</span>, <span class="st">"sup"</span>, <span class="st">"targeted"</span>, <span class="va">pathwayMethod</span>, <span class="st">"boxplots"</span><span class="op">)</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span>, showWarnings <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="va">pathway_scores</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/score_pathways.html">score_pathways</a></span><span class="op">(</span><span class="va">exp_data</span>, <span class="va">pathways</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu">S4Vectors</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Annotated-class.html" class="external-link">metadata</a></span><span class="op">(</span><span class="va">exp_data</span><span class="op">)</span><span class="op">[[</span><span class="st">"pathway_scores"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">pathway_scores</span></span>
@@ -726,7 +1146,7 @@ conditions influence the results when p &lt; 0.05.</p>
 <span>                   fname <span class="op">=</span> <span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_glue.html" class="external-link">str_glue</a></span><span class="op">(</span><span class="st">"results/sup/targeted/{pathwayMethod}/boxplots/box_{path}_{annotation}.pdf"</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="op">}</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu">flatten</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">boxplots</span>, nrows <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">boxplots</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span><span class="op">)</span>, guides <span class="op">=</span> <span class="st">"collect"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="sup_rnaseq_files/figure-html/unnamed-chunk-13-1.png" width="700"></p>
 </div>
@@ -737,7 +1157,7 @@ conditions influence the results when p &lt; 0.05.</p>
 <p>On the heatmaps, we can tell that the top_genes expressions are
 higher for the treated samples. It means that these genes might be
 involved in the treatment response.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hms</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">heatmap_genes</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">i</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">genes</span> <span class="op">&lt;-</span> <span class="va">heatmap_genes</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span></span>
 <span>  <span class="va">name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">heatmap_genes</span><span class="op">)</span><span class="op">)</span>, <span class="va">i</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">heatmap_genes</span><span class="op">)</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span></span>

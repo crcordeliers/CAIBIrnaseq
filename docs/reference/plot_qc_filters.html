@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">CAIBIrnaseq</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.0.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,6 +59,7 @@
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plot_qc_filters</span><span class="op">(</span></span>
 <span>  <span class="va">gexp</span>,</span>
+<span>  color <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  fname <span class="op">=</span> <span class="st">"results/qc/plot_QC_filters.pdf"</span>,</span>
 <span>  min_nfeats <span class="op">=</span> <span class="fl">5000</span>,</span>
 <span>  min_ncounts <span class="op">=</span> <span class="fl">5e+06</span>,</span>
@@ -71,15 +72,22 @@
 
 
 <dl><dt id="arg-gexp">gexp<a class="anchor" aria-label="anchor" href="#arg-gexp"></a></dt>
-<dd><p>A `SummarizedExperiment` object containing gene expression data. The `colData` must include `nfeats` (number of detected features) and `ncounts` (total counts per sample).</p></dd>
+<dd><p>A `SummarizedExperiment` object containing gene expression data. The `colData`
+must include `nfeats` (number of detected features) and `ncounts` (total counts per sample).</p></dd>
+
+
+<dt id="arg-color">color<a class="anchor" aria-label="anchor" href="#arg-color"></a></dt>
+<dd><p>A variable in the `colData` to be used as different colors of the QC points, helps visualize possible batch effects.</p></dd>
 
 
 <dt id="arg-fname">fname<a class="anchor" aria-label="anchor" href="#arg-fname"></a></dt>
-<dd><p>A character string specifying the file path to save the plot as a PDF. Default is `"results/qc/plot_QC_filters.pdf"`. Set to `NULL` to skip saving.</p></dd>
+<dd><p>A character string specifying the file path to save the
+plot as a PDF. Default is `"results/qc/plot_QC_filters.pdf"`. Set to `NULL` to skip saving.</p></dd>
 
 
 <dt id="arg-min-nfeats">min_nfeats<a class="anchor" aria-label="anchor" href="#arg-min-nfeats"></a></dt>
-<dd><p>An integer specifying the minimum number of features for a sample to pass QC. Default is `5000`.</p></dd>
+<dd><p>An integer specifying the minimum number of features
+for a sample to pass QC. Default is `5000`.</p></dd>
 
 
 <dt id="arg-min-ncounts">min_ncounts<a class="anchor" aria-label="anchor" href="#arg-min-ncounts"></a></dt>
@@ -87,12 +95,14 @@
 
 
 <dt id="arg-out">out<a class="anchor" aria-label="anchor" href="#arg-out"></a></dt>
-<dd><p>A character string indicating the output type: `"plotly"` (interactive Plotly plot) or `"ggplot"` (static ggplot). Default is `"plotly"`.</p></dd>
+<dd><p>A character string indicating the output type: `"plotly"`
+(interactive Plotly plot) or `"ggplot"` (static ggplot). Default is `"plotly"`.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A QC plot, either as a `plotly` interactive object or a `ggplot` static object, depending on the `out` parameter.</p>
+    <p>A QC plot, either as a `plotly` interactive object or a `ggplot`
+static object, depending on the `out` parameter.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
