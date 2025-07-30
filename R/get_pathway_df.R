@@ -27,8 +27,10 @@ get_pathway_df <- function(exp_data, pathway_scores, pathways) {
     stop("`pathway_scores` must be a matrix or data.frame.")
   }
 
+  pathways <- str_replace_all(pathways, " ", "_")
+
   # --- Sample annotations ---
-  sample_annot <- SummarizedExperiment::colData(exp_data) |> as.data.frame()
+  sample_annot <- colData(exp_data) |> as.data.frame()
 
   # --- Validate pathway presence ---
   missing_pathways <- setdiff(pathways, rownames(pathway_scores))

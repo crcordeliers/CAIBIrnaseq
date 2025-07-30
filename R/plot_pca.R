@@ -1,37 +1,35 @@
 #' Plot PCA Results for Gene Expression Data
 #'
 #' This function generates a PCA plot for a `SummarizedExperiment` object using precomputed PCA results.
+#' It creates a scatter plot of the specified principal components (`pcs[1]` and `pcs[2]`).
+#' Metadata can be visualized via point color and shape.
 #'
-#' @param exp_data A `SummarizedExperiment` object containing gene expression data. PCA results must be stored in `exp_data@metadata` under the name specified by `res_name`.
-#' @param color A character string specifying the column name in `colData(exp_data)` to use for coloring the points. Default is `NA`, meaning no coloring.
-#' @param shape A character string specifying the column name in `colData(exp_data)` to use for shaping the points. Default is `NA`, meaning no shaping.
-#' @param fname A character string specifying the file path to save the plot as a PDF. Default is `"results/qc/plot_PCA.pdf"`. Set to `NULL` to skip saving.
-#' @param pcs An integer vector of length 2 specifying the principal components to plot on the x and y axes. Default is `c(1, 2)`.
+#' @param exp_data A `SummarizedExperiment` object containing gene expression data.
+#' PCA results must be stored in `exp_data@metadata` under the name specified by `res_name`.
+#' @param color A character string specifying the column name in `colData(exp_data)`
+#' to use for coloring the points. Default is `NA`, meaning no coloring.
+#' @param shape A character string specifying the column name in `colData(exp_data)`
+#' to use for shaping the points. Default is `NA`, meaning no shaping.
+#' @param fname A character string specifying the file path to save the plot as a PDF.
+#' Default is `"results/qc/plot_PCA.pdf"`. Set to `NULL` to skip saving.
+#' @param pcs An integer vector of length 2 specifying the principal components to plot
+#' on the x and y axes. Default is `c(1, 2)`.
 #' @param res_name A character string specifying the name of the PCA results stored in `exp_data@metadata`. Default is `"pca_res"`.
 #' @param id_name A character string specifying the column name in `colData(exp_data)` containing sample identifiers. Default is `"sample_id"`.
 #' @param point_size A numeric value specifying the size of the points in the plot. Default is `2`.
-#' @param ellipses if TRUE, `stat_ellipse` is added to the points, representing the 95% confidence-interval ellipse for each group in `color`.
+#' @param ellipses if TRUE, `stat_ellipse` is added to the points, representing the 0.95 confidence-interval ellipse for each group in `color`.
 #' @param out A character string indicating the output type: `"plotly"` (interactive Plotly plot) or `"ggplot"` (static ggplot). Default is `"plotly"`.
 #'
 #' @return A PCA plot, either as a `plotly` interactive object or a `ggplot` static object, depending on the `out` parameter.
-#'
-#' @details
-#' The function creates a scatter plot of the specified principal components (`pcs[1]` and `pcs[2]`). Users can optionally:
-#' - Color points based on a metadata column (`color`).
-#' - Shape points based on a metadata column (`shape`).
-#' - Save the static plot as a PDF if `fname` is not `NULL`.
-#'
-#' If PCA results are not precomputed using `pca_gexp`, the function will throw an error. The proportion of variance explained by the principal components is displayed on the axis labels.
 #'
 #' @importFrom ggplot2 ggplot aes geom_point geom_hline geom_vline labs theme_light guides guide_legend element_rect element_line element_text stat_ellipse
 #' @importFrom plotly ggplotly
 #' @importFrom dplyr left_join
 #' @importFrom stringr str_c str_glue
 #' @importFrom S4Vectors metadata
-#' @importFrom rlang :=
+#' @importFrom fs path_dir
 #'
 #' @export
-#'
 plot_pca <- function(exp_data,
                      color = NA,
                      shape = NA,
@@ -111,6 +109,7 @@ plot_pca <- function(exp_data,
 
   # Save plot if path provided
   if (!is.null(fname)) {
+    dir.create(path_dir(fname), recursive = TRUE, showWarnings = FALSE)
     ggsave(fname, pca_plot, device = "pdf")
   }
 

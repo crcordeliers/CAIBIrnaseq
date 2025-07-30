@@ -42,11 +42,11 @@ pathwayORA <- function(diffexp_result, pathways,
 
   genes <- diffexp_result |>
     rownames_to_column("genes") |>
-    filter(padj < pcutoff, genes %in% gene_ids) |>
+    arrange(padj, desc(log2FoldChange)) |>
+    filter(padj < pcutoff, log2FoldChange > 0, genes %in% gene_ids) |>
     pull(genes)
 
   message("Found ", length(genes), " differentially expressed genes...")
-
 
   # Generate gene set lists
   gene_sets <- split(pathways[[id_col]], pathways$pathway)

@@ -23,7 +23,7 @@
 #' @importFrom dplyr arrange
 #' @importFrom fgsea fgseaMultilevel
 #' @export
-pathwayFGSEA <- function(diffexp, pathwayCollection) {
+pathwayFGSEA <- function(diffexp, pathwayCollection, seed = 0) {
   # Validation des entrées
   if (!"log2FoldChange" %in% colnames(diffexp)) {
     stop("The 'diffexp' data frame must contain a 'log2FoldChange' column.")
@@ -32,18 +32,21 @@ pathwayFGSEA <- function(diffexp, pathwayCollection) {
   if (!all(c("pathway", "gene_symbol") %in% colnames(pathwayCollection))) {
     stop("The 'pathwayCollection' data frame must contain 'pathway' and 'gene_symbol' columns.")
   }
+  if(is.null(seed)) {
+    set.seed(seed)
+  }
 
-  diffexp <- diffexp |>
-    dplyr::arrange(desc(log2FoldChange))
+  pheno <- diffexp |>
+    arrange(desc(log2FoldChange)) |>
+    pull(log2FoldChange)
 
-  stat <- as.numeric(diffexp$log2FoldChange)
-  names(stat) <- rownames(diffexp)
+  names(pheno) <- rownames(diffexp)
 
   pathwayList <- split(pathwayCollection$gene_symbol, pathwayCollection$pathway)
 
   message("Running FGSEA analysis...")
 
-  result <- fgsea::fgseaMultilevel(pathways = pathwayList, stats = stat)
+  result <- fgseaMultilevel(pathways = pathwayList, pheno)
 
   result <- result |>
     arrange(padj, NES) |>

@@ -28,36 +28,39 @@ plt_boxplot <- function(exp_df, gene, annotation,
                         stat_comparisons,
                         stat_format) {
   largest_n <- exp_df |>
-    dplyr::group_by(!!rlang::sym(annotation)) |>
-    dplyr::summarize(count = dplyr::n()) |>
-    dplyr::pull(count) |>
+    group_by(!!sym(annotation)) |>
+    summarize(count = n()) |>
+    pull(count) |>
     max()
 
-  plt <- ggplot2::ggplot(exp_df, ggplot2::aes(!!rlang::sym(annotation), !!rlang::sym(gene)))
+  plt <- ggplot(exp_df, aes(!!sym(annotation), !!sym(gene)))
 
   # Add beeswarm
   if (!is.na(color_var)) {
-    plt <- plt + ggbeeswarm::geom_beeswarm(ggplot2::aes(color = !!rlang::sym(color_var)), size = pt_size)
+    plt <- plt + geom_beeswarm(aes(color = !!sym(color_var)), size = pt_size)
   } else {
-    plt <- plt + ggbeeswarm::geom_beeswarm(size = pt_size)
+    plt <- plt + geom_beeswarm(size = pt_size)
   }
 
   # Add summary (boxplot or mean line)
   if (largest_n > 10 & summary_type != "line" | summary_type == "box") {
-    plt <- plt + ggplot2::geom_boxplot(width = 0.05)
+    plt <- plt + geom_boxplot(width = 0.05)
   } else {
-    plt <- plt + ggplot2::stat_summary(fun = mean, geom = "crossbar",
+    plt <- plt + stat_summary(fun = mean, geom = "crossbar",
                                        fun.min = mean, fun.max = mean,
                                        width = 0.5, lwd = 0.2)
   }
 
   # Add stats
   if (is.na(stat_comparisons)) {
-    plt <- plt + ggpubr::stat_compare_means(label = stat_format)
+    plt <- plt + stat_compare_means(label = stat_format)
   } else {
-    plt <- plt + ggpubr::stat_compare_means(comparisons = stat_comparisons, label = stat_format)
+    plt <- plt + stat_compare_means(comparisons = stat_comparisons, label = stat_format)
   }
 
-  plt <- plt + ggplot2::theme_light()
+  y_lab <- str_replace_all(gene, "_", " ")
+
+  plt <- plt + theme_light() + labs(y = str_wrap(y_lab, width = 30))
+
   return(plt)
 }

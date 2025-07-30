@@ -5,27 +5,26 @@
 \title{Pathway Analysis}
 \usage{
 pathwayAnalysis(
-  gene_set,
+  diffexp,
   pathways,
   method = "ORA",
-  species = "Homo sapiens",
   id_col = "gene_symbol",
   pcutoff = 0.05,
-  verbose = TRUE
+  ...
 )
 }
 \arguments{
-\item{gene_set}{A data frame containing the differential expression results. Rows represent genes.}
-
 \item{pathways}{A data frame containing pathway information, with columns for pathways and associated genes.}
 
 \item{method}{A string specifying the pathway analysis method. Options are `"ORA"` for Over-representation Analysis or `"FGSEA"` for Gene Set Enrichment Analysis. Default is `"ORA"`.}
 
-\item{species}{A string specifying the species for which the pathways are relevant. Default is `"Homo sapiens"`.}
-
 \item{id_col}{A string specifying the column in the `pathways` data frame that contains gene identifiers. Default is `"gene_symbol"`.}
 
 \item{pcutoff}{A numeric value specifying the adjusted p-value cutoff for significant pathways. Default is `0.05`.}
+
+\item{gene_set}{A data frame containing the differential expression results. Rows represent genes.}
+
+\item{species}{A string specifying the species for which the pathways are relevant. Default is `"Homo sapiens"`.}
 
 \item{verbose}{A logical value indicating whether to display progress messages. Default is `TRUE`.}
 }

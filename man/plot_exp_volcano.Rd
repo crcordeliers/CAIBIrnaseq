@@ -10,7 +10,8 @@ plot_exp_volcano(
   title = "Volcano Plot of Differential Expression",
   color_up = "#0072B2",
   color_down = "#D55E00",
-  color_ns = "gray80"
+  color_ns = "gray80",
+  fname = NULL
 )
 }
 \arguments{

@@ -29,7 +29,7 @@ plt_heatmap <- function(data4hm, annotations = NA,
   colorbar_dir <- if_else(any(is.na(annotations)), "vertical", "horizontal")
 
   # Generate the basic heatmap using ggheatmap
-  hm <- ggheatmapper::ggheatmap(data4hm$table,
+  hm <- ggheatmap(data4hm$table,
                   colv = data4hm$colv,
                   rowv = data4hm$rowv,
                   clustering_method = "ward.D2",
@@ -39,7 +39,7 @@ plt_heatmap <- function(data4hm, annotations = NA,
 
   # If annotations are provided, add them to the heatmap
   if (!any(is.na(annotations))) {
-    hm <- ggheatmapper::add_tracks(hm,
+    hm <- add_tracks(hm,
                      track_columns = annotations,
                      track_colors = track_colors,
                      leg_ncol = 1,
@@ -53,7 +53,7 @@ plt_heatmap <- function(data4hm, annotations = NA,
   # If a file name is provided, save the heatmap as an image
   if (!is.null(fname)) {
     message("-- Saving heatmap at ", fname)
-    ggplot2::ggsave(fname, hm, width = fwidth, height = fheight, create.dir = TRUE)
+    ggsave(fname, hm, width = fwidth, height = fheight, create.dir = TRUE)
   }
 
   # Return the heatmap object

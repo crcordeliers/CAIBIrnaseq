@@ -13,16 +13,18 @@
 #'
 #' @return A `ggplot` object representing the volcano plot.
 #'
-#' @importFrom ggplot2 ggplot aes geom_point geom_hline geom_vline labs theme_minimal element_text
+#' @importFrom ggplot2 ggplot aes geom_point geom_hline geom_vline labs theme_minimal element_text ggsave
 #' @importFrom ggrepel geom_text_repel
 #' @importFrom dplyr filter arrange slice_head
 #' @importFrom forcats fct_rev
+#' @importFrom fs path_dir
 #' @export
 #'
 plot_exp_volcano <- function(diffexp, nb = 10, title = "Volcano Plot of Differential Expression",
                              color_up = "#0072B2",
                              color_down = "#D55E00",
-                             color_ns = "gray80") {
+                             color_ns = "gray80",
+                             fname = NULL) {
   # Vérification des colonnes requises
   required_cols <- c("log2FoldChange", "padj")
   if (!all(required_cols %in% colnames(diffexp))) {
@@ -106,6 +108,11 @@ plot_exp_volcano <- function(diffexp, nb = 10, title = "Volcano Plot of Differen
       legend.title = element_text(face = "bold"),
       plot.title = element_text(face = "bold", hjust = 0.5)
     )
+
+  if(!is.null(fname)) {
+    dir.create(path_dir(fname), recursive = TRUE, showWarnings = FALSE)
+    ggsave(vplot, path = fname)
+  }
 
   return(vplot)
 }

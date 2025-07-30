@@ -51,7 +51,7 @@ diffExpAnalysis <- function(exp_data, design, lfcShrink = TRUE, contrasts = NULL
     }
     res <- res |>
       as.data.frame() |>
-      arrange(padj, log2FoldChange)
+      arrange(padj, desc(log2FoldChange))
 
     return(res)
   })

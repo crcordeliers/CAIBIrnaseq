@@ -4,7 +4,7 @@
 \alias{pathwayFGSEA}
 \title{Pathway Enrichment Using FGSEA}
 \usage{
-pathwayFGSEA(diffexp, pathwayCollection)
+pathwayFGSEA(diffexp, pathwayCollection, seed = 0)
 }
 \arguments{
 \item{diffexp}{A data frame of differential expression results, with row names as gene IDs
