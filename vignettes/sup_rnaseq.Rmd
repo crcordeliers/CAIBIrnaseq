@@ -52,6 +52,9 @@ heatmap_genes <- list(
   `Glucocorticoid response genes` = c("FKBP5", "TSC22D3", "PER1", "ZBTB16"),
   `Anti-inflammatory genes`  = c("DUSP1", "SOCS1", "MT2A"))
 
+pathway_genes <- c("GOBP SMALL MOLECULE METABOLIC PROCESS", 
+                   "GOBP POSITIVE REGULATION OF SYNAPSE ASSEMBLY")
+
 heatmap_pathways <- c("GOBP RESPONSE TO HORMONE", "GOBP SMALL MOLECULE METABOLIC PROCESS", "GOBP POSITIVE REGULATION OF SYNAPSE ASSEMBLY")
 ```
 Remember to come back in this cell to modify the genes, pathways you are interested in studying.
@@ -260,13 +263,11 @@ pathways <- get_annotation_collection(collections,
 
 pathwayResult <- pathwayAnalysis(diffexp, 
                               pathways = pathways,
-                              method = "ora", 
-                              species = species)
+                              method = "ora")
 
 pathwayResult2 <- pathwayAnalysis(diffexp, 
                               pathways = pathways,
-                              method = "fgsea", 
-                              species = species)
+                              method = "fgsea")
 metadata(exp_data)[["pathwayEnrichment"]] <- pathwayResult
 metadata(exp_data)[["pathwayEnrichment_fgsea"]] <- pathwayResult2
 
@@ -307,7 +308,7 @@ boxplots <- lapply(heatmap_pathways, function(path) {
                   color_var = annotation, 
                    pt_size = 2,
                    fname = str_glue(
-                     "results/sup/targeted/box_{path}_{annotation}.pdf"))
+                     "results/sup/box_{path}_{annotation}.pdf"))
   })
 }) |> flatten()
 ```
@@ -319,7 +320,9 @@ boxplots <- lapply(heatmap_pathways, function(path) {
 wrap_plots(boxplots, nrows = round(length(boxplots)/2), guides = "collect")
 ```
 
-88444444444444444444444yuuuuj## Heatmap of genes
+## Heatmaps
+
+### Chosen gene signature
 
 We can use heatmaps to visualize multiple genes at the same time, and group
 their expression profiles in our samples. Annotation tracks highlight whether
@@ -337,7 +340,27 @@ hms <- lapply(1:length(heatmap_genes), function(i) {
                    show_rownames = ifelse(length(genes) <= 100, TRUE, FALSE),
                    hm_color_limits = c(-2,2),
                    show_dend_row = FALSE,
-                   fname = str_glue("results/sup/targeted/hm_genes_{name}.pdf"))
+                   fname = str_glue("results/sup/hm_genes_{name}.pdf"))
 })
 wrap_plots(hms, ncol = 2)
 ```
+
+### Pathway genes
+
+```{r}
+#| fig.height: 5
+#| fig.width: 8
+#| message: false
+hms_path <- lapply(pathway_genes, function(path) {
+  path <- str_replace_all(path, " ", "_")
+  genes <- pathways |> filter(pathway %in% path) |> pull(gene_symbol) |> unique()
+  hm <- plot_exp_heatmap(exp_data, genes = genes,
+                   annotations = annotation,
+                   show_rownames = ifelse(length(genes) <= 100, TRUE, FALSE),
+                   hm_color_limits = c(-2,2),
+                   show_dend_row = FALSE,
+                   fname = str_glue("results/sup/hm_genes_{path}.pdf"))
+})
+wrap_plots(hms_path, ncol = 2)
+```
+

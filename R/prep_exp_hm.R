@@ -32,19 +32,18 @@ prep_exp_hm <- function(expData,
   } else {
     genes <- genes
   }
-  gexp <- SummarizedExperiment::assays(expData)[[assay]][genes,]
+  gexp <- assays(expData)[[assay]][genes,]
   gexp_t <- gexp |>
     t() |>
     as.data.frame() |>
-    tibble::rownames_to_column("sample_id") |>
-    tibble::tibble()
+    rownames_to_column("sample_id") |>
+    tibble()
 
   feats <- colnames(gexp_t)[-1]
 
-  samp_annot <- SummarizedExperiment::colData(exp_data) |> as.data.frame()
+  samp_annot <- colData(exp_data) |> as.data.frame()
 
-  gexp_t <- gexp_t |>
-    dplyr::left_join(samp_annot, by = "sample_id")
+  gexp_t <- gexp_t |> left_join(samp_annot, by = "sample_id")
 
   return(list(table = gexp_t, colv = "sample_id", rowv = feats))
 }
