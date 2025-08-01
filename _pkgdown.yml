@@ -131,8 +131,8 @@ reference:
       - get_pathway_genes
       - plot_pathway_dotplot
       - plot_pathway_heatmap
-      - plot_path_boxplot
-      - plot_path_scatter
+      - plot_pathway_boxplot
+      - plot_pathway_scatter
 
   - title: "Microenvironment & Cell-type Scores"
     contents:

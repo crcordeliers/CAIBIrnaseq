@@ -29,6 +29,7 @@ library(SummarizedExperiment)
 library(CAIBIrnaseq)
 library(tidyverse)
 library(patchwork)
+devtools::load_all()
 ```
 
 Before analysing the dataset, we define the variables with the names of the genes / pathways we want to analyse. This is not mandatory, but it can allow someone with limited coding experience to execute the notebook without changing the downstream code except for these variables.
@@ -51,6 +52,9 @@ boxplot_pathways <- c("GOBP RESPONSE TO HORMONE", "GOBP SMALL MOLECULE METABOLIC
 heatmap_genes <- list(
   `Glucocorticoid response genes` = c("FKBP5", "TSC22D3", "PER1", "ZBTB16"),
   `Anti-inflammatory genes`  = c("DUSP1", "SOCS1", "MT2A"))
+
+pathway_genes <- c("GOBP SMALL MOLECULE METABOLIC PROCESS", 
+                   "GOBP POSITIVE REGULATION OF SYNAPSE ASSEMBLY")
 
 heatmap_pathways <- c("GOBP RESPONSE TO HORMONE", "GOBP SMALL MOLECULE METABOLIC PROCESS", "GOBP POSITIVE REGULATION OF SYNAPSE ASSEMBLY")
 ```
@@ -76,6 +80,8 @@ rowData(exp_data)$gene_length_kb <-
 # If you are using your own dataset .RDS file), use this command line : 
 # exp_data <- readRDS(data_file)
 exp_data
+
+colnames(SummarizedExperiment::rowData(exp_data))
 ```
 
 Even if the datasets are globally build the same way, the names of the variables are not exactly the same, so if we want to keep the same code, we need to redefine a bit the variables.
@@ -90,7 +96,8 @@ Most datasets use ensembl gene ID by default after alignment, so this step rebas
 
 ```{r}
 #| message: false
-exp_data <- rebase_gexp(exp_data)
+exp_data <- rebase_gexp(exp_data, keep_cols = c("gene_name", "gene_id", 
+                                                "gene_biotype", "gene_length_kb"))
 exp_data
 ```
 
@@ -129,6 +136,7 @@ exp_data <- normalize_gexp(exp_data)
 ```{r}
 #| message: false
 metadata(exp_data)[["pca_res"]] <- pca_gexp(exp_data)
+annotations <- setdiff(annotation, c("exp_cluster", "path_cluster"))
 plot_pca(exp_data, color = annotation, ellipses = TRUE)
 ```
 
@@ -260,16 +268,13 @@ pathways <- get_annotation_collection(collections,
 
 pathwayResult <- pathwayAnalysis(diffexp, 
                               pathways = pathways,
-                              method = "ora", 
-                              species = species)
+                              method = "ora")
 
 pathwayResult2 <- pathwayAnalysis(diffexp, 
                               pathways = pathways,
-                              method = "fgsea", 
-                              species = species)
+                              method = "fgsea")
 metadata(exp_data)[["pathwayEnrichment"]] <- pathwayResult
 metadata(exp_data)[["pathwayEnrichment_fgsea"]] <- pathwayResult2
-
 ```
 
 The resulting `dot plot` summarizes the most enriched biological pathways across different conditions or samples
@@ -307,7 +312,7 @@ boxplots <- lapply(heatmap_pathways, function(path) {
                   color_var = annotation, 
                    pt_size = 2,
                    fname = str_glue(
-                     "results/sup/targeted/box_{path}_{annotation}.pdf"))
+                     "results/sup/box_{path}_{annotation}.pdf"))
   })
 }) |> flatten()
 ```
@@ -318,8 +323,9 @@ boxplots <- lapply(heatmap_pathways, function(path) {
 #| fig.height: 3.5
 wrap_plots(boxplots, nrows = round(length(boxplots)/2), guides = "collect")
 ```
+## Heatmap of genes
 
-88444444444444444444444yuuuuj## Heatmap of genes
+### Chosen gene signature
 
 We can use heatmaps to visualize multiple genes at the same time, and group
 their expression profiles in our samples. Annotation tracks highlight whether
@@ -337,7 +343,26 @@ hms <- lapply(1:length(heatmap_genes), function(i) {
                    show_rownames = ifelse(length(genes) <= 100, TRUE, FALSE),
                    hm_color_limits = c(-2,2),
                    show_dend_row = FALSE,
-                   fname = str_glue("results/sup/targeted/hm_genes_{name}.pdf"))
+                   fname = str_glue("results/sup/hm_genes_{name}.pdf"))
 })
 wrap_plots(hms, ncol = 2)
 ```
+### Pathway genes
+
+```{r}
+#| fig.height: 5
+#| fig.width: 8
+#| message: false
+hms_path <- lapply(pathway_genes, function(path) {
+  path <- str_replace_all(path, " ", "_")
+  genes <- pathways |> filter(pathway %in% path) |> pull(gene_symbol) |> unique()
+  hm <- plot_exp_heatmap(exp_data, genes = genes,
+                   annotations = annotation,
+                   show_rownames = ifelse(length(genes) <= 100, TRUE, FALSE),
+                   hm_color_limits = c(-2,2),
+                   show_dend_row = FALSE,
+                   fname = str_glue("results/sup/hm_genes_{path}.pdf"))
+})
+wrap_plots(hms_path, ncol = 2)
+```
+
