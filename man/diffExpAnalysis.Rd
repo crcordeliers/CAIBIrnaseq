@@ -4,7 +4,13 @@
 \alias{diffExpAnalysis}
 \title{Differential expression analysis (DESeq2 wrapper)}
 \usage{
-diffExpAnalysis(exp_data, design, lfcShrink = TRUE, contrasts = NULL)
+diffExpAnalysis(
+  exp_data,
+  design,
+  lfcShrink = TRUE,
+  contrasts = NULL,
+  fname = NULL
+)
 }
 \arguments{
 \item{exp_data}{A count matrix, SummarizedExperiment containing raw counts
@@ -20,6 +26,9 @@ shrinkage on each result table via DESeq2::lfcShrink.}
 \item{contrasts}{Character vector of named results to extract (as returned
 by DESeq2::resultsNames). If NULL (default), all names except the intercept
 are used.}
+
+\item{fname}{if provided, will save a `csv` file. If multiple contrasts,
+will use the base of fname and append the contrast for the file names.}
 }
 \value{
 A named list of data.frames (one per contrast), each sorted by adjusted

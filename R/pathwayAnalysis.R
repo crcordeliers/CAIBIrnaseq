@@ -6,7 +6,6 @@
 #' @param gene_set A data frame containing the differential expression results. Rows represent genes.
 #' @param pathways A data frame containing pathway information, with columns for pathways and associated genes.
 #' @param method A string specifying the pathway analysis method. Options are `"ORA"` for Over-representation Analysis or `"FGSEA"` for Gene Set Enrichment Analysis. Default is `"ORA"`.
-#' @param species A string specifying the species for which the pathways are relevant. Default is `"Homo sapiens"`.
 #' @param id_col A string specifying the column in the `pathways` data frame that contains gene identifiers. Default is `"gene_symbol"`.
 #' @param pcutoff A numeric value specifying the adjusted p-value cutoff for significant pathways. Default is `0.05`.
 #' @param verbose A logical value indicating whether to display progress messages. Default is `TRUE`.

@@ -24,8 +24,6 @@ pathwayAnalysis(
 
 \item{gene_set}{A data frame containing the differential expression results. Rows represent genes.}
 
-\item{species}{A string specifying the species for which the pathways are relevant. Default is `"Homo sapiens"`.}
-
 \item{verbose}{A logical value indicating whether to display progress messages. Default is `TRUE`.}
 }
 \value{

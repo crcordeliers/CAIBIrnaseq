@@ -16,6 +16,8 @@
 #' @param contrasts Character vector of named results to extract (as returned
 #' by DESeq2::resultsNames). If NULL (default), all names except the intercept
 #' are used.
+#' @param fname if provided, will save a `csv` file. If multiple contrasts,
+#' will use the base of fname and append the contrast for the file names.
 #'
 #' @return
 #' A named list of data.frames (one per contrast), each sorted by adjusted
@@ -30,8 +32,11 @@
 #'
 #' @importFrom stringr str_detect
 #' @importFrom DESeq2 DESeqDataSet DESeq results lfcShrink resultsNames
+#' @importFrom readr write_csv
+#' @importFrom fs path_ext_remove
 #' @export
-diffExpAnalysis <- function(exp_data, design, lfcShrink = TRUE, contrasts = NULL) {
+diffExpAnalysis <- function(exp_data, design, lfcShrink = TRUE, contrasts = NULL,
+                            fname = NULL) {
   if(!str_detect(design, "~")) {
     design <- paste0("~", design)
   }
@@ -42,12 +47,20 @@ diffExpAnalysis <- function(exp_data, design, lfcShrink = TRUE, contrasts = NULL
   if(is.null(contrasts)) {
     contrasts <- resultsNames(ddsSE)[-1]
   }
-  # Get results for all contrasts, applying shrink
+
   results <- lapply(contrasts, function(contrast) {
-    res <- results(ddsSE,
-                   name = contrast)
-    if(lfcShrink) {
-      res <- lfcShrink(ddsSE, coef = contrast, res = res)
+    if(length(contrast) == 3) {
+      res <- results(ddsSE, contrast = contrast)
+      if(lfcShrink) {
+        res <- lfcShrink(ddsSE, contrast = contrast, type = "normal", res = res)
+      }
+    } else if(length(contrast) == 1) {
+      res <- results(ddsSE, name = contrast)
+      if(lfcShrink) {
+        res <- lfcShrink(ddsSE, coef = contrast, res = res)
+      }
+    } else {
+      stop("Can't work with the `contrasts` provided.")
     }
     res <- res |>
       as.data.frame() |>
@@ -55,11 +68,25 @@ diffExpAnalysis <- function(exp_data, design, lfcShrink = TRUE, contrasts = NULL
 
     return(res)
   })
+  contrasts <- lapply(contrasts, paste, collapse = "_") |> unlist()
+
   names(results) <- contrasts
 
   if(length(results) == 1) {
-    message("Retuning condition = ", names(results)[1])
     results <- results[[1]]
+    if(!is.null(fname)) {
+      res <- results |> rownames_to_column("gene")
+      write_csv(res, fname)
+    }
+  } else {
+    if(!is.null(fname)) {
+      fnames <- sapply(contrasts, function(ctr) {
+        paste0(path_ext_remove(fname), "_", ctr, ".csv") })
+      lapply(1:length(results), function(i) {
+        res <- results[[i]] |> rownames_to_column("gene")
+        write_csv(res, file =  fnames[i])
+      })
+    }
   }
   return(results)
 }

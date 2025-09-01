@@ -10,6 +10,8 @@
 #' pathway names (e.g., 'pathway') and one with gene identifiers.
 #' @param id_col Character. The column name in `pathways` that matches gene identifiers in `diffexp_result`.
 #' @param pcutoff adjusted p-value to be used to filter differentially expressed genes.
+#' @param direction either "up" or "down". ORA takes only "up" or "down"-regulated
+#' genes to do it's overrepresentation analysis.
 #'
 #' @return A data frame of enriched pathways with columns:
 #' \describe{
@@ -27,8 +29,10 @@
 #'
 
 pathwayORA <- function(diffexp_result, pathways,
+                       direction = "up",
                        id_col = "gene_symbol",
-                       pcutoff = 0.05) {
+                       pcutoff = 0.05
+                       ) {
 
   message("--- Running Overrepresentation Analysis")
 
@@ -39,14 +43,23 @@ pathwayORA <- function(diffexp_result, pathways,
     stop("`exp_data` uses unknown gene annotation.
          Try either using ensembl_gene_id or gene_name/gene_symbol.")
   }
+  if(direction == "up") {
+    genes <- diffexp_result |>
+      rownames_to_column("genes") |>
+      arrange(padj, desc(log2FoldChange)) |>
+      filter(padj < pcutoff, log2FoldChange > 0, genes %in% gene_ids) |>
+      pull(genes)
+    message("Found ", length(genes), " up-regulated expressed genes...")
+  } else if (direction == "down") {
+    message("Running ORA on down-regulated genes...")
+    genes <- diffexp_result |>
+      rownames_to_column("genes") |>
+      arrange(padj, log2FoldChange) |>
+      filter(padj < pcutoff, log2FoldChange < 0, genes %in% gene_ids) |>
+      pull(genes)
+    message("Found ", length(genes), " down-regulated expressed genes...")
+  }
 
-  genes <- diffexp_result |>
-    rownames_to_column("genes") |>
-    arrange(padj, desc(log2FoldChange)) |>
-    filter(padj < pcutoff, log2FoldChange > 0, genes %in% gene_ids) |>
-    pull(genes)
-
-  message("Found ", length(genes), " differentially expressed genes...")
 
   # Generate gene set lists
   gene_sets <- split(pathways[[id_col]], pathways$pathway)

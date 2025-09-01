@@ -58,7 +58,6 @@ rebase_gexp <- function(exp_data, gene_id = "gene_id", new_gene_id = "gene_name"
     stop("Missing required column(s) in rowData: ", paste(missing_cols, collapse = ", "))
   }
 
-
   # Check that counts assay exists
   if (!"counts" %in% names(assays(exp_data))) {
     stop("Assay 'counts' not found in the SummarizedExperiment object.")

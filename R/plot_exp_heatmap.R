@@ -71,7 +71,9 @@ plot_exp_heatmap <- function(expData,
   hm_data <- prep_exp_hm(expData, genes, assay, gene_name)
 
   # Generate the heatmap using the plt_heatmap function
-  dir.create(path_dir(fname), recursive = TRUE, showWarnings = FALSE)
+  if(!is.null(fname)) {
+    dir.create(path_dir(fname), recursive = TRUE, showWarnings = FALSE)
+  }
 
   hm <- plt_heatmap(hm_data,
                     annotations = annotations,

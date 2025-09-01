@@ -14,6 +14,7 @@
 #' @return A heatmap plot object.
 #'
 #' @importFrom viridisLite plasma
+#' @importFrom S4Vectors metadata
 #'
 #' @export
 #'
@@ -25,12 +26,17 @@ plot_microenv_heatmap <- function(exp_data,
                                   fwidth = 7,
                                   fheight = 5,
                                   ...) {
-  # Extraire les scores de microenvironnement depuis les métadonnées
-  microenv_scores <- S4Vectors::metadata(exp_data)[["microenv_scores"]]
+  microenv_scores <- metadata(exp_data)[["microenv_scores"]]
 
   # Vérifier si les scores existent dans les métadonnées
   if (is.null(microenv_scores)) {
     stop('No microenvironment population scores found in `metadata(exp_data)[["microenv_scores"]])`')
+  }
+  score_var <- apply(microenv_scores, 1, var)
+  if(any(score_var == 0)) {
+    unvar_score <- names(which(score_var == 0))
+    warning("Dropping ", paste0(unvar_score, collapse = ", "), " due to variance = 0")
+    microenv_scores <- microenv_scores[setdiff(rownames(microenv_scores), unvar_score),]
   }
 
   # Préparer les données pour le heatmap en utilisant la fonction `prep_scores_hm`
@@ -40,17 +46,17 @@ plot_microenv_heatmap <- function(exp_data,
   dir.create(path_dir(fname), recursive = TRUE, showWarnings = FALSE)
 
   hm <- plt_heatmap(hm_data,
-                    center = TRUE,  # Centrer les données pour le heatmap
-                    scale = TRUE,   # Normaliser les données
+                    center = TRUE,
+                    scale = TRUE,
                     annotations = annotations,
-                    colors_title = "Population score",  # Titre des couleurs
-                    hm_colors = viridisLite::plasma(100),  # Choisir une palette de couleurs
-                    track_prop = annotation_prop,  # Proportion des annotations
-                    track_colors = annotation_colors,  # Couleurs des annotations
-                    fname = fname,  # Nom du fichier pour enregistrer l'image
-                    fwidth = fwidth,  # Largeur de l'image
-                    fheight = fheight,  # Hauteur de l'image
-                    ...)  # Passer d'autres arguments à `plt_heatmap`
+                    colors_title = "Population score",
+                    hm_colors = viridisLite::plasma(100),
+                    track_prop = annotation_prop,
+                    track_colors = annotation_colors,
+                    fname = fname,
+                    fwidth = fwidth,
+                    fheight = fheight,
+                    ...)
 
   # Retourner l'objet heatmap
   return(hm)

@@ -53,14 +53,14 @@ prep_scores_hm <- function(exp_data, pathway_scores, pathways = 1:20) {
   }
 
   # Extract and clean sample annotations
-  samp_annot <- SummarizedExperiment::colData(exp_data) |> as.data.frame()
+  samp_annot <- colData(exp_data) |> as.data.frame()
 
   if ("sample_id" %in% colnames(samp_annot)) {
     warning("'sample_id' already exists in colData and will be overwritten.")
     samp_annot <- samp_annot[, colnames(samp_annot) != "sample_id"]
   }
 
-  samp_annot <- tibble::rownames_to_column(samp_annot, "sample_id")
+  samp_annot <- rownames_to_column(samp_annot, "sample_id")
 
   # Prepare tidy pathway score table
   path_table <- pathway_scores[feats, , drop = FALSE] |>
@@ -72,14 +72,16 @@ prep_scores_hm <- function(exp_data, pathway_scores, pathways = 1:20) {
     path_table <- path_table[, colnames(path_table) != "sample_id"]
   }
 
-  path_table <- tibble::rownames_to_column(path_table, "sample_id")
+  path_table <- rownames_to_column(path_table, "sample_id")
 
   # Join with sample annotations
   path_table <- dplyr::left_join(path_table, samp_annot, by = "sample_id")
 
-  return(list(
+  hm_data <- list(
     table = path_table,
     colv = "sample_id",
     rowv = feats
-  ))
+  )
+
+  return(hm_data)
 }

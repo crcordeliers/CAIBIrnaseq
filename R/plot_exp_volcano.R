@@ -111,7 +111,7 @@ plot_exp_volcano <- function(diffexp, nb = 10, title = "Volcano Plot of Differen
 
   if(!is.null(fname)) {
     dir.create(path_dir(fname), recursive = TRUE, showWarnings = FALSE)
-    ggsave(vplot, path = fname)
+    ggsave(fname, vplot)
   }
 
   return(vplot)
