@@ -10,7 +10,7 @@
 #' @export
 #' @importFrom SummarizedExperiment assays
 #'
-mcp_counter <- function(exp_data, species, feature_type = "gene_name") {
+mcp_counter <- function(exp_data, species, feature_type = "gene_name", assay = "tpm") {
   if (!requireNamespace("MCPcounter", quietly = TRUE)) {
     stop("The 'MCPcounter' package is required but not installed.")
   }
@@ -20,9 +20,9 @@ mcp_counter <- function(exp_data, species, feature_type = "gene_name") {
     stop("exp_data must be a SummarizedExperiment object.")
   }
 
-  gexp <- SummarizedExperiment::assays(exp_data)[["tpm"]]
+  gexp <- SummarizedExperiment::assays(exp_data)[[assay]]
   if (is.null(gexp)) {
-    stop("The 'tpm' assay is missing in the SummarizedExperiment object.")
+    stop("The ", assay, " assay is missing in the SummarizedExperiment object.")
   }
 
   if (feature_type == "gene_name") {

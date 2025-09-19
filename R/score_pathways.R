@@ -46,9 +46,12 @@ score_pathways <- function(exp_data, pathways,
   mat <- assays(exp_data)$norm
 
   # Check the gene annotation in the pathways data
-  if (any(rownames(mat) %in% pathways$gene_id)) {
+  votes_gene_id <- sum(rownames(mat) %in% pathways$gene_id)
+  votes_gene_symbol <- sum(rownames(mat) %in% pathways$gene_symbol)
+
+  if (votes_gene_id >= votes_gene_symbol & votes_gene_id > 100) {
     gene_annot <- "gene_id"
-  } else if (any(rownames(mat) %in% pathways$gene_symbol)) {
+  } else if (votes_gene_symbol > votes_gene_id & votes_gene_symbol > 100) {
     gene_annot <- "gene_symbol"
   } else {
     stop("`exp_data` uses unknown gene annotation.
