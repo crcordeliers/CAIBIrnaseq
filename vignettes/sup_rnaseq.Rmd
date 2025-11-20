@@ -1,126 +1,109 @@
 ---
-title: "Unsupervised RNA-seq analysis"
+title: "Supervised RNA-seq analysis"
 author: "Cordeliers Artificial Intelligence and Bioinformatics"
 format: 
   html:
     toc: true
     embed-resources: true
-editor: source
+    code-fold: show
+    lightbox: true
 ---
-<img src="../man/figures/CAIBI.png" align="right" alt="" width="120" />
 
-For the supervised and unsupervised analyses, we are using an open dataset which is given by the `airway` package. 
-It provides a gene expression dataset derived from **human bronchial epithelial cells**, treated or not with **dexamethasone** (a corticosteroid).
- 
-Here is an example of how the **supervised** part of the `CAIBIrnaseq` package can be use. If you want to use this notebook for your projects, it is available [here](https://github.com/crcordeliers/CAIBIrnaseq/blob/dev/vignettes/unsup_rnaseq.Rmd)
+<img src="../man/figures/CAIBI.png" align="right" width="120"/>
 
-First, we need to import the required packages :
+For the supervised and unsupervised analyses, we are using an open dataset which is given by the `airway` package. It provides a gene expression dataset derived from **human bronchial epithelial cells**, treated or not with **dexamethasone** (a corticosteroid).
 
-```{r read_params}
-#| message: false
-library(airway)               # dataset's package  
-library(SummarizedExperiment) # Object's type we are using
-library(CAIBIrnaseq)          # package
-```
+Dexamethasone treatment is expected to triggers a stress‐response program 
+and reset the peripheral circadian clock.
 
-Before analysing the dataset, we define the variables with the names of the genes / pathways we want to analyse.
+The treatment information is recorded in the `dex` column of the data.
 
-These variables will change in function of how your dataset is build and which type of data it is.
+Here is an example of how the **supervised** part of the `CAIBIrnaseq` package.
+
+First, we need to import the required packages :  
 
 ```{r dependencies}
 #| message: false
-
-annotation <- "dex"
-diffexpMethod <- "limma" # Either limma or deseq2
-species <- "human"
-pathwayMethod <- "ora"  # Either ORA or fgsea
-
-# The following variables are those that will need to be modified depending on the analyses you want to do  
-
-collections <- c("CGP", "CP", "CP:KEGG_LEGACY", "Hallmark")
-
-pathwayOfInterest <- list("HALLMARK_INFLAMMATORY_RESPONSE", "GOBP_RESPONSE_TO_GLUCOCORTICOID","GOBP_REGULATION_OF_CELL_PROLIFERATION","HALLMARK_APOPTOSIS")
-
-boxplot_pathways <- list("HALLMARK_INFLAMMATORY_RESPONSE","GOBP_RESPONSE_TO_STEROID_HORMONE")
-
-heatmap_genes <- list(
-  gr_response_genes = c("FKBP5", "TSC22D3", "PER1", "ZBTB16"),
-  anti_inflam_genes = c("DUSP1", "SOCS1", "MT2A")
-)
-
-heatmap_pathways <- c(
-  "DUTERTRE_ESTRADIOL_RESPONSE_24HR_DN",
-  "REN_ALVEOLAR_RHABDOMYOSARCOMA_DN",
-  "NUYTTEN_EZH2_TARGETS_UP",
-  "PASINI_SUZ12_TARGETS_DN"
-)
+library(airway)
+library(SummarizedExperiment)
+library(CAIBIrnaseq)
+library(tidyverse)
+library(patchwork)
+devtools::load_all()
 ```
 
-Remember to come back in this cell to modify the genes, pathways you are interested in studying. 
+Before analysing the dataset, we define the variables with the names of the genes / pathways we want to analyse. This is not mandatory, but it can allow someone with limited coding experience to execute the notebook without changing the downstream code except for these variables.
+
+These variables will change in function of how your dataset is build and which type of data it is.
+
+## Parameters
+
+```{r params}
+#| message: false
+
+annotation <- "dex"
+species <- "human"
+pathwayMethod <- "ora"  
+
+collections <- c("Hallmark", "GO:BP")
+
+boxplot_pathways <- c("GOBP RESPONSE TO HORMONE", "GOBP SMALL MOLECULE METABOLIC PROCESS", "GOBP POSITIVE REGULATION OF SYNAPSE ASSEMBLY")
+
+heatmap_genes <- list(
+  `Glucocorticoid response genes` = c("FKBP5", "TSC22D3", "PER1", "ZBTB16"),
+  `Anti-inflammatory genes`  = c("DUSP1", "SOCS1", "MT2A"))
+
+pathway_genes <- c("GOBP SMALL MOLECULE METABOLIC PROCESS", 
+                   "GOBP POSITIVE REGULATION OF SYNAPSE ASSEMBLY")
+
+heatmap_pathways <- c("GOBP RESPONSE TO HORMONE", "GOBP SMALL MOLECULE METABOLIC PROCESS", "GOBP POSITIVE REGULATION OF SYNAPSE ASSEMBLY")
+```
+Remember to come back in this cell to modify the genes, pathways you are interested in studying.
 
 ## Load data
 
-This section loads the RNA-seq dataset for analysis. It ensures the correct input file is used, as specified in the parameters.
-rebase_gexp
+This section loads the RNA-seq dataset for analysis. It ensures the correct input file is used, as specified in the parameters. rebase_gexp
 
 Ensure your dataset is in a `Summarized Experiment` object, because all the used functions below works with this type of input.
 
 If you want to know more about this type of object, please click here: [Bioconductor](https://bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html)
 
-If you have a .xsl file (Excel), there is an existing notebook to convert it in a .RDS file. 
+If you have a .xsl file (Excel), there is an existing notebook to convert it in a .RDS file.
 
 ```{r load_data}
 #| message: false
 data(airway, package="airway")
 exp_data <- airway
-
-# If you are using your own dataset .RDS file), use this command line : 
-# exp_data <- readRDS(data_file)
-```
-
-Even if the datasets are globally build the same way,  the names of the variables are not exactly the same, so if we want to keep the same code, we need to redefine a bit the variables. 
-
-If you want to know what are the used variables in this part, run this command line : `colnames(SummarizedExperiment::rowData(exp_data))`
-
-You should have these variables (with these exact same names):   
-  - **gene_name** : The commonly used symbol or name for the gene (e.g., A1BG).    
-  - **gene_id** : A unique and stable identifier for the gene, often from databases like Ensembl.  
-  - **gene_length_kb** :  The length of the gene measured in kilobases   
-  - **gene_description** : A brief textual summary of the gene’s function or characteristics. 
-  - **gene_biotype** : A classification of the gene based on its biological function or transcript type, such as protein_coding, lncRNA, or pseudogene.  
-
-If you are using the notebook that Clarice GROENEVELD created to convert a .xsl file into a .RDS one, you can SKIP the next cell. 
-If not, you should look at how your dataset is defined. You might need to run some command line as the following ones:   
-
-```{r}
-#| message: false
 rowData(exp_data)$gene_length_kb <- 
   (rowData(exp_data)$gene_seq_end - rowData(exp_data)$gene_seq_start) / 1000
 
-library(biomaRt)
-mart <- useEnsembl("ensembl", dataset = "hsapiens_gene_ensembl")
-gene_ids <- rowData(exp_data)$gene_id
+# If you are using your own dataset .RDS file), use this command line : 
+# exp_data <- readRDS(data_file)
+exp_data
 
-annot <- getBM(attributes = c("ensembl_gene_id", "description"),
-               filters = "ensembl_gene_id",
-               values = gene_ids,
-               mart = mart)
-matched <- match(rowData(exp_data)$gene_id, annot$ensembl_gene_id)
-rowData(exp_data)$gene_description <- annot$description[matched]
+colnames(SummarizedExperiment::rowData(exp_data))
 ```
+
+Even if the datasets are globally build the same way, the names of the variables are not exactly the same, so if we want to keep the same code, we need to redefine a bit the variables.
+
+If data was generated by CAIBI from an nf-core/RNAseq pipeline, the `salmon.merged.gene_counts_scaled.rds` RDS object included with the outputs will already be in the appropriate format.
+
+If not, you should look at how your dataset is constructed. You might need to gene annotation metadata. We suggest using \[`biomaRt::getBM`\].
 
 ## Pre-processing
 
-Most datasets use ensembl gene ID by default after alignment, so this step rebases the expression data to gene names. This ensures consistency in naming for downstream analyses.
+Most datasets use ensembl gene ID by default after alignment, so this step rebases the expression data to gene names. This ensures consistency in naming for downstream analyses. This may be skipped if the exp_data already uses `gene_name` or `gene_symbol` as its default ID.
 
 ```{r}
 #| message: false
-exp_data <- rebase_gexp(exp_data, annotation = "gene_name")
+exp_data <- rebase_gexp(exp_data, keep_cols = c("gene_name", "gene_id", 
+                                                "gene_biotype", "gene_length_kb"))
+exp_data
 ```
 
 ### Filter
 
-Here, we filter out genes expressed in too few samples or with very low counts. This removes noise from the data and focuses on meaningful gene expressions.
+Here, we filter out genes expressed in too few samples or with very low counts. This removes noise from the data and focuses on meaningful gene expressions. In this example, only zero-expression genes will be filtered, which is appropriate for a lot of analyses.
 
 ```{r}
 #| message: false
@@ -134,7 +117,6 @@ Visualization of the filtering process to ensure the criteria applied align with
 ```{r plot_qc_filters, warning=FALSE}
 #| message: false
 colData(exp_data)$sample_id <- colnames(exp_data)
-
 plot_qc_filters(exp_data)
 ```
 
@@ -155,65 +137,101 @@ exp_data <- normalize_gexp(exp_data)
 #| message: false
 metadata(exp_data)[["pca_res"]] <- pca_gexp(exp_data)
 annotations <- setdiff(annotation, c("exp_cluster", "path_cluster"))
-plot_pca(exp_data, color = annotation)
+plot_pca(exp_data, color = annotation, ellipses = TRUE)
 ```
 
-## Diffexp
+## Differential expression
 
-**Differential expression analysis** (diffexp) is a statistical method used to identify genes whose expression levels significantly change between different experimental conditions. These changes in gene expression can provide insights into the biological processes or pathways affected, and help identify key molecular players involved in a condition or phenotype.
+**Differential expression analysis** is a statistical method used to identify genes whose expression levels significantly change between different experimental conditions, *i.e* differentially expressed genes (DEGs). These changes in gene expression can provide insights into the biological processes or pathways affected, and help identify key molecular players involved in a condition or phenotype.
+
+### Design
+
+The differential expression `design` argument allows us to control which variables will be considered sources of biological (or technical) variation by the model.
+
+In our example, we say our only source of variation is the `annotation` variable (which corresponds to the treatment column, `dex`).
+
+The `~` symbol may be added before the variable name to represent that it's the independent variable (i.e. the differential expressed genes will depend on `annotation` *i.e.* `DEGs ~ annotation`.
+
+However, it is possible to make an additive model by adding variables together in the design (e.g. `design = "~ var1 + var2"`). This can be very useful and lead to more accurate and stringent DEGs prediction than doing separate analyses for different variables.
+
+The model can also consider interactions, but this is a more advanced topic and should be explored from a statistical point of view.
+
+### Constrasts
+
+Contrasts are how we tell the model what to compare. For our function, contrasts should be defined as a string with exactly three elements: the name of a variable in the design formula, the name of the numerator level for the fold change, and the name of the denominator level for the fold change, separated by `_vs_`.
+
+For example: 
+`dex_trt_vs_untrt` : for variable dex, compare treated (`trt`) vs untreated 
+`untrt` samples.
+
+- Variable: `dex` 
+- Numerator: `trt` 
+- Denominator: `untrt`
+
+Genes with positive fold-change will be up-regulated in the numerator (`trt`).
+
+Available contrasts will be built from the levels of the variable, where the
+first level will be used as denominator and all other levels as possible 
+numerators.
+
+> Warning: Pay attention to the order of levels in the variable as this may
+lead to wrong comparisons where numerator/denominator are inverted. It may
+need to be altered manually, as in our example below.
+
+> Note: if contrasts are not given, all possible contrasts will be returned 
+(with levels in automatic order)
+
+### Fitting the model
 
 ```{r}
 #| message: false
-library(edgeR)
-colData(exp_data)$dex <- factor(colData(exp_data)$dex)
-colData(exp_data)$dex <- factor(colData(exp_data)$dex, levels = c("untrt", "trt"))    # conditions' names 
-
-
-diffexp <- diffExpAnalysis(countData = assays(exp_data)$counts,
-                                          sampleInfo = colData(exp_data),
-                                          method = diffexpMethod, cutoff = 10,
-                                          annotation = annotation)
+colData(exp_data)$dex <- factor(colData(exp_data)$dex, levels = c("untrt", "trt"))
+diffexp <- diffExpAnalysis(exp_data, design = annotation, contrasts = "dex_trt_vs_untrt")
 ```
 
-### Diffexp Filtering
-
-**Differential expression filtering** include thresholds on adjusted p-values (e.g., padj < 0.05) to ensure statistical significance, and log2 fold change (e.g., |log2FC| > 1) to focus on genes with meaningful expression differences.
-
-```{r}
-#| message: false
-if(tolower(diffexpMethod) == "limma") {   # for 'limma', the default variables names are different, so we have to rename it
-  diffexp <- diffexp |>
-    dplyr::rename(
-      log2FoldChange = logFC, 
-      pvalue = P.Value,
-      padj = adj.P.Val
-    )
-}
-
-diffexp_filtered <- diffexp |>
-    dplyr::filter(padj <= 0.05) |>    # we filter the diffexp, to keep the values under a given threshold 'padj'. this threshold can be change 
-    dplyr::arrange(padj)
-
-# Select the 16 most differentially expressed genes
-top_de_genes <- rownames(diffexp_filtered)[1:16]
-```
-
-## Volcano plot
+### Volcano plot
 
 A **volcano plot** is a graphical tool used to visualize the results of differential expression analysis. It plots the statistical significance on the y-axis against the magnitude of change on the x-axis for each gene.
 
 ```{r, warning=FALSE}
 #| message: false
+#| fig.width: 6
+#| fig.height: 4
 volcano_plot <- plot_exp_volcano(diffexp, 20)
 volcano_plot
 ```
 
-There is also the possibility to flip  this graph by using `coord_flip` of the `ggplot2` package
+### Top differentially-expressed genes
 
-```{r, warning=FALSE}
-#| message: false
-volcano_plot + ggplot2::coord_flip()
+The differentially expressed genes (DEGs) can be checked directly from the results.
+
+Here, we show the top 30 most differentially-expressed genes:
+
+```{r}
+#| eval: false
+diffexp |>
+  slice(1:30)
 ```
+
+```{r}
+#| echo: false
+diffexp |>
+  slice(1:30) |>
+  kableExtra::kbl() |> kableExtra::kable_styling() |> kableExtra::scroll_box(height = "200px")
+```
+
+
+The most important values are `log2FoldChange` and `padj` (you may see the 
+explanation for all outputs by checking `? DESeq2::results`)
+
+- `log2FoldChange`: the effect size estimate. This value indicates how much the 
+gene's expression seems to have changed between the comparison and control 
+groups. This value is reported on a logarithmic scale to base 2.
+- `padj`: Adjusted P-value for multiple testing for the gene or transcript.
+
+We should privilege using the adjusted p-value to account for false-discoveries.
+Fold-changes are shrunk with `apeglm` by default to avoid noise and preserve
+large differences. (see: `? DESeq2::lfcShrink` and the [`apeglm` paper](https://academic.oup.com/bioinformatics/article/35/12/2084/5159452)).
 
 ## Pathway analysis
 
@@ -221,69 +239,101 @@ Pathway collections available in the MSIGdb can be specified in the parameters. 
 
 ```{r}
 #| message: false
-#| label: collections
-msigdbr::msigdbr_collections() |> kableExtra::kbl() |> kableExtra::kable_styling() |> kableExtra::scroll_box(height = "300px")
+#| label: collections1
+#| eval: false
+msigdbr::msigdbr_collections()
 ```
-
 
 ```{r}
 #| message: false
+#| label: collections2
+#| echo: false
+msigdbr::msigdbr_collections() |> kableExtra::kbl() |> kableExtra::kable_styling() |> kableExtra::scroll_box(height = "300px")
+```
+
+### Pathway scores
+
+For scoring pathways from differential expression analysis results, we propose
+two scoring methods:
+
+- **Overrepresentation Analysis (ORA)** treats your significant hits (e.g. DE genes above a chosen cutoff) as a "bag" and asks whether any known pathway is represented more often in that bag than you'd expect by chance—typically via a Fisher's exact or hypergeometric test against all measured genes. It's extremely fast and easy to interpret, but hinges on where you set your significance cutoff.
+
+- **(Fast) Gene Set Enrichment Analysis (FGSEA)** avoids that arbitrary cutoff by taking a ranked list of all genes (for example, sorted by fold‑change) and "walking" down it to see if members of each pathway accumulate at the top or bottom. You end up with an enrichment score for each pathway, and statistical significance comes from permuting phenotype labels. GSEA is more sensitive to coordinated, subtle shifts across a pathway.
+
+```{r}
+#| message: false
+#| warning: false
 pathways <- get_annotation_collection(collections, 
                                       species = species)
 
-pathwayResult <- pathwayAnalysis(diffexp_filtered,
+pathwayResult <- pathwayAnalysis(diffexp, 
                               pathways = pathways,
-                              method = pathwayMethod, species = species) |> as.data.frame()
-rownames(pathwayResult) <- pathwayResult$pathway
-S4Vectors::metadata(exp_data)[["pathwayEnrichment"]] <- pathwayResult
-pathwayResult_sorted <- pathwayResult[order(pathwayResult$PValue), ]
+                              method = "ora")
 
-top10_pathways <- head(pathwayResult_sorted, 10)
+pathwayResult2 <- pathwayAnalysis(diffexp, 
+                              pathways = pathways,
+                              method = "fgsea")
+metadata(exp_data)[["pathwayEnrichment"]] <- pathwayResult
+metadata(exp_data)[["pathwayEnrichment_fgsea"]] <- pathwayResult2
 ```
-
-### Dot Plot 
 
 The resulting `dot plot` summarizes the most enriched biological pathways across different conditions or samples
 
 ```{r}
 #| message: false
-plot_pathway_dotplot(exp_data, score_name = "pathwayEnrichment")
+plot_pathway_dotplot(exp_data, score_name = "pathwayEnrichment_fgsea")
 ```
 
-### Boxplots 
+### Single-sample pathway scores
 
-**Boxplots** are valuable tools in biology for visualizing the distribution of gene expression or other quantitative variables across experimental conditions. They allow quick comparisons between groups by summarizing key statistics
-A **Wilcoxon test** is made, and the p-value is also printed. The closer the value is to 0, the more the genes/pathways are influenced by the experimental conditions. We can consider that the experimental conditions influence the results when p < 0.05.
+Pathway scores can also be calculated per-sample (single-sample), and compared
+using statistics like the *Wilcoxon rank-sum test* to estimate the difference 
+between groups.
 
-```{r} 
+```{r}
 #| message: false
-dir.create(file.path("results", "sup", "targeted", pathwayMethod, "boxplots"), recursive = TRUE, showWarnings = FALSE)
+#| warning: false
 pathway_scores <- score_pathways(exp_data, pathways, verbose = FALSE)
-S4Vectors::metadata(exp_data)[["pathway_scores"]] <- pathway_scores
+metadata(exp_data)[["pathway_scores"]] <- pathway_scores
+```
 
+Boxplots are used to visualize the distribution of a quantitative variables across experimental conditions. Here, we propose visualizing single-sample pathway scores
+using a variation called a "beeswarm" plot, that highlights all the points belonging 
+to each group. We also add a line representing the mean per group and the results
+of a Wilcoxon test.
+
+```{r}
+#| message: false
 boxplots <- lapply(heatmap_pathways, function(path) {
   lapply(annotation, function(annotation) {
-    plt <- plot_path_boxplot(exp_data, 
+    plt <- plot_pathway_boxplot(exp_data, 
                              pathway = path,
                    annotation = annotation, 
                   color_var = annotation, 
                    pt_size = 2,
-                   fname = stringr::str_glue("results/sup/targeted/{pathwayMethod}/boxplots/box_{path}_{annotation}.pdf"))
+                   fname = str_glue(
+                     "results/sup/box_{path}_{annotation}.pdf"))
   })
-}) |> purrr::flatten()
-
+}) |> flatten()
 ```
 
 ```{r}
 #| message: false
-patchwork::wrap_plots(boxplots, nrows = round(length(boxplots)/2), guides = "collect")
+#| fig.width: 9
+#| fig.height: 3.5
+wrap_plots(boxplots, nrows = round(length(boxplots)/2), guides = "collect")
 ```
+## Heatmap of genes
 
-## Genes Heatmap
+### Chosen gene signature
 
-On the heatmaps, we can tell that the top_genes expressions are higher for the treated samples. It means that these genes might be involved in the treatment response. 
+We can use heatmaps to visualize multiple genes at the same time, and group
+their expression profiles in our samples. Annotation tracks highlight whether
+samples group logically according to the expression profile of selected genes.
 
 ```{r}
+#| fig.height: 3
+#| fig.width: 8
 #| message: false
 hms <- lapply(1:length(heatmap_genes), function(i) {
   genes <- heatmap_genes[[i]]
@@ -293,7 +343,26 @@ hms <- lapply(1:length(heatmap_genes), function(i) {
                    show_rownames = ifelse(length(genes) <= 100, TRUE, FALSE),
                    hm_color_limits = c(-2,2),
                    show_dend_row = FALSE,
-                   fname = stringr::str_glue("results/sup/targeted/{pathwayMethod}/hm_genes_{i}.pdf"))
+                   fname = str_glue("results/sup/hm_genes_{name}.pdf"))
 })
-patchwork::wrap_plots(hms, ncol = 2, guides = "collect")
+wrap_plots(hms, ncol = 2)
 ```
+### Pathway genes
+
+```{r}
+#| fig.height: 5
+#| fig.width: 8
+#| message: false
+hms_path <- lapply(pathway_genes, function(path) {
+  path <- str_replace_all(path, " ", "_")
+  genes <- pathways |> filter(pathway %in% path) |> pull(gene_symbol) |> unique()
+  hm <- plot_exp_heatmap(exp_data, genes = genes,
+                   annotations = annotation,
+                   show_rownames = ifelse(length(genes) <= 100, TRUE, FALSE),
+                   hm_color_limits = c(-2,2),
+                   show_dend_row = FALSE,
+                   fname = str_glue("results/sup/hm_genes_{path}.pdf"))
+})
+wrap_plots(hms_path, ncol = 2)
+```
+

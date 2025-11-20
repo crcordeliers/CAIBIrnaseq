@@ -12,29 +12,34 @@ plot_pca(
   pcs = c(1, 2),
   res_name = "pca_res",
   id_name = "sample_id",
+  ellipses = FALSE,
   point_size = 2,
-  color_in = c("color", "fill")[1],
   out = c("plotly", "ggplot")[1]
 )
 }
 \arguments{
-\item{exp_data}{A `SummarizedExperiment` object containing gene expression data. PCA results must be stored in `exp_data@metadata` under the name specified by `res_name`.}
+\item{exp_data}{A `SummarizedExperiment` object containing gene expression data.
+PCA results must be stored in `exp_data@metadata` under the name specified by `res_name`.}
 
-\item{color}{A character string specifying the column name in `colData(exp_data)` to use for coloring the points. Default is `NA`, meaning no coloring.}
+\item{color}{A character string specifying the column name in `colData(exp_data)`
+to use for coloring the points. Default is `NA`, meaning no coloring.}
 
-\item{shape}{A character string specifying the column name in `colData(exp_data)` to use for shaping the points. Default is `NA`, meaning no shaping.}
+\item{shape}{A character string specifying the column name in `colData(exp_data)`
+to use for shaping the points. Default is `NA`, meaning no shaping.}
 
-\item{fname}{A character string specifying the file path to save the plot as a PDF. Default is `"results/qc/plot_PCA.pdf"`. Set to `NULL` to skip saving.}
+\item{fname}{A character string specifying the file path to save the plot as a PDF.
+Default is `"results/qc/plot_PCA.pdf"`. Set to `NULL` to skip saving.}
 
-\item{pcs}{An integer vector of length 2 specifying the principal components to plot on the x and y axes. Default is `c(1, 2)`.}
+\item{pcs}{An integer vector of length 2 specifying the principal components to plot
+on the x and y axes. Default is `c(1, 2)`.}
 
 \item{res_name}{A character string specifying the name of the PCA results stored in `exp_data@metadata`. Default is `"pca_res"`.}
 
 \item{id_name}{A character string specifying the column name in `colData(exp_data)` containing sample identifiers. Default is `"sample_id"`.}
 
-\item{point_size}{A numeric value specifying the size of the points in the plot. Default is `2`.}
+\item{ellipses}{if TRUE, `stat_ellipse` is added to the points, representing the 0.95 confidence-interval ellipse for each group in `color`.}
 
-\item{color_in}{A character string indicating whether the color aesthetic should be applied to `"color"` (border) or `"fill"` (interior). Default is `"color"`.}
+\item{point_size}{A numeric value specifying the size of the points in the plot. Default is `2`.}
 
 \item{out}{A character string indicating the output type: `"plotly"` (interactive Plotly plot) or `"ggplot"` (static ggplot). Default is `"plotly"`.}
 }
@@ -43,12 +48,6 @@ A PCA plot, either as a `plotly` interactive object or a `ggplot` static object,
 }
 \description{
 This function generates a PCA plot for a `SummarizedExperiment` object using precomputed PCA results.
-}
-\details{
-The function creates a scatter plot of the specified principal components (`pcs[1]` and `pcs[2]`). Users can optionally:
-- Color points based on a metadata column (`color`).
-- Shape points based on a metadata column (`shape`).
-- Save the static plot as a PDF if `fname` is not `NULL`.
-
-If PCA results are not precomputed using `pca_gexp`, the function will throw an error. The proportion of variance explained by the principal components is displayed on the axis labels.
+It creates a scatter plot of the specified principal components (`pcs[1]` and `pcs[2]`).
+Metadata can be visualized via point color and shape.
 }

@@ -20,6 +20,7 @@
 #' @return A heatmap object showing Progeny pathway scores.
 #'
 #' @importFrom viridisLite viridis
+#' @importFrom fs path_dir
 #'
 #' @export
 plot_progeny_heatmap <- function(progeny_scores,
@@ -49,6 +50,7 @@ plot_progeny_heatmap <- function(progeny_scores,
       stop('No pathway scores found in `metadata(exp_data)[["progeny_scores"]])`')
     }
     hm_data <- prep_scores_hm(exp_data, progeny_scores)
+    dir.create(path_dir(fname), recursive = TRUE, showWarnings = FALSE)
     hm <- plt_heatmap(hm_data,
                        annotations = annotations,
                        colors_title = "Pathway score",

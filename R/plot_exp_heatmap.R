@@ -16,8 +16,8 @@
 #'
 #' @return A `ggplot` object representing the heatmap.
 #'
-#' @importFrom SummarizedExperiment colData rowData
-#' @importFrom ggplot2 ggplot
+#' @importFrom SummarizedExperiment colData rowData assayNames
+#' @importFrom fs path_dir
 #' @export
 #'
 plot_exp_heatmap <- function(expData,
@@ -41,14 +41,14 @@ plot_exp_heatmap <- function(expData,
   if (!is.character(assay) || length(assay) != 1) {
     stop("assay must be a single character string.")
   }
-  if (!assay %in% SummarizedExperiment::assayNames(expData)) {
+  if (!assay %in% assayNames(expData)) {
     stop(paste0("Assay '", assay, "' not found in expData. Available assays are: ",
-                paste(SummarizedExperiment::assayNames(expData), collapse = ", ")))
+                paste(assayNames(expData), collapse = ", ")))
   }
   if (!is.character(gene_name) || length(gene_name) != 1) {
     stop("gene_name must be a single character string.")
   }
-  if (!gene_name %in% colnames(SummarizedExperiment::rowData(expData))) {
+  if (!gene_name %in% colnames(rowData(expData))) {
     stop(paste0("gene_name '", gene_name, "' not found in rowData(expData)."))
   }
   if (!is.numeric(annotation_prop) || annotation_prop < 0 || annotation_prop > 1) {
@@ -60,9 +60,10 @@ plot_exp_heatmap <- function(expData,
 
   ## Optional: validate annotations if provided
   if (!is.na(annotations[1])) {
-    if (!all(annotations %in% colnames(SummarizedExperiment::colData(expData)))) {
-      missing_annots <- annotations[!annotations %in% colnames(SummarizedExperiment::colData(expData))]
-      stop(paste0("Some annotations not found in expData: ", paste(missing_annots, collapse = ", ")))
+    if (!all(annotations %in% colnames(colData(expData)))) {
+      missing_annots <- annotations[!annotations %in% colnames(colData(expData))]
+      stop(paste0("Some annotations not found in expData: ",
+                  paste(missing_annots, collapse = ", ")))
     }
   }
 
@@ -70,6 +71,10 @@ plot_exp_heatmap <- function(expData,
   hm_data <- prep_exp_hm(expData, genes, assay, gene_name)
 
   # Generate the heatmap using the plt_heatmap function
+  if(!is.null(fname)) {
+    dir.create(path_dir(fname), recursive = TRUE, showWarnings = FALSE)
+  }
+
   hm <- plt_heatmap(hm_data,
                     annotations = annotations,
                     fontsize = 8,

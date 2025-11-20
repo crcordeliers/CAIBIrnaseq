@@ -16,6 +16,7 @@
 #' @return A heatmap plot object.
 #'
 #' @importFrom viridisLite viridis
+#' @importFrom fs path_dir
 #'
 #' @export
 #'
@@ -38,7 +39,7 @@ plot_pathway_heatmap <- function(pathway_scores,
     # Créer et personnaliser le heatmap
     hm <- plt_heatmap(hm_data,
                       colors_title = "Pathway score",
-                      hm_colors = viridisLite::viridis(100),
+                      hm_colors = viridis(100),
                       fname = fname,
                       fwidth = fwidth,
                       fheight = fheight,
@@ -56,10 +57,11 @@ plot_pathway_heatmap <- function(pathway_scores,
     # Préparer les données du heatmap pour un SummarizedExperiment
     hm_data <- prep_scores_hm(exp_data, pathway_scores, pathways)
     # Créer et personnaliser le heatmap
+    dir.create(path_dir(fname), recursive = TRUE, showWarnings = FALSE)
     hm <- plt_heatmap(hm_data,
                       annotations = annotations,
                       colors_title = "Pathway score",
-                      hm_colors = viridisLite::viridis(100),
+                      hm_colors = viridis(100),
                       track_prop = annotation_prop,
                       track_colors = annotation_colors,
                       fname = fname,

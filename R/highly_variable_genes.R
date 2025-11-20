@@ -21,11 +21,13 @@
 
 highly_variable_genes <- function(gexp, n_hvg = 2000) {
   # Check if input is a SummarizedExperiment and extract normalized expression if so
-  if("SummarizedExperiment" %in% class(gexp)) {
-    if (!"norm" %in% names(SummarizedExperiment::assays(gexp))) {
+  if(inherits(gexp, "SummarizedExperiment")) {
+    if (!"norm" %in% names(assays(gexp))) {
       stop("Normalized expression data ('norm') not found in the SummarizedExperiment object.")
     }
-    gexp <- SummarizedExperiment::assays(gexp)[["norm"]]  # Use the normalized gene expression data
+    gexp <- assays(gexp)[["norm"]]  # Use the normalized gene expression data
+  } else {
+    gexp <- gexp
   }
 
   # Calculate the robust coefficient of variation (CV) for each gene
@@ -38,7 +40,6 @@ highly_variable_genes <- function(gexp, n_hvg = 2000) {
   gkeep <- sort(gcvs, decreasing = TRUE)[1:n_hvg]
   gkeep <- names(gkeep)  # Extract gene names
 
-  # Check if there are enough highly variable genes
   if (length(gkeep) < n_hvg) {
     message("Warning: Less than ", n_hvg, " highly variable genes were found. Returning ", length(gkeep), " genes.")
   }

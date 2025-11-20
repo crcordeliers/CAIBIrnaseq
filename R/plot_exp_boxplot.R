@@ -17,6 +17,9 @@
 #'
 #' @return A ggplot object representing the boxplot.
 #'
+#' @importFrom ggplot2 ggsave
+#' @importFrom fs path_dir
+#'
 #' @export
 #'
 plot_exp_boxplot <- function(exp_data, gene, annotation,
@@ -64,7 +67,8 @@ plot_exp_boxplot <- function(exp_data, gene, annotation,
 
   if (!is.null(fname)) {
     message("-- Saving plot at ", fname)
-    ggplot2::ggsave(
+    dir.create(path_dir(fname), recursive = TRUE, showWarnings = FALSE)
+    ggsave(
       filename = fname,
       plot = plt,
       width = fwidth,

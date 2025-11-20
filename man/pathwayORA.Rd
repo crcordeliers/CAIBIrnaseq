@@ -4,7 +4,13 @@
 \alias{pathwayORA}
 \title{Pathway Over-Representation Analysis (ORA)}
 \usage{
-pathwayORA(diffexp_result, pathways, id_col = "gene_symbol", pcutoff = 0.05)
+pathwayORA(
+  diffexp_result,
+  pathways,
+  direction = "up",
+  id_col = "gene_symbol",
+  pcutoff = 0.05
+)
 }
 \arguments{
 \item{diffexp_result}{A data frame of differential expression results,
@@ -13,9 +19,12 @@ where row names correspond to gene identifiers.}
 \item{pathways}{A data frame with at least two columns: one indicating
 pathway names (e.g., 'pathway') and one with gene identifiers.}
 
+\item{direction}{either "up" or "down". ORA takes only "up" or "down"-regulated
+genes to do it's overrepresentation analysis.}
+
 \item{id_col}{Character. The column name in `pathways` that matches gene identifiers in `diffexp_result`.}
 
-\item{pcutoff}{Numeric. Adjusted p-value threshold to filter significant pathways (default = 0.05).}
+\item{pcutoff}{adjusted p-value to be used to filter differentially expressed genes.}
 }
 \value{
 A data frame of enriched pathways with columns:

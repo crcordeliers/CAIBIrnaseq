@@ -6,6 +6,7 @@
 \usage{
 plot_qc_filters(
   gexp,
+  color = NA,
   fname = "results/qc/plot_QC_filters.pdf",
   min_nfeats = 5000,
   min_ncounts = 5e+06,
@@ -13,18 +14,25 @@ plot_qc_filters(
 )
 }
 \arguments{
-\item{gexp}{A `SummarizedExperiment` object containing gene expression data. The `colData` must include `nfeats` (number of detected features) and `ncounts` (total counts per sample).}
+\item{gexp}{A `SummarizedExperiment` object containing gene expression data. The `colData`
+must include `nfeats` (number of detected features) and `ncounts` (total counts per sample).}
 
-\item{fname}{A character string specifying the file path to save the plot as a PDF. Default is `"results/qc/plot_QC_filters.pdf"`. Set to `NULL` to skip saving.}
+\item{color}{A variable in the `colData` to be used as different colors of the QC points, helps visualize possible batch effects.}
 
-\item{min_nfeats}{An integer specifying the minimum number of features for a sample to pass QC. Default is `5000`.}
+\item{fname}{A character string specifying the file path to save the
+plot as a PDF. Default is `"results/qc/plot_QC_filters.pdf"`. Set to `NULL` to skip saving.}
+
+\item{min_nfeats}{An integer specifying the minimum number of features
+for a sample to pass QC. Default is `5000`.}
 
 \item{min_ncounts}{A numeric value specifying the minimum total counts for a sample to pass QC. Default is `5e6`.}
 
-\item{out}{A character string indicating the output type: `"plotly"` (interactive Plotly plot) or `"ggplot"` (static ggplot). Default is `"plotly"`.}
+\item{out}{A character string indicating the output type: `"plotly"`
+(interactive Plotly plot) or `"ggplot"` (static ggplot). Default is `"plotly"`.}
 }
 \value{
-A QC plot, either as a `plotly` interactive object or a `ggplot` static object, depending on the `out` parameter.
+A QC plot, either as a `plotly` interactive object or a `ggplot`
+static object, depending on the `out` parameter.
 }
 \description{
 This function creates a quality control (QC) plot for a `SummarizedExperiment` object, highlighting samples that pass or fail specified QC thresholds.

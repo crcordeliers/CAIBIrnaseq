@@ -4,24 +4,44 @@
 \alias{rebase_gexp}
 \title{Rebase Gene Expression Matrix}
 \usage{
-rebase_gexp(exp_data, annotation = "gene_name")
+rebase_gexp(
+  exp_data,
+  gene_id = "gene_id",
+  new_gene_id = "gene_name",
+  keep_cols = NULL
+)
 }
 \arguments{
-\item{exp_data}{A `SummarizedExperiment` object containing the gene expression data.}
+\item{exp_data}{A `SummarizedExperiment` object containing the gene expression
+data.}
 
-\item{annotation}{A character string specifying the column in the gene annotation to use as the main identifier. Default is `"gene_name"`.}
+\item{gene_id}{A character string specifying the column in the gene annotation
+with the old main annotation. Default is `"gene_id"`.}
+
+\item{new_gene_id}{A character string specifying the column in the gene annotation
+to use as the main identifier. Default is `"gene_name"`.}
+
+\item{keep_cols}{A character vector specifying columns to keep in the new
+annotation. If `NULL`, all original columns are kept and aggregated as follows:
+- For numeric variables, the mean is kept for multimapping resolution
+- For character variables, all values are kept in a long string}
 }
 \value{
-A `SummarizedExperiment` object with rebased gene expression data. The output includes updated `rowData` with summarized gene-level information, and new `assays` containing rebased `counts` and `tpm` matrices.
+A `SummarizedExperiment` object with rebased gene expression data.
+The output includes updated `rowData` with summarized gene-level information,
+and new `assays` containing rebased `counts` and `tpm` matrices.
 }
 \description{
 This function rebases the gene expression matrix in a `SummarizedExperiment` object using a specified annotation as the primary identifier.
 }
 \details{
-This function rebases the gene expression data by aggregating counts based on the specified annotation. It also calculates transcripts per million (TPM) using the aggregated data and associated gene lengths.
+This function rebases the gene expression data by aggregating counts based on
+the specified annotation. It also calculates transcripts per million (TPM)
+using the aggregated data and associated gene lengths.
 
 The function performs the following steps:
 - Aggregates gene counts and metadata based on the specified annotation.
-- Calculates TPM values using the rebased gene counts and average gene lengths.
+- If `gene_lengths_kb` is available, calculates TPM values using the rebased
+gene counts and average gene lengths.
 - Constructs a new `SummarizedExperiment` object with the rebased data.
 }

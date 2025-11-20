@@ -22,10 +22,11 @@
 #'
 #' @importFrom S4Vectors metadata
 #' @importFrom ggplot2 ggsave
+#' @importFrom fs path_dir
 #'
 #' @export
 #'
-plot_path_scatter <- function(exp_data, pathway1, pathway2,
+plot_pathway_scatter <- function(exp_data, pathway1, pathway2,
                               color_var = NA, pt_size = 2,
                               fname = NULL,
                               fwidth = 5,
@@ -47,8 +48,9 @@ plot_path_scatter <- function(exp_data, pathway1, pathway2,
 
   # If a file name is provided, save the plot
   if(!is.null(fname)) {
+    dir.create(path_dir(fname), recursive = TRUE, showWarnings = FALSE)
     message("-- Saving plot at ", fname)
-    ggplot2::ggsave(fname, plt, width = fwidth, height = fheight, create.dir = TRUE)
+    ggsave(fname, plt, width = fwidth, height = fheight, create.dir = TRUE)
   }
 
   # Return the plot object

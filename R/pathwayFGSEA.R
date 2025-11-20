@@ -23,7 +23,7 @@
 #' @importFrom dplyr arrange
 #' @importFrom fgsea fgseaMultilevel
 #' @export
-pathwayFGSEA <- function(diffexp, pathwayCollection) {
+pathwayFGSEA <- function(diffexp, pathwayCollection, seed = 0) {
   # Validation des entrées
   if (!"log2FoldChange" %in% colnames(diffexp)) {
     stop("The 'diffexp' data frame must contain a 'log2FoldChange' column.")
@@ -32,24 +32,25 @@ pathwayFGSEA <- function(diffexp, pathwayCollection) {
   if (!all(c("pathway", "gene_symbol") %in% colnames(pathwayCollection))) {
     stop("The 'pathwayCollection' data frame must contain 'pathway' and 'gene_symbol' columns.")
   }
+  if(is.null(seed)) {
+    set.seed(seed)
+  }
 
-  # Tri par ordre décroissant de log2FoldChange
-  diffexp <- diffexp |>
-    dplyr::arrange(desc(log2FoldChange))
+  pheno <- diffexp |>
+    arrange(desc(log2FoldChange)) |>
+    pull(log2FoldChange)
 
-  # Création du vecteur de statistiques avec log2FoldChange
-  stat <- as.numeric(diffexp$log2FoldChange)
-  names(stat) <- rownames(diffexp)
+  names(pheno) <- rownames(diffexp)
 
-  # Création de la liste des ensembles de gènes pour chaque voie
   pathwayList <- split(pathwayCollection$gene_symbol, pathwayCollection$pathway)
 
-  # Affichage du message de début si verbose est activé
   message("Running FGSEA analysis...")
 
-  # Exécution de FGSEA
-  result <- fgsea::fgseaMultilevel(pathways = pathwayList, stats = stat)
+  result <- fgseaMultilevel(pathways = pathwayList, pheno)
 
-  # Retourner les résultats
+  result <- result |>
+    arrange(padj, NES) |>
+    as_tibble()
+
   return(result)
 }

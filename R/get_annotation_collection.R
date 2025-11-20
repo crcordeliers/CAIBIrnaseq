@@ -41,15 +41,15 @@ get_annotation_collection <- function(collections, species = "Homo sapiens") {
       message("-- Collecting ", collection, " from MSigDB...")
 
       msigdb <- msigdbr::msigdbr(species = species) |>
-        dplyr::mutate(
-          gs_subcollection = dplyr::if_else(gs_collection == "H", "Hallmark", gs_subcollection)
+        mutate(
+          gs_subcollection = if_else(is.na(gs_subcollection), gs_collection, gs_subcollection)
         )
 
       gene_sets <- msigdb |>
-        dplyr::filter(gs_subcollection %in% collection) |>
-        dplyr::mutate(collection = collection) |>
-        dplyr::rename(pathway = gs_name) |>
-        dplyr::select(collection, pathway, gene_id = ensembl_gene, gene_symbol)
+        filter(gs_subcollection %in% collection) |>
+        mutate(collection = collection) |>
+        rename(pathway = gs_name) |>
+        select(collection, pathway, gene_id = ensembl_gene, gene_symbol)
 
       return(gene_sets)
     } else {
@@ -59,11 +59,11 @@ get_annotation_collection <- function(collections, species = "Homo sapiens") {
   })
 
   # --- Bind and deduplicate ---
-  collection_sets <- dplyr::bind_rows(results)
+  collection_sets <- bind_rows(results)
   if (nrow(collection_sets) == 0) {
     message("No valid gene sets found. Returning NULL.")
     return(NULL)
   }
 
-  return(dplyr::distinct(collection_sets))
+  return(distinct(collection_sets))
 }

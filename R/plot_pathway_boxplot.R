@@ -29,9 +29,10 @@
 #'
 #' @importFrom S4Vectors metadata
 #' @importFrom ggplot2 ggsave
+#' @importFrom fs path_dir
 #'
 #' @export
-plot_path_boxplot <- function(exp_data, pathway, annotation,
+plot_pathway_boxplot <- function(exp_data, pathway, annotation,
                               color_var = NA,
                               pt_size = 1,
                               summary_type = c("choose", "line", "box")[1],
@@ -40,7 +41,8 @@ plot_path_boxplot <- function(exp_data, pathway, annotation,
                               fname = NULL,
                               fwidth = 5,
                               fheight = 3) {
-  pathway_scores <- S4Vectors::metadata(exp_data)[["pathway_scores"]]
+  pathway_scores <- metadata(exp_data)[["pathway_scores"]]
+  pathway <- str_replace_all(pathway, " ", "_")
 
   if (is.null(pathway_scores)) {
     stop('No pathway scores found in `metadata(exp_data)[["pathway_scores"]]`')
@@ -53,7 +55,8 @@ plot_path_boxplot <- function(exp_data, pathway, annotation,
 
   if (!is.null(fname)) {
     message("-- Saving plot at ", fname)
-    ggplot2::ggsave(fname, plt, width = fwidth, height = fheight)
+    dir.create(path_dir(fname), recursive = TRUE, showWarnings = FALSE)
+    ggsave(fname, plt, width = fwidth, height = fheight)
   }
 
   return(plt)
