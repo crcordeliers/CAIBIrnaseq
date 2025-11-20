@@ -41,16 +41,17 @@ pathwayORA <- function(diffexp_result, pathways,
   gene_sets <- split(pathways[[id_col]], pathways$pathway)
 
   # Universe size
-  univ <- length(unique(unlist(gene_sets)))
+  univ <- length(unique(pathways[[id_col]]))
+  gene_ids_filtered <- intersect(gene_ids, unique(pathways[[id_col]]))
 
   # Perform Over-representation Analysis
   enrich_res <- lapply(names(gene_sets), function(id) {
     path <- gene_sets[[id]]
-    genes <- rownames(diffexp_result)
-    ginpath <- sum(genes %in% path)
+    genes <- gene_ids_filtered
+    ginpath <- length(intersect(genes, path))
     gopath <- length(genes) - ginpath
     opath <- length(path) - ginpath
-    rest <- univ - ginpath - gopath - opath
+    rest <- univ - length(path) - gopath
 
 
     ctg <- matrix(c(ginpath, opath, gopath, rest), nrow = 2)
@@ -63,8 +64,8 @@ pathwayORA <- function(diffexp_result, pathways,
     data.frame(
       Pathway = id,
       PValue = pfish,
-      GeneRatio = paste0(ginpath, '/', length(genes)),
-      BgRatio = paste0(opath, '/', univ - length(path)),
+      GeneRatio = paste0(ginpath, "/", length(genes)),
+      BgRatio = paste0(length(path), "/", univ),
       Genes = paste(genes[genes %in% path], collapse = ", ")
     )
   }) %>% bind_rows()
