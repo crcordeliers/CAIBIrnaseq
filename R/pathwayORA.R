@@ -96,8 +96,8 @@ pathwayORA <- function(diffexp_result, pathways,
 
   # Adjust p-values and filter
   enrich_res <- enrich_res %>%
-    mutate(padj = p.adjust(pval, method = "BH")) %>%
-    relocate(padj, .after = pval) %>%
+    mutate(padj = p.adjust(PValue, method = "BH")) %>%
+    relocate(padj, .after = PValue) %>%
     arrange(padj) %>%
     tibble()
 
