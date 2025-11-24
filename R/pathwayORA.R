@@ -90,7 +90,7 @@ pathwayORA <- function(diffexp_result, pathways,
       PValue = pfish,
       GeneRatio = paste0(ginpath, "/", length(genes)),
       BgRatio = paste0(length(path), "/", univ),
-      Genes = paste(genes[genes %in% path], collapse = ", ")
+      geneHits = paste(genes[genes %in% path], collapse = ", ")
     )
   }) %>% bind_rows()
 
