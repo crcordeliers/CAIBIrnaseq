@@ -86,10 +86,10 @@ pathwayORA <- function(diffexp_result, pathways,
     pfish <- fisher.test(ctg, alternative = "greater")$p.value
 
     data.frame(
-      Pathway = id,
-      PValue = pfish,
-      GeneRatio = paste0(ginpath, "/", length(genes)),
-      BgRatio = paste0(length(path), "/", univ),
+      pathway = id,
+      pval = pfish,
+      geneRatio = paste0(ginpath, "/", length(genes)),
+      bgRatio = paste0(length(path), "/", univ),
       geneHits = paste(genes[genes %in% path], collapse = ", ")
     )
   }) %>% bind_rows()
