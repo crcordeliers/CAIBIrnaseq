@@ -50,7 +50,9 @@ plot_progeny_heatmap <- function(progeny_scores,
       stop('No pathway scores found in `metadata(exp_data)[["progeny_scores"]])`')
     }
     hm_data <- prep_scores_hm(exp_data, progeny_scores)
-    dir.create(path_dir(fname), recursive = TRUE, showWarnings = FALSE)
+    if(!is.null(fname)) {
+      dir.create(path_dir(fname), recursive = TRUE, showWarnings = FALSE)
+    }
     hm <- plt_heatmap(hm_data,
                        annotations = annotations,
                        colors_title = "Pathway score",
@@ -58,8 +60,8 @@ plot_progeny_heatmap <- function(progeny_scores,
                        track_prop = annotation_prop,
                        track_colors = annotation_colors,
                        fname = fname,
-                       fwidth = 7,
-                       fheight = 5,
+                       fwidth = fwidth,
+                       fheight = fheight,
                        ...)
   }
 

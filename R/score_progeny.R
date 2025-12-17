@@ -41,7 +41,6 @@ score_progeny <- function(exp_data, species = "Homo sapiens") {
   # Calculate PROGENy pathway scores
   progeny_scores <- t(progeny::progeny(gexp, organism = organism))  # Transpose for correct format
 
-  # Convert the resulting scores into a data frame
   progeny_scores_df <- data.frame(progeny_scores)
 
   # Return the pathway scores as a data frame

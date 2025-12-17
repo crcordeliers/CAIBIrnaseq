@@ -37,10 +37,9 @@ pathwayFGSEA <- function(diffexp, pathwayCollection, seed = 0) {
   }
 
   pheno <- diffexp |>
+    rownames_to_column("symbol") |>
     arrange(desc(log2FoldChange)) |>
-    pull(log2FoldChange)
-
-  names(pheno) <- rownames(diffexp)
+    pull(log2FoldChange, symbol)
 
   pathwayList <- split(pathwayCollection$gene_symbol, pathwayCollection$pathway)
 
