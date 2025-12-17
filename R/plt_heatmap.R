@@ -25,6 +25,7 @@ plt_heatmap <- function(data4hm, annotations = NA,
                         track_prop = 0.1,
                         fname = NULL, fwidth = 7, fheight = 5,
                         ...) {
+  
   # Determine the colorbar direction based on the presence of annotations
   colorbar_dir <- if_else(any(is.na(annotations)), "vertical", "horizontal")
 
