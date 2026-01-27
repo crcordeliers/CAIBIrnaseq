@@ -77,7 +77,6 @@ plot_exp_heatmap <- function(expData,
 
   hm <- plt_heatmap(hm_data,
                     annotations = annotations,
-                    fontsize = 8,
                     colors_title = "Scaled gene exp",
                     center = TRUE,
                     scale = TRUE,
