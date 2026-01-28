@@ -33,7 +33,6 @@ plt_heatmap <- function(data4hm, annotations = NA,
   hm <- ggheatmap(data4hm$table,
                   colv = data4hm$colv,
                   rowv = data4hm$rowv,
-                  clustering_method = "ward.D2",
                   fontsize = fontsize,
                   colorbar_dir = colorbar_dir,
                   ...)
