@@ -29,14 +29,14 @@ plot_pathway_heatmap <- function(pathway_scores,
                                  fwidth = 7,
                                  fheight = 5,
                                  ...) {
-  # Si pathway_scores est un data.frame (scores de voies)
+  # If pathway_scores is a data.frame (pathway scores)
   if (is.data.frame(pathway_scores)) {
     if (!is.na(annotations)) {
       warning("Plotting pathway score matrix, no sample annotation will be plotted")
     }
-    # Préparer les données du heatmap pour un data.frame de scores
+    # Prepare heatmap data from a scores data.frame
     hm_data <- prep_scoredf_hm(pathway_scores, pathways = pathways)
-    # Créer et personnaliser le heatmap
+    # Create and customize the heatmap
     hm <- plt_heatmap(hm_data,
                       colors_title = "Pathway score",
                       hm_colors = viridis(100),
@@ -45,18 +45,18 @@ plot_pathway_heatmap <- function(pathway_scores,
                       fheight = fheight,
                       ...)
   } else {
-    # Si pathway_scores est un SummarizedExperiment, récupérer les scores dans les métadonnées
+    # If pathway_scores is a SummarizedExperiment, retrieve scores from metadata
     exp_data <- pathway_scores
     pathway_scores <- S4Vectors::metadata(pathway_scores)[["pathway_scores"]]
 
-    # Vérifier la présence des scores dans les métadonnées
+    # Check that scores are present in the metadata
     if (is.null(pathway_scores)) {
       stop('No pathway scores found in `metadata(exp_data)[["pathway_scores"]])`')
     }
 
-    # Préparer les données du heatmap pour un SummarizedExperiment
+    # Prepare heatmap data from a SummarizedExperiment
     hm_data <- prep_scores_hm(exp_data, pathway_scores, pathways)
-    # Créer et personnaliser le heatmap
+    # Create and customize the heatmap
     dir.create(path_dir(fname), recursive = TRUE, showWarnings = FALSE)
     hm <- plt_heatmap(hm_data,
                       annotations = annotations,
@@ -69,6 +69,6 @@ plot_pathway_heatmap <- function(pathway_scores,
                       fheight = fheight,
                       ...)
   }
-  # Retourner l'objet heatmap
+  # Return the heatmap object
   return(hm)
 }

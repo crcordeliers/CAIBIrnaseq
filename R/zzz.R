@@ -1,23 +1,23 @@
 # utils::globalVariables(c(
-#   ".",                        # Utilisé dans les pipes (%>%)
-#   "n",                        # utilisé dans dplyr::summarize
-#   "gene_id",                  # Utilisé dans rebase_gexp
-#   "gene_length_kb",           # Utilisé dans rebase_gexp
-#   "gene_lenght_kb",           # (typo mais conservé de la variable définie par l'utilisateur)
-#   "gene_description",         # Utilisé dans rebase_gexp
-#   "gene_biotype",             # Utilisé dans rebase_gexp
-#   "nfeats",                   # Utilisé dans plot_qc_filters
-#   "ncounts", "sample_id",     # Utilisé dans plot_qc_filters
-#   "qc_status",                # Utilisé dans plot_qc_filters
-#   "gs_collection",            # Utilisé dans get_annotation_collection
-#   "gs_subcollection",         # Utilisé dans get_annotation_collection
-#   "gs_name",                  # Utilisé dans get_annotation_collection
-#   "ensembl_gene",             # Utilisé dans get_annotation_collection
-#   "gene_symbol",              # Utilisé dans get_annotation_collection
-#   "collection",               # Utilisé dans get_annotation_collection
-#   "pathway",                  # Utilisé dans get_annotation_collection
-#   ".data" ,                   # Utilisé dans get_annotation_collection
-#   "pathway_scores",           # Utilisé dans cluster_metadata
+#   ".",                        # Used in pipes (%>%)
+#   "n",                        # Used in dplyr::summarize
+#   "gene_id",                  # Used in rebase_gexp
+#   "gene_length_kb",           # Used in rebase_gexp
+#   "gene_lenght_kb",           # (typo but kept from user-defined variable)
+#   "gene_description",         # Used in rebase_gexp
+#   "gene_biotype",             # Used in rebase_gexp
+#   "nfeats",                   # Used in plot_qc_filters
+#   "ncounts", "sample_id",     # Used in plot_qc_filters
+#   "qc_status",                # Used in plot_qc_filters
+#   "gs_collection",            # Used in get_annotation_collection
+#   "gs_subcollection",         # Used in get_annotation_collection
+#   "gs_name",                  # Used in get_annotation_collection
+#   "ensembl_gene",             # Used in get_annotation_collection
+#   "gene_symbol",              # Used in get_annotation_collection
+#   "collection",               # Used in get_annotation_collection
+#   "pathway",                  # Used in get_annotation_collection
+#   ".data" ,                   # Used in get_annotation_collection
+#   "pathway_scores",           # Used in cluster_metadata
 #   "metadata",
 #
 #   "desc", "log2FoldChange", "PValue", "PAdj", "padj", "Significance",

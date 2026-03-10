@@ -15,7 +15,7 @@ mcp_counter <- function(exp_data, species, feature_type = "gene_name", assay = "
     stop("The 'MCPcounter' package is required but not installed.")
   }
 
-  # Vérification de l'objet SummarizedExperiment
+  # Check that exp_data is a SummarizedExperiment object
   if (!"SummarizedExperiment" %in% class(exp_data)) {
     stop("exp_data must be a SummarizedExperiment object.")
   }
