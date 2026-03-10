@@ -41,6 +41,12 @@ diffExpAnalysis <- function(exp_data, design, lfcShrink = TRUE, contrasts = NULL
     design <- paste0("~", design)
   }
   # Apply DESeq model
+  counts <- SummarizedExperiment::assay(exp_data, "counts")
+  if (!is.integer(counts)) {
+    SummarizedExperiment::assay(exp_data, "counts") <- matrix(
+      as.integer(round(counts)), nrow = nrow(counts), dimnames = dimnames(counts)
+    )
+  }
   ddsSE <- DESeqDataSet(exp_data, design = as.formula(design))
   ddsSE <- DESeq(ddsSE)
 

@@ -22,6 +22,10 @@ normalize_gexp <- function(exp_data) {
   if (is.null(counts)) {
     stop("No 'counts' assay found in the SummarizedExperiment object.")
   }
+  if (!is.integer(counts)) {
+    counts <- matrix(as.integer(round(counts)), nrow = nrow(counts),
+                     dimnames = dimnames(counts))
+  }
   if (ncol(counts) < 30) {
     message("- Less than 30 samples -> Performing `rlog` normalization...")
     norm <- rlog(counts)
