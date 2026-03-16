@@ -51,7 +51,6 @@ prep_scores_hm <- function(exp_data, pathway_scores, pathways = 1:20) {
   } else {
     stop("Some of the specified pathway names are not found in `pathway_scores`.")
   }
-  browser()
   # Extract and clean sample annotations
   samp_annot <- colData(exp_data) |> as.data.frame()
 

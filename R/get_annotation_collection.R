@@ -40,13 +40,18 @@ get_annotation_collection <- function(collections, species = "Homo sapiens") {
     if (collection %in% all_collections) {
       message("-- Collecting ", collection, " from MSigDB...")
 
+      collection_key <- if (tolower(collection) == "hallmark") "H" else collection
+
       msigdb <- msigdbr::msigdbr(species = species) |>
         mutate(
-          gs_subcollection = if_else(is.na(gs_subcollection), gs_collection, gs_subcollection)
+          gs_subcollection = if_else(
+            is.na(gs_subcollection) | gs_subcollection == "",
+            gs_collection, gs_subcollection
+          )
         )
 
       gene_sets <- msigdb |>
-        filter(gs_subcollection %in% collection) |>
+        filter(gs_subcollection %in% collection_key | gs_collection %in% collection_key) |>
         mutate(collection = collection) |>
         rename(pathway = gs_name) |>
         select(collection, pathway, gene_id = ensembl_gene, gene_symbol)

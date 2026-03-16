@@ -21,8 +21,8 @@
 #' @export
 #'
 plot_exp_volcano <- function(diffexp, nb = 10, title = "Volcano Plot of Differential Expression",
-                             color_up = "#a8250eff",
-                             color_down = "#2954b1ff",
+                             color_up = "#0072B2",
+                             color_down = "#D32F2F",
                              color_ns = "gray80",
                              fname = NULL) {
   # Check required columns
