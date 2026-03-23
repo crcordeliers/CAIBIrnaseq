@@ -7,6 +7,7 @@
 #'   - `log2FoldChange`: The log2 fold change values for each gene.
 #'   - `padj`: The adjusted p-value for each gene.
 #' @param nb The number of genes that have an annotation
+#' @param lfc_threshold A numeric vector of length 2 giving the log2 fold change
 #' @param color_up Color used for upregulated genes (default is "#0072B2").
 #' @param color_down Color used for downregulated genes (default is "#D55E00").
 #' @param color_ns Color used for non-significant genes (default is "gray80").
@@ -21,6 +22,7 @@
 #' @export
 #'
 plot_exp_volcano <- function(diffexp, nb = 10, title = "Volcano Plot of Differential Expression",
+                             lfc_threshold = c(-1, 1),
                              color_up = "#0072B2",
                              color_down = "#D32F2F",
                              color_ns = "gray80",
@@ -36,10 +38,13 @@ plot_exp_volcano <- function(diffexp, nb = 10, title = "Volcano Plot of Differen
     diffexp$gene <- rownames(diffexp)
   }
 
+  lfc_low <- min(lfc_threshold)
+  lfc_high <- max(lfc_threshold)
+
   # Define significance groups
   diffexp$Significance <- case_when(
-    diffexp$padj < 0.05 & diffexp$log2FoldChange > 1 ~ "Upregulated",
-    diffexp$padj < 0.05 & diffexp$log2FoldChange < -1 ~ "Downregulated",
+    diffexp$padj < 0.05 & diffexp$log2FoldChange > lfc_high ~ "Upregulated",
+    diffexp$padj < 0.05 & diffexp$log2FoldChange < lfc_low ~ "Downregulated",
     TRUE ~ "Not Significant"
   )
 
@@ -89,7 +94,7 @@ plot_exp_volcano <- function(diffexp, nb = 10, title = "Volcano Plot of Differen
       color = "gray"
     ) +
     geom_vline(
-      xintercept = c(-1, 1),
+      xintercept = c(lfc_low, lfc_high),
       linetype = "dashed",
       color = "gray"
     ) +
