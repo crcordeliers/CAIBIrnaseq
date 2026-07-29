@@ -15,15 +15,18 @@
 #'
 #' @return A data frame of enriched pathways with columns:
 #' \describe{
-#'   \item{Pathway}{Name of the enriched pathway}
-#'   \item{PValue}{Raw p-value from Fisher's exact test}
-#'   \item{PAdj}{Adjusted p-value (Benjamini-Hochberg)}
-#'   \item{GeneRatio}{Proportion of input genes found in the pathway}
-#'   \item{BgRatio}{Proportion of background genes found in the pathway}
-#'   \item{Genes}{Comma-separated list of matched genes}
+#'   \item{pathway}{Name of the enriched pathway}
+#'   \item{pval}{Raw p-value from Fisher's exact test}
+#'   \item{padj}{Adjusted p-value (Benjamini-Hochberg)}
+#'   \item{geneRatio}{Proportion of input genes found in the pathway}
+#'   \item{bgRatio}{Proportion of background genes found in the pathway}
+#'   \item{genes}{Comma-separated list of matched genes}
 #' }
+#' Column names match the naming used by \code{\link{pathwayFGSEA}} (\code{pathway}, \code{pval}, \code{padj})
+#' so that downstream consumers such as \code{\link{plot_pathway_dotplot}} can handle both result types.
 #'
-#' @importFrom dplyr filter mutate arrange bind_rows
+#' @importFrom dplyr filter mutate arrange bind_rows desc relocate pull
+#' @importFrom tibble rownames_to_column tibble
 #' @importFrom stats fisher.test p.adjust
 #' @export
 #'
@@ -90,7 +93,7 @@ pathwayORA <- function(diffexp_result, pathways,
       pval = pfish,
       geneRatio = paste0(ginpath, "/", length(genes)),
       bgRatio = paste0(length(path), "/", univ),
-      geneHits = paste(genes[genes %in% path], collapse = ", ")
+      genes = paste(genes[genes %in% path], collapse = ", ")
     )
   }) %>% bind_rows()
 

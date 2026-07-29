@@ -34,7 +34,8 @@ get_annotation_collection <- function(collections, species = "Homo sapiens") {
 
   # --- Get available collections from MSigDB ---
   available_subcollections <- msigdbr::msigdbr_collections()$gs_subcollection
-  all_collections <- unique(c(available_subcollections, "Hallmark", "HALLMARK", "hallmark"))
+  collections <- if_else(tolower(collections) == "hallmark", "H", collections)
+  all_collections <- unique(c(available_subcollections, "H"))
 
   results <- lapply(collections, function(collection) {
     if (collection %in% all_collections) {

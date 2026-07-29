@@ -5,6 +5,7 @@
 #' @param exp_data A `SummarizedExperiment` object containing normalized expression data in the `assays(exp_data)$norm` slot.
 #' @param pathways A data frame with pathway definitions, containing at least two columns: `pathway` (pathway name) and either `gene_id` (Ensembl IDs) or `gene_symbol` (gene symbols).
 #' @param scoring_method A character string specifying the scoring method to use. Options are `"gsva"`, `"ssgsea"`, `"plage"`, or `"zscore"`. Default is `"gsva"`.
+#' @param min_genes An integer specifying the minimum number of genes required for a pathway to be considered. Default is `100`. Lower only if using targetted panel.
 #' @param verbose Logical; if `TRUE`, prints progress messages during computation. Default is `TRUE`.
 #'
 #' @details
@@ -25,10 +26,12 @@
 #'
 #' @importFrom SummarizedExperiment assays
 #' @importFrom GSVA gsvaParam ssgseaParam plageParam zscoreParam gsva
+#' @importFrom matrixStats rowVars
 #'
 #' @export
 score_pathways <- function(exp_data, pathways,
                            scoring_method = "gsva",
+                           min_genes = 100,
                            verbose = TRUE) {
 
 
@@ -49,9 +52,9 @@ score_pathways <- function(exp_data, pathways,
   votes_gene_id <- sum(rownames(mat) %in% pathways$gene_id)
   votes_gene_symbol <- sum(rownames(mat) %in% pathways$gene_symbol)
 
-  if (votes_gene_id >= votes_gene_symbol & votes_gene_id > 100) {
+  if (votes_gene_id >= votes_gene_symbol & votes_gene_id > min_genes) {
     gene_annot <- "gene_id"
-  } else if (votes_gene_symbol > votes_gene_id & votes_gene_symbol > 100) {
+  } else if (votes_gene_symbol > votes_gene_id & votes_gene_symbol > min_genes) {
     gene_annot <- "gene_symbol"
   } else {
     stop("`exp_data` uses unknown gene annotation.
@@ -78,10 +81,10 @@ score_pathways <- function(exp_data, pathways,
   scores <- GSVA::gsva(param, verbose = verbose)
   path_scores_df <- data.frame(scores)
 
-  # Sort pathways by absolute scores and select the most variable pathways
-  max_diff_paths <- path_scores_df |>
-    abs() |>
-    rowSums() |>
+  # Sort pathways by most variable scores
+  path_vars <- rowVars(as.matrix(path_scores_df))
+  names(path_vars) <- rownames(path_scores_df)
+  max_diff_paths <- path_vars |>
     sort(decreasing = TRUE) |>
     names()
 

@@ -8,8 +8,9 @@ plot_exp_volcano(
   diffexp,
   nb = 10,
   title = "Volcano Plot of Differential Expression",
+  lfc_threshold = c(-1, 1),
   color_up = "#0072B2",
-  color_down = "#D55E00",
+  color_down = "#D32F2F",
   color_ns = "gray80",
   fname = NULL
 )
@@ -20,6 +21,8 @@ plot_exp_volcano(
 - `padj`: The adjusted p-value for each gene.}
 
 \item{nb}{The number of genes that have an annotation}
+
+\item{lfc_threshold}{A numeric vector of length 2 giving the log2 fold change}
 
 \item{color_up}{Color used for upregulated genes (default is "#0072B2").}
 

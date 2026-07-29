@@ -42,9 +42,11 @@ plot_microenv_heatmap <- function(exp_data,
   # Prepare heatmap data using `prep_scores_hm`
   hm_data <- prep_scores_hm(exp_data, microenv_scores)
 
-  # Generate the heatmap using `plt_heatmap`
-  dir.create(path_dir(fname), recursive = TRUE, showWarnings = FALSE)
+  if(!is.null(fname)) {
+    dir.create(path_dir(fname), recursive = TRUE, showWarnings = FALSE)
+  }
 
+  # Generate the heatmap using `plt_heatmap`
   hm <- plt_heatmap(hm_data,
                     center = TRUE,
                     scale = TRUE,

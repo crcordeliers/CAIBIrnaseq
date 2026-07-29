@@ -4,7 +4,7 @@
 \alias{mcp_counter}
 \title{MCP-counter wrapper for SummarizedExperiment objects}
 \usage{
-mcp_counter(exp_data, species, feature_type = "gene_name")
+mcp_counter(exp_data, species, feature_type = "gene_name", assay = "tpm")
 }
 \arguments{
 \item{exp_data}{A SummarizedExperiment object containing TPM expression data in the "tpm" assay.}

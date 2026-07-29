@@ -1,0 +1,72 @@
+# Plot QC Filters for Gene Expression Data
+
+This function creates a quality control (QC) plot for a
+\`SummarizedExperiment\` object, highlighting samples that pass or fail
+specified QC thresholds.
+
+## Usage
+
+``` r
+plot_qc_filters(
+  gexp,
+  color = NA,
+  fname = "results/qc/plot_QC_filters.pdf",
+  min_nfeats = 5000,
+  min_ncounts = 5e+06,
+  out = c("plotly", "ggplot")[1]
+)
+```
+
+## Arguments
+
+- gexp:
+
+  A \`SummarizedExperiment\` object containing gene expression data. The
+  \`colData\` must include \`nfeats\` (number of detected features) and
+  \`ncounts\` (total counts per sample).
+
+- color:
+
+  A variable in the \`colData\` to be used as different colors of the QC
+  points, helps visualize possible batch effects.
+
+- fname:
+
+  A character string specifying the file path to save the plot as a PDF.
+  Default is \`"results/qc/plot_QC_filters.pdf"\`. Set to \`NULL\` to
+  skip saving.
+
+- min_nfeats:
+
+  An integer specifying the minimum number of features for a sample to
+  pass QC. Default is \`5000\`.
+
+- min_ncounts:
+
+  A numeric value specifying the minimum total counts for a sample to
+  pass QC. Default is \`5e6\`.
+
+- out:
+
+  A character string indicating the output type: \`"plotly"\`
+  (interactive Plotly plot) or \`"ggplot"\` (static ggplot). Default is
+  \`"plotly"\`.
+
+## Value
+
+A QC plot, either as a \`plotly\` interactive object or a \`ggplot\`
+static object, depending on the \`out\` parameter.
+
+## Details
+
+The function identifies samples that fail QC based on thresholds for the
+number of detected features (\`min_nfeats\`) and total counts
+(\`min_ncounts\`). It creates a scatter plot with: - The x-axis
+representing the number of features (\`nfeats\`). - The y-axis
+representing the total counts (\`ncounts\`). - Points color-coded based
+on QC status (\`pass\` or \`fail\`). - Dashed lines indicating the QC
+thresholds.
+
+If \`out = "plotly"\`, the plot is interactive, allowing for sample
+tooltips. If a file name (\`fname\`) is provided, the static ggplot is
+saved as a PDF.

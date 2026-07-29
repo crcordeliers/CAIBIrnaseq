@@ -15,7 +15,7 @@
 #' @return A `ggplot2` object representing the boxplot or summary plot.
 #' @export
 #'
-#' @importFrom dplyr group_by summarize pull
+#' @importFrom dplyr group_by summarize pull n
 #' @importFrom ggplot2 ggplot aes geom_boxplot theme_light stat_summary
 #' @importFrom ggbeeswarm geom_beeswarm
 #' @importFrom ggpubr stat_compare_means

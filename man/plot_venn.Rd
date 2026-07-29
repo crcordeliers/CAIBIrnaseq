@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_venn.R
 \name{plot_venn}
 \alias{plot_venn}
-\title{Plot a Venn diagram for two vectors}
+\title{Plot a Venn diagram for two or three vectors}
 \usage{
 plot_venn(
   v1,
@@ -10,6 +10,8 @@ plot_venn(
   universe_size = NULL,
   v1_name = "V1",
   v2_name = "V2",
+  v3 = NULL,
+  v3_name = "V3",
   fills = TRUE,
   quantities = TRUE,
   title = NULL,
@@ -21,11 +23,15 @@ plot_venn(
 
 \item{v2}{A vector of elements in set 2.}
 
-\item{universe_size}{Optional total size of the universe for Fisher's test.}
+\item{universe_size}{Optional total size of the universe for Fisher's test (2-set only).}
 
 \item{v1_name}{Name for set 1.}
 
 \item{v2_name}{Name for set 2.}
+
+\item{v3}{Optional vector of elements in set 3 for a 3-way Venn diagram.}
+
+\item{v3_name}{Name for set 3.}
 
 \item{fills}{Colors to fill the diagram.}
 

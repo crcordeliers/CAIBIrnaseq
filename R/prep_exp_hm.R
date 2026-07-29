@@ -26,7 +26,7 @@ prep_exp_hm <- function(expData,
                         gene_name = "gene_name") {
   gene_annot <- SummarizedExperiment::rowData(expData)
   if (!any(genes %in% rownames(expData))) {
-    stop("No `genes` were found as `gene_name` in the `exp_data` object.")
+    stop("No `genes` were found as `gene_name` in the `expData` object.")
   } else if(!all(genes %in% gene_annot$gene_name)) {
     genes <- genes[genes %in% rownames(expData)]
   } else {
@@ -41,7 +41,7 @@ prep_exp_hm <- function(expData,
 
   feats <- colnames(gexp_t)[-1]
 
-  samp_annot <- colData(exp_data) |> as.data.frame()
+  samp_annot <- colData(expData) |> as.data.frame()
 
   gexp_t <- gexp_t |> left_join(samp_annot, by = "sample_id")
 

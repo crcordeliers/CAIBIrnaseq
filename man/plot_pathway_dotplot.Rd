@@ -4,12 +4,12 @@
 \alias{plot_pathway_dotplot}
 \title{Plot Pathway Analysis Results as a Dot Plot}
 \usage{
-plot_pathway_dotplot(exp_data, score_name, top_n = 10, maxPval = 0.05)
+plot_pathway_dotplot(exp_data, score_name = NULL, top_n = 10, maxPval = 0.05)
 }
 \arguments{
 \item{exp_data}{A `SummarizedExperiment` object containing pathway analysis results stored in the `metadata()`.}
 
-\item{score_name}{A character string indicating the metadata field where pathway results are stored. Default is `"resultsORA"`.}
+\item{score_name}{A character string indicating the metadata field where pathway results are stored.}
 
 \item{top_n}{Number of top pathways to display. Default is `10`.}
 
@@ -24,7 +24,7 @@ Creates a dot plot to visualize pathway enrichment analysis results, supporting 
 \details{
 The function supports two types of enrichment results:
 \itemize{
-  \item{ORA (Over-Representation Analysis): requires columns `PAdj`, `GeneRatio`, and `Pathway`}
+  \item{ORA (Over-Representation Analysis): requires columns `padj`, `geneRatio`, and `pathway`}
   \item{FGSEA: requires columns `padj`, `size`, and `pathway`}
 }
 
