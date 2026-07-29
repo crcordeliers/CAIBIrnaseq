@@ -6,7 +6,7 @@ mMCPcounter.
 ## Usage
 
 ``` r
-mcp_counter(exp_data, species, feature_type = "gene_name")
+mcp_counter(exp_data, species, feature_type = "gene_name", assay = "tpm")
 ```
 
 ## Arguments

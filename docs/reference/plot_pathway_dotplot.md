@@ -6,7 +6,7 @@ supporting both ORA and FGSEA formats.
 ## Usage
 
 ``` r
-plot_pathway_dotplot(exp_data, score_name, top_n = 10, maxPval = 0.05)
+plot_pathway_dotplot(exp_data, score_name = NULL, top_n = 10, maxPval = 0.05)
 ```
 
 ## Arguments
@@ -19,7 +19,7 @@ plot_pathway_dotplot(exp_data, score_name, top_n = 10, maxPval = 0.05)
 - score_name:
 
   A character string indicating the metadata field where pathway results
-  are stored. Default is \`"resultsORA"\`.
+  are stored.
 
 - top_n:
 
@@ -38,8 +38,8 @@ A \`ggplot2\` dot plot object showing pathway enrichment.
 
 The function supports two types of enrichment results:
 
-- ORA (Over-Representation Analysis): requires columns \`PAdj\`,
-  \`GeneRatio\`, and \`Pathway\`
+- ORA (Over-Representation Analysis): requires columns \`padj\`,
+  \`geneRatio\`, and \`pathway\`
 
 - FGSEA: requires columns \`padj\`, \`size\`, and \`pathway\`
 

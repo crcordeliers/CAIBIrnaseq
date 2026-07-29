@@ -25,7 +25,6 @@ library(SummarizedExperiment)
 library(CAIBIrnaseq)
 library(tidyverse)
 library(patchwork)
-devtools::load_all()
 ```
 
 Before analysing the dataset, we define the variables with the names of
@@ -412,12 +411,12 @@ propose two scoring methods:
   but hinges on where you set your significance cutoff.
 
 - **(Fast) Gene Set Enrichment Analysis (FGSEA)** avoids that arbitrary
-  cutoff by taking a ranked list of all genes (for example, sorted by
-  fold‑change) and “walking” down it to see if members of each pathway
-  accumulate at the top or bottom. You end up with an enrichment score
-  for each pathway, and statistical significance comes from permuting
-  phenotype labels. GSEA is more sensitive to coordinated, subtle shifts
-  across a pathway.
+  cutoff by taking a ranked list of all genes (for example, sorted based
+  on p-value and fold‑change sign) and “walking” down it to see if
+  members of each pathway accumulate at the top or bottom. You end up
+  with an enrichment score for each pathway, and statistical
+  significance comes from permuting phenotype labels. GSEA is more
+  sensitive to coordinated, subtle shifts across a pathway.
 
 Code
 

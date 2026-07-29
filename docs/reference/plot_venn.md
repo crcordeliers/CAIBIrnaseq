@@ -1,4 +1,4 @@
-# Plot a Venn diagram for two vectors
+# Plot a Venn diagram for two or three vectors
 
 This function plots a Venn diagram using the \`euler\` function from the
 eulerr package.
@@ -12,6 +12,8 @@ plot_venn(
   universe_size = NULL,
   v1_name = "V1",
   v2_name = "V2",
+  v3 = NULL,
+  v3_name = "V3",
   fills = TRUE,
   quantities = TRUE,
   title = NULL,
@@ -31,7 +33,7 @@ plot_venn(
 
 - universe_size:
 
-  Optional total size of the universe for Fisher's test.
+  Optional total size of the universe for Fisher's test (2-set only).
 
 - v1_name:
 
@@ -40,6 +42,14 @@ plot_venn(
 - v2_name:
 
   Name for set 2.
+
+- v3:
+
+  Optional vector of elements in set 3 for a 3-way Venn diagram.
+
+- v3_name:
+
+  Name for set 3.
 
 - fills:
 

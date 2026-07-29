@@ -46,26 +46,32 @@ pathwayORA(
 
 A data frame of enriched pathways with columns:
 
-- Pathway:
+- pathway:
 
   Name of the enriched pathway
 
-- PValue:
+- pval:
 
   Raw p-value from Fisher's exact test
 
-- PAdj:
+- padj:
 
   Adjusted p-value (Benjamini-Hochberg)
 
-- GeneRatio:
+- geneRatio:
 
   Proportion of input genes found in the pathway
 
-- BgRatio:
+- bgRatio:
 
   Proportion of background genes found in the pathway
 
-- Genes:
+- genes:
 
   Comma-separated list of matched genes
+
+Column names match the naming used by
+[`pathwayFGSEA`](https://crcordeliers.github.io/CAIBIrnaseq/reference/pathwayFGSEA.md)
+(`pathway`, `pval`, `padj`) so that downstream consumers such as
+[`plot_pathway_dotplot`](https://crcordeliers.github.io/CAIBIrnaseq/reference/plot_pathway_dotplot.md)
+can handle both result types.

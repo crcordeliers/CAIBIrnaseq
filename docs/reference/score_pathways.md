@@ -6,7 +6,13 @@ scoring methods.
 ## Usage
 
 ``` r
-score_pathways(exp_data, pathways, scoring_method = "gsva", verbose = TRUE)
+score_pathways(
+  exp_data,
+  pathways,
+  scoring_method = "gsva",
+  min_genes = 100,
+  verbose = TRUE
+)
 ```
 
 ## Arguments
@@ -27,6 +33,12 @@ score_pathways(exp_data, pathways, scoring_method = "gsva", verbose = TRUE)
   A character string specifying the scoring method to use. Options are
   \`"gsva"\`, \`"ssgsea"\`, \`"plage"\`, or \`"zscore"\`. Default is
   \`"gsva"\`.
+
+- min_genes:
+
+  An integer specifying the minimum number of genes required for a
+  pathway to be considered. Default is \`100\`. Lower only if using
+  targetted panel.
 
 - verbose:
 

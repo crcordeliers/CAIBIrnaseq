@@ -52,7 +52,7 @@
 - [`plot_qc_filters()`](https://crcordeliers.github.io/CAIBIrnaseq/reference/plot_qc_filters.md)
   : Plot QC Filters for Gene Expression Data
 - [`plot_venn()`](https://crcordeliers.github.io/CAIBIrnaseq/reference/plot_venn.md)
-  : Plot a Venn diagram for two vectors
+  : Plot a Venn diagram for two or three vectors
 
 ## Pathway Analysis
 
