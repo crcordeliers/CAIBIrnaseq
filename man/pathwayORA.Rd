@@ -29,13 +29,15 @@ genes to do it's overrepresentation analysis.}
 \value{
 A data frame of enriched pathways with columns:
 \describe{
-  \item{Pathway}{Name of the enriched pathway}
-  \item{PValue}{Raw p-value from Fisher's exact test}
-  \item{PAdj}{Adjusted p-value (Benjamini-Hochberg)}
-  \item{GeneRatio}{Proportion of input genes found in the pathway}
-  \item{BgRatio}{Proportion of background genes found in the pathway}
-  \item{Genes}{Comma-separated list of matched genes}
+  \item{pathway}{Name of the enriched pathway}
+  \item{pval}{Raw p-value from Fisher's exact test}
+  \item{padj}{Adjusted p-value (Benjamini-Hochberg)}
+  \item{geneRatio}{Proportion of input genes found in the pathway}
+  \item{bgRatio}{Proportion of background genes found in the pathway}
+  \item{genes}{Comma-separated list of matched genes}
 }
+Column names match the naming used by \code{\link{pathwayFGSEA}} (\code{pathway}, \code{pval}, \code{padj})
+so that downstream consumers such as \code{\link{plot_pathway_dotplot}} can handle both result types.
 }
 \description{
 Performs an over-representation analysis (ORA) using Fisher's exact test

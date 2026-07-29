@@ -34,6 +34,7 @@
 #' @importFrom DESeq2 DESeqDataSet DESeq results lfcShrink resultsNames
 #' @importFrom readr write_csv
 #' @importFrom fs path_ext_remove
+#' @importFrom dplyr arrange desc
 #' @export
 diffExpAnalysis <- function(exp_data, design, lfcShrink = TRUE, contrasts = NULL,
                             fname = NULL) {

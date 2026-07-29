@@ -3,7 +3,7 @@
 #' Creates a dot plot to visualize pathway enrichment analysis results, supporting both ORA and FGSEA formats.
 #'
 #' @param exp_data A `SummarizedExperiment` object containing pathway analysis results stored in the `metadata()`.
-#' @param score_name A character string indicating the metadata field where pathway results are stored. Default is `"resultsORA"`.
+#' @param score_name A character string indicating the metadata field where pathway results are stored.
 #' @param top_n Number of top pathways to display. Default is `10`.
 #' @param maxPval Maximum adjusted p-value for filtering pathways (if `usePval = TRUE`). Default is `0.05`.
 #'
@@ -12,15 +12,15 @@
 #' @details
 #' The function supports two types of enrichment results:
 #' \itemize{
-#'   \item{ORA (Over-Representation Analysis): requires columns `PAdj`, `GeneRatio`, and `Pathway`}
+#'   \item{ORA (Over-Representation Analysis): requires columns `padj`, `geneRatio`, and `pathway`}
 #'   \item{FGSEA: requires columns `padj`, `size`, and `pathway`}
 #' }
 #'
 #' When `usePval = TRUE`, the plot will show -log10 adjusted p-values on the x-axis, colored by significance.
 #' When `usePval = FALSE`, the plot will rank and size pathways by gene ratio or enrichment size.
 #'
-#' @importFrom ggplot2 ggplot aes geom_point scale_x_continuous scale_color_gradient scale_size_continuous scale_y_discrete ggtitle labs theme element_text element_blank element_line
-#' @importFrom dplyr arrange filter slice_head mutate
+#' @importFrom ggplot2 ggplot aes geom_point geom_segment geom_vline scale_x_continuous scale_color_gradient scale_fill_distiller scale_size_continuous scale_y_discrete ggtitle labs theme element_text element_blank element_line
+#' @importFrom dplyr arrange filter slice slice_head mutate rowwise ungroup case_when
 #' @importFrom scales pretty_breaks
 #' @importFrom stringr str_wrap str_replace_all
 #' @importFrom S4Vectors metadata
@@ -28,14 +28,23 @@
 #' @export
 #'
 plot_pathway_dotplot <- function(exp_data,
-                                 score_name,
+                                 score_name = NULL,
                                  top_n = 10,
                                  maxPval = 0.05) {
+  
+  if(is.null(score_name)) {
+    scores <- names(metadata(exp_data))
+    if(length(scores) == 0) {
+      stop("No pathway analysis results found in the metadata of the SummarizedExperiment object.")
+    }
+    score_name <- scores[1]
+    message("Plotting the first available score in metadata: ", score_name)
+  }
 
   results <- metadata(exp_data)[[score_name]]
 
   results_type <- case_when(
-    "geneHits" %in% colnames(results) ~ "ORA",
+    "geneRatio" %in% colnames(results) ~ "ORA",
     "leadingEdge" %in% colnames(results) ~ "GSEA",
     TRUE ~ NA_character_
   )
@@ -114,7 +123,7 @@ plot_pathway_dotplot <- function(exp_data,
   return(p)
 }
 
-#' @importFrom stringr str_split
+#' @importFrom stringr str_split_fixed
 .fraction_to_decimal <- function(fraction) {
   num_denum <- str_split_fixed(fraction, "/", 2) |>
     as.numeric()

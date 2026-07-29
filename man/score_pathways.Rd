@@ -4,7 +4,13 @@
 \alias{score_pathways}
 \title{Score Pathways}
 \usage{
-score_pathways(exp_data, pathways, scoring_method = "gsva", verbose = TRUE)
+score_pathways(
+  exp_data,
+  pathways,
+  scoring_method = "gsva",
+  min_genes = 100,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{exp_data}{A `SummarizedExperiment` object containing normalized expression data in the `assays(exp_data)$norm` slot.}
@@ -12,6 +18,8 @@ score_pathways(exp_data, pathways, scoring_method = "gsva", verbose = TRUE)
 \item{pathways}{A data frame with pathway definitions, containing at least two columns: `pathway` (pathway name) and either `gene_id` (Ensembl IDs) or `gene_symbol` (gene symbols).}
 
 \item{scoring_method}{A character string specifying the scoring method to use. Options are `"gsva"`, `"ssgsea"`, `"plage"`, or `"zscore"`. Default is `"gsva"`.}
+
+\item{min_genes}{An integer specifying the minimum number of genes required for a pathway to be considered. Default is `100`. Lower only if using targetted panel.}
 
 \item{verbose}{Logical; if `TRUE`, prints progress messages during computation. Default is `TRUE`.}
 }

@@ -9,7 +9,8 @@ gexp_preprocess(
   gene_annotation = NULL,
   keep_annot = "gene_name",
   og_annot = "gene_id",
-  keep_stat = sum
+  keep_stat = sum,
+  organism = NULL
 )
 }
 \arguments{

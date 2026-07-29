@@ -1,5 +1,3 @@
-require(tidyverse)
-
 #' Pre-process a gene expression matrix to have different gene annotation
 #'
 #' @param gexp A gene expression matrix, with samples in columns and genes in rows
@@ -16,7 +14,7 @@ require(tidyverse)
 #' @returns A processed gene expression matrix
 #' @export
 #'
-#' @importFrom dplyr select filter group_by slice_max ungroup summarise_all across left_join slice everything
+#' @importFrom dplyr select filter group_by slice_max ungroup summarise_all across left_join slice everything case_when
 #' @importFrom tibble rownames_to_column column_to_rownames
 #' @importFrom rlang sym
 #' @importFrom dplyr %>% top_n
@@ -24,21 +22,31 @@ require(tidyverse)
 #' @importFrom biomaRt useMart getBM
 #'
 gexp_preprocess <- function(gexp, gene_annotation = NULL , keep_annot = "gene_name",
-                            og_annot = "gene_id", keep_stat = sum) {
+                            og_annot = "gene_id", keep_stat = sum, organism = NULL) {
+  if(is.null(organism) && is.null(gene_annotation)){
+    warning("Organism for annotation set as: Homo sapiens")
+    organism <- "hsapiens_gene_ensembl"
+  } else if(is.null(gene_annotation)) {
+    organism <- case_when(
+      tolower(organism) %in% c("hsapiens", "human", "homo sapiens") ~ "hsapiens_gene_ensembl",
+      tolower(organism) %in% c("mmusculus", "mouse", "mus musculus") ~ "mmusculus_gene_ensembl",
+      TRUE ~ stop("Organism for annotation not recognized. Please specify 'hsapiens' or 'mmusculus'.")
+    )
+  }
   if(is.null(gene_annotation)){
     # Connect to the Ensembl database
-    ensembl <- useMart("ensembl", dataset = "mmusculus_gene_ensembl") # Replace with "hsapiens_gene_ensembl" for human data
+    ensembl <- useMart("ensembl", dataset = organism) # Replace with "hsapiens_gene_ensembl" for human data
 
     #-- Retrieve HUGO gene symbols
     gene_symbols <- getBM(attributes = c('ensembl_gene_id', 'mgi_symbol'),
                           filters = 'ensembl_gene_id',
-                          values = rownames(gene_mat),
+                          values = rownames(gexp),
                           mart = ensembl)
 
     #-- Change ensembl rownames with mgi symbols
-    rownames(gene_mat) <- gene_symbols$mgi_symbol[match(rownames(gene_mat), gene_symbols$ensembl_gene_id)]
-  }
-  else{
+    rownames(gexp) <- gene_symbols$mgi_symbol[match(rownames(gexp), gene_symbols$ensembl_gene_id)]
+    gexp_res <- gexp
+  } else {
     #-- Get important annotation
     samples <- colnames(gexp)
     gannot <- dplyr::select(gene_annotation, {{og_annot}}, {{keep_annot}})

@@ -20,7 +20,8 @@
 #'   \item{leadingEdge}{Vector of leading-edge genes}
 #' }
 #'
-#' @importFrom dplyr arrange
+#' @importFrom dplyr arrange desc mutate pull
+#' @importFrom tibble rownames_to_column as_tibble
 #' @importFrom fgsea fgseaMultilevel
 #' @export
 pathwayFGSEA <- function(diffexp, pathwayCollection, seed = 0) {
@@ -32,14 +33,15 @@ pathwayFGSEA <- function(diffexp, pathwayCollection, seed = 0) {
   if (!all(c("pathway", "gene_symbol") %in% colnames(pathwayCollection))) {
     stop("The 'pathwayCollection' data frame must contain 'pathway' and 'gene_symbol' columns.")
   }
-  if(is.null(seed)) {
+  if(!is.null(seed)) {
     set.seed(seed)
   }
-
+  browser()
   pheno <- diffexp |>
     rownames_to_column("symbol") |>
-    arrange(desc(log2FoldChange)) |>
-    pull(log2FoldChange, symbol)
+    mutate(stat = -log10(pvalue)*sign(log2FoldChange)) |>
+    arrange(stat, desc(stat)) |>
+    pull(stat, symbol)
 
   pathwayList <- split(pathwayCollection$gene_symbol, pathwayCollection$pathway)
 
