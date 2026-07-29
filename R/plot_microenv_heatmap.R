@@ -28,7 +28,7 @@ plot_microenv_heatmap <- function(exp_data,
                                   ...) {
   microenv_scores <- metadata(exp_data)[["microenv_scores"]]
 
-  # Vérifier si les scores existent dans les métadonnées
+  # Check that scores are present in the metadata
   if (is.null(microenv_scores)) {
     stop('No microenvironment population scores found in `metadata(exp_data)[["microenv_scores"]])`')
   }
@@ -39,14 +39,14 @@ plot_microenv_heatmap <- function(exp_data,
     microenv_scores <- microenv_scores[setdiff(rownames(microenv_scores), unvar_score),]
   }
 
-  # Préparer les données pour le heatmap en utilisant la fonction `prep_scores_hm`
+  # Prepare heatmap data using `prep_scores_hm`
   hm_data <- prep_scores_hm(exp_data, microenv_scores)
 
   if(!is.null(fname)) {
     dir.create(path_dir(fname), recursive = TRUE, showWarnings = FALSE)
   }
 
-  # Générer le heatmap en utilisant `plt_heatmap`
+  # Generate the heatmap using `plt_heatmap`
   hm <- plt_heatmap(hm_data,
                     center = TRUE,
                     scale = TRUE,
@@ -60,6 +60,6 @@ plot_microenv_heatmap <- function(exp_data,
                     fheight = fheight,
                     ...)
 
-  # Retourner l'objet heatmap
+  # Return the heatmap object
   return(hm)
 }

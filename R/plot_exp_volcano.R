@@ -7,6 +7,7 @@
 #'   - `log2FoldChange`: The log2 fold change values for each gene.
 #'   - `padj`: The adjusted p-value for each gene.
 #' @param nb The number of genes that have an annotation
+#' @param lfc_threshold A numeric vector of length 2 giving the log2 fold change
 #' @param color_up Color used for upregulated genes (default is "#0072B2").
 #' @param color_down Color used for downregulated genes (default is "#D55E00").
 #' @param color_ns Color used for non-significant genes (default is "gray80").
@@ -21,45 +22,49 @@
 #' @export
 #'
 plot_exp_volcano <- function(diffexp, nb = 10, title = "Volcano Plot of Differential Expression",
+                             lfc_threshold = c(-1, 1),
                              color_up = "#0072B2",
-                             color_down = "#D55E00",
+                             color_down = "#D32F2F",
                              color_ns = "gray80",
                              fname = NULL) {
-  # Vérification des colonnes requises
+  # Check required columns
   required_cols <- c("log2FoldChange", "padj")
   if (!all(required_cols %in% colnames(diffexp))) {
-    stop("Le data.frame diffexp doit contenir les colonnes : log2FoldChange et padj.")
+    stop("diffexp must contain columns: log2FoldChange and padj.")
   }
 
-  # Gestion du nom des gènes
+  # Handle gene names
   if (!"gene" %in% colnames(diffexp)) {
     diffexp$gene <- rownames(diffexp)
   }
 
-  # Définir les groupes de significativité
+  lfc_low <- min(lfc_threshold)
+  lfc_high <- max(lfc_threshold)
+
+  # Define significance groups
   diffexp$Significance <- case_when(
-    diffexp$padj < 0.05 & diffexp$log2FoldChange > 1 ~ "Upregulated",
-    diffexp$padj < 0.05 & diffexp$log2FoldChange < -1 ~ "Downregulated",
+    diffexp$padj < 0.05 & diffexp$log2FoldChange > lfc_high ~ "Upregulated",
+    diffexp$padj < 0.05 & diffexp$log2FoldChange < lfc_low ~ "Downregulated",
     TRUE ~ "Not Significant"
   )
 
-  # Sélection des top nb gènes
+  # Select top nb genes
   top_genes <- diffexp |>
     filter(Significance != "Not Significant") |>
     arrange(padj) |>
     slice_head(n = nb)
 
-  # Ajouter une colonne pour les labels
+  # Add label column
   diffexp$label <- ifelse(diffexp$gene %in% top_genes$gene, diffexp$gene, NA)
 
-  # Palette personnalisée depuis les paramètres
+  # Custom color palette
   color_palette <- c(
     "Upregulated" = color_up,
     "Downregulated" = color_down,
     "Not Significant" = color_ns
   )
 
-  # Définir les limites élargies
+  # Define expanded axis limits
   x_margin <- 2
   x_range <- range(diffexp$log2FoldChange, na.rm = TRUE)
   x_limits <- c(floor(x_range[1]) - x_margin, ceiling(x_range[2]) + x_margin)
@@ -67,7 +72,7 @@ plot_exp_volcano <- function(diffexp, nb = 10, title = "Volcano Plot of Differen
   y_range <- -log10(diffexp$padj)
   y_limit <- ceiling(max(y_range, na.rm = TRUE)) + 1
 
-  # Construction du graphique
+  # Build plot
   vplot <- ggplot(diffexp, aes(
     x = log2FoldChange,
     y = -log10(padj),
@@ -89,7 +94,7 @@ plot_exp_volcano <- function(diffexp, nb = 10, title = "Volcano Plot of Differen
       color = "gray"
     ) +
     geom_vline(
-      xintercept = c(-1, 1),
+      xintercept = c(lfc_low, lfc_high),
       linetype = "dashed",
       color = "gray"
     ) +

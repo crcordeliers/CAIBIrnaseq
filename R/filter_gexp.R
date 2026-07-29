@@ -30,9 +30,11 @@ filter_gexp <- function(exp_data, min_nsamp = 1, min_counts = 10) {
     stop("Error: `counts` assay not found in the SummarizedExperiment object.")
   }
 
+  counts <- as.matrix(counts)
   if (!is.numeric(counts)) {
     stop("Error: `counts` must be a numeric matrix.")
   }
+  SummarizedExperiment::assays(exp_data)[["counts"]] <- counts
 
   if (!is.numeric(min_nsamp) || min_nsamp < 1) {
     stop("Error: `min_nsamp` must be a positive integer.")

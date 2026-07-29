@@ -25,7 +25,7 @@
 #' @importFrom fgsea fgseaMultilevel
 #' @export
 pathwayFGSEA <- function(diffexp, pathwayCollection, seed = 0) {
-  # Validation des entrées
+  # Validate inputs
   if (!"log2FoldChange" %in% colnames(diffexp)) {
     stop("The 'diffexp' data frame must contain a 'log2FoldChange' column.")
   }
@@ -36,7 +36,6 @@ pathwayFGSEA <- function(diffexp, pathwayCollection, seed = 0) {
   if(!is.null(seed)) {
     set.seed(seed)
   }
-  browser()
   pheno <- diffexp |>
     rownames_to_column("symbol") |>
     mutate(stat = -log10(pvalue)*sign(log2FoldChange)) |>
