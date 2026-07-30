@@ -19,6 +19,12 @@
 #' @param point_size A numeric value specifying the size of the points in the plot. Default is `2`.
 #' @param ellipses if TRUE, `stat_ellipse` is added to the points, representing the 0.95 confidence-interval ellipse for each group in `color`.
 #' @param out A character string indicating the output type: `"plotly"` (interactive Plotly plot) or `"ggplot"` (static ggplot). Default is `"plotly"`.
+#' @param flag_outliers Logical. If `TRUE`, flags samples whose distance from the
+#' `pcs[1]`/`pcs[2]` centroid, in SD-standardized PC coordinates, exceeds `outlier_sd`
+#' standard deviations. Flagged samples (if any) are reported via `warning()`, along with
+#' example code to remove them; if none are flagged, a message says so. Default is `FALSE`.
+#' @param outlier_sd Numeric. The standard-deviation threshold used when `flag_outliers = TRUE`.
+#' Default is `3`.
 #'
 #' @return A PCA plot, either as a `plotly` interactive object or a `ggplot` static object, depending on the `out` parameter.
 #'
@@ -28,6 +34,7 @@
 #' @importFrom stringr str_c str_glue
 #' @importFrom S4Vectors metadata
 #' @importFrom fs path_dir
+#' @importFrom stats sd
 #'
 #' @export
 plot_pca <- function(exp_data,
@@ -39,7 +46,9 @@ plot_pca <- function(exp_data,
                      id_name = "sample_id",
                      ellipses = FALSE,
                      point_size = 2,
-                     out = c("plotly", "ggplot")[1]) {
+                     out = c("plotly", "ggplot")[1],
+                     flag_outliers = FALSE,
+                     outlier_sd = 3) {
 
   if (is.null(metadata(exp_data)[[res_name]])) {
     stop("PCA results are missing. Please run `pca_gexp` before plotting.")
@@ -55,6 +64,28 @@ plot_pca <- function(exp_data,
   PCb <- paste0("PC", pcs[2])
 
   plot_df <- left_join(plot_df, annotation, by = id_name)
+
+  if (flag_outliers) {
+    pc_a <- plot_df[[PCa]]
+    pc_b <- plot_df[[PCb]]
+    z_a <- (pc_a - mean(pc_a)) / sd(pc_a)
+    z_b <- (pc_b - mean(pc_b)) / sd(pc_b)
+    centroid_dist <- sqrt(z_a^2 + z_b^2)
+    outliers <- plot_df[[id_name]][centroid_dist > outlier_sd]
+
+    if (length(outliers) > 0) {
+      outliers_vec <- paste0('"', outliers, '"', collapse = ", ")
+      warning(
+        length(outliers), " sample(s) flagged as PCA outliers (> ", outlier_sd,
+        " SD from the ", PCa, "/", PCb, " centroid): ", paste(outliers, collapse = ", "),
+        "\n\nTo remove them:\n",
+        "exp_data <- exp_data[, !colData(exp_data)[[\"", id_name, "\"]] %in% c(", outliers_vec, ")]",
+        call. = FALSE
+      )
+    } else {
+      message("No samples were flagged as PCA outliers.")
+    }
+  }
 
   # Check if color/shape exist in colData
   if (!is.na(color) && !color %in% colnames(annotation)) {

@@ -16,13 +16,17 @@ pathwayORA(
 \item{diffexp_result}{A data frame of differential expression results,
 where row names correspond to gene identifiers.}
 
-\item{pathways}{A data frame with at least two columns: one indicating
-pathway names (e.g., 'pathway') and one with gene identifiers.}
+\item{pathways}{Either a data frame with at least two columns, one indicating pathway names
+(`pathway`) and one with gene identifiers (named by `id_col`), or a named list of character
+vectors (one gene-ID vector per pathway/signature), e.g. `list(MySignature = c("GENE1", "GENE2"))`.
+The list form lets custom gene signatures be tested the same way as an MSigDB collection, and
+ignores `id_col`.}
 
 \item{direction}{either "up" or "down". ORA takes only "up" or "down"-regulated
 genes to do it's overrepresentation analysis.}
 
-\item{id_col}{Character. The column name in `pathways` that matches gene identifiers in `diffexp_result`.}
+\item{id_col}{Character. The column name in `pathways` that matches gene identifiers in
+`diffexp_result`. Only used when `pathways` is a data frame.}
 
 \item{pcutoff}{adjusted p-value to be used to filter differentially expressed genes.}
 }

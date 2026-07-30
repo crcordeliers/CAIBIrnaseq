@@ -2,7 +2,7 @@ Package: CAIBIrnaseq
 Type: Package
 Title: Supervised and Unsupervised RNAseq(bulk) Analysis
 Description: This package provides functions to visualize and analyze RNA-seq results
-Version: 1.1.0
+Version: 1.1.1
 Authors@R: c(
     person("Nicolas", "Salaün", email = "nicolas.salaun@inserm.fr", role = "ctb"),
     person("Clarice", "Groeneveld", email = "clarice.groeneveld@inserm.fr", role = "cre"),
@@ -54,7 +54,9 @@ Imports:
     ggplotify,
     knitr,
     quarto,
-    matrixStats
+    matrixStats,
+    edgeR,
+    limma
 Remotes:
     github::cit-bioinfo/mMCP-counter,
     github::csgroen/ggheatmapper,
@@ -66,7 +68,9 @@ Remotes:
     bioc::3.21/ggtree,
     bioc::3.21/biomaRt,
     bioc::3.21/apeglm,
-    bioc::3.21/fgsea
+    bioc::3.21/fgsea,
+    bioc::3.21/edgeR,
+    bioc::3.21/limma
 VignetteBuilder:
     knitr,
     quarto

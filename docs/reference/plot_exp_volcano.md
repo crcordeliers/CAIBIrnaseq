@@ -11,11 +11,13 @@ plot_exp_volcano(
   diffexp,
   nb = 10,
   title = "Volcano Plot of Differential Expression",
-  lfc_threshold = c(-1, 1),
+  lfc_threshold = 1,
+  padj_threshold = 0.05,
   color_up = "#0072B2",
   color_down = "#D32F2F",
   color_ns = "gray80",
-  fname = NULL
+  fname = NULL,
+  out = c("ggplot", "plotly")[1]
 )
 ```
 
@@ -33,7 +35,19 @@ plot_exp_volcano(
 
 - lfc_threshold:
 
-  A numeric vector of length 2 giving the log2 fold change
+  A single non-negative number giving the absolute log2 fold change
+  cutoff used to call a gene up-/down-regulated (i.e.
+  \`\|log2FoldChange\| \> lfc_threshold\`). Default is \`1\` (a 2-fold
+  change), a fixed, dataset-independent effect-size bar - not a
+  data-adaptive value like a percentile of the observed fold changes,
+  since that would make the same real effect size count as "significant"
+  or not depending on the shape of each dataset's fold-change
+  distribution, breaking comparability across analyses.
+
+- padj_threshold:
+
+  A single number giving the adjusted p-value cutoff used to call a gene
+  significant. Default is \`0.05\`.
 
 - color_up:
 
@@ -47,6 +61,14 @@ plot_exp_volcano(
 
   Color used for non-significant genes (default is "gray80").
 
+- out:
+
+  A character string indicating the output type: \`"plotly"\`
+  (interactive Plotly plot) or \`"ggplot"\` (static ggplot). Default is
+  \`"ggplot"\`. Only affects the returned object; when \`fname\` is
+  provided, the static ggplot version is always what gets saved to file.
+
 ## Value
 
-A \`ggplot\` object representing the volcano plot.
+A volcano plot, either as a \`ggplot\` static object or a \`plotly\`
+interactive object, depending on the \`out\` parameter.

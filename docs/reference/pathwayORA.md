@@ -25,8 +25,12 @@ pathwayORA(
 
 - pathways:
 
-  A data frame with at least two columns: one indicating pathway names
-  (e.g., 'pathway') and one with gene identifiers.
+  Either a data frame with at least two columns, one indicating pathway
+  names (\`pathway\`) and one with gene identifiers (named by
+  \`id_col\`), or a named list of character vectors (one gene-ID vector
+  per pathway/signature), e.g. \`list(MySignature = c("GENE1",
+  "GENE2"))\`. The list form lets custom gene signatures be tested the
+  same way as an MSigDB collection, and ignores \`id_col\`.
 
 - direction:
 
@@ -36,7 +40,8 @@ pathwayORA(
 - id_col:
 
   Character. The column name in \`pathways\` that matches gene
-  identifiers in \`diffexp_result\`.
+  identifiers in \`diffexp_result\`. Only used when \`pathways\` is a
+  data frame.
 
 - pcutoff:
 

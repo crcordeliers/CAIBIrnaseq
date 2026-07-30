@@ -17,7 +17,7 @@ Metadata can be visualized via point color and shape."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">CAIBIrnaseq</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.0.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,7 +73,9 @@ Metadata can be visualized via point color and shape.</p>
 <span>  id_name <span class="op">=</span> <span class="st">"sample_id"</span>,</span>
 <span>  ellipses <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  point_size <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>  out <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"plotly"</span>, <span class="st">"ggplot"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
+<span>  out <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"plotly"</span>, <span class="st">"ggplot"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,</span>
+<span>  flag_outliers <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  outlier_sd <span class="op">=</span> <span class="fl">3</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -124,6 +126,18 @@ on the x and y axes. Default is `c(1, 2)`.</p></dd>
 
 <dt id="arg-out">out<a class="anchor" aria-label="anchor" href="#arg-out"></a></dt>
 <dd><p>A character string indicating the output type: `"plotly"` (interactive Plotly plot) or `"ggplot"` (static ggplot). Default is `"plotly"`.</p></dd>
+
+
+<dt id="arg-flag-outliers">flag_outliers<a class="anchor" aria-label="anchor" href="#arg-flag-outliers"></a></dt>
+<dd><p>Logical. If `TRUE`, flags samples whose distance from the
+`pcs[1]`/`pcs[2]` centroid, in SD-standardized PC coordinates, exceeds `outlier_sd`
+standard deviations. Flagged samples (if any) are reported via `warning()`, along with
+example code to remove them; if none are flagged, a message says so. Default is `FALSE`.</p></dd>
+
+
+<dt id="arg-outlier-sd">outlier_sd<a class="anchor" aria-label="anchor" href="#arg-outlier-sd"></a></dt>
+<dd><p>Numeric. The standard-deviation threshold used when `flag_outliers = TRUE`.
+Default is `3`.</p></dd>
 
 </dl></div>
     <div class="section level2">

@@ -3,13 +3,22 @@
 #' Computes pathway scores for a given expression dataset using specified scoring methods.
 #'
 #' @param exp_data A `SummarizedExperiment` object containing normalized expression data in the `assays(exp_data)$norm` slot.
-#' @param pathways A data frame with pathway definitions, containing at least two columns: `pathway` (pathway name) and either `gene_id` (Ensembl IDs) or `gene_symbol` (gene symbols).
+#' @param pathways Either a data frame with pathway definitions, containing at least two columns:
+#' `pathway` (pathway name) and either `gene_id` (Ensembl IDs) or `gene_symbol` (gene symbols); or
+#' a named list of character vectors (one gene-ID vector per pathway/signature), e.g.
+#' `list(MySignature = c("GENE1", "GENE2"))`. The list form lets custom gene signatures be scored
+#' the same way as an MSigDB collection - the gene IDs must match the rownames of
+#' `assays(exp_data)$norm` directly (no gene_id/gene_symbol auto-detection is performed).
 #' @param scoring_method A character string specifying the scoring method to use. Options are `"gsva"`, `"ssgsea"`, `"plage"`, or `"zscore"`. Default is `"gsva"`.
 #' @param min_genes An integer specifying the minimum number of genes required for a pathway to be considered. Default is `100`. Lower only if using targetted panel.
 #' @param verbose Logical; if `TRUE`, prints progress messages during computation. Default is `TRUE`.
 #'
 #' @details
-#' The function identifies the gene annotation used in the expression matrix (`gene_id` or `gene_symbol`) by matching row names of `assays(exp_data)$norm` to the `pathways` data frame.
+#' When `pathways` is a data frame, the function identifies the gene annotation used in the
+#' expression matrix (`gene_id` or `gene_symbol`) by matching row names of `assays(exp_data)$norm`
+#' to the `pathways` data frame. When `pathways` is a named list, its gene IDs are used as-is
+#' (matched directly against `rownames(assays(exp_data)$norm)`), which is the natural format for
+#' scoring custom signatures rather than an MSigDB collection.
 #' It then splits the pathways into gene sets and scores them using the specified method from the `GSVA` package.
 #'
 #' The available scoring methods are:
@@ -48,21 +57,31 @@ score_pathways <- function(exp_data, pathways,
   # Extract normalized expression matrix from the SummarizedExperiment object
   mat <- assays(exp_data)$norm
 
-  # Check the gene annotation in the pathways data
-  votes_gene_id <- sum(rownames(mat) %in% pathways$gene_id)
-  votes_gene_symbol <- sum(rownames(mat) %in% pathways$gene_symbol)
+  if (is.data.frame(pathways)) {
+    # Check the gene annotation in the pathways data
+    votes_gene_id <- sum(rownames(mat) %in% pathways$gene_id)
+    votes_gene_symbol <- sum(rownames(mat) %in% pathways$gene_symbol)
 
-  if (votes_gene_id >= votes_gene_symbol & votes_gene_id > min_genes) {
-    gene_annot <- "gene_id"
-  } else if (votes_gene_symbol > votes_gene_id & votes_gene_symbol > min_genes) {
-    gene_annot <- "gene_symbol"
+    if (votes_gene_id >= votes_gene_symbol & votes_gene_id > min_genes) {
+      gene_annot <- "gene_id"
+    } else if (votes_gene_symbol > votes_gene_id & votes_gene_symbol > min_genes) {
+      gene_annot <- "gene_symbol"
+    } else {
+      stop("`exp_data` uses unknown gene annotation.
+           Try either using ensembl_gene_id or gene_name/gene_symbol.")
+    }
+
+    gene_sets <- .as_gene_sets(pathways, id_col = gene_annot)
   } else {
-    stop("`exp_data` uses unknown gene annotation.
-         Try either using ensembl_gene_id or gene_name/gene_symbol.")
+    # Named list of custom gene signatures: use the gene IDs as-is.
+    gene_sets <- .as_gene_sets(pathways)
+    matched <- sum(rownames(mat) %in% unique(unlist(gene_sets, use.names = FALSE)))
+    if (matched < min_genes) {
+      stop("`exp_data` uses unknown gene annotation: fewer than `min_genes` (", min_genes, ") of ",
+           "`rownames(assays(exp_data)$norm)` match the gene IDs in `pathways`. Make sure they use ",
+           "the same gene ID type (e.g. both Ensembl IDs, or both gene symbols).")
+    }
   }
-
-  # Generate a list of gene sets based on the pathway annotations
-  gene_sets <- split(pathways[[gene_annot]], pathways$pathway)
 
   # Score pathways using the specified method
   if (scoring_method == "gsva") {

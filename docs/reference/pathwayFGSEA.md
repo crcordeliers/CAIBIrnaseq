@@ -19,8 +19,12 @@ pathwayFGSEA(diffexp, pathwayCollection, seed = 0)
 
 - pathwayCollection:
 
-  A data frame with at least two columns: one for pathway names
-  (\`pathway\`) and one for gene symbols (\`gene_symbol\`).
+  Either a data frame with at least two columns, one for pathway names
+  (\`pathway\`) and one for gene symbols (\`gene_symbol\`), or a named
+  list of character vectors (one gene-symbol vector per
+  pathway/signature), e.g. \`list(MySignature = c("GENE1", "GENE2"))\`.
+  The list form lets custom gene signatures be tested the same way as an
+  MSigDB collection.
 
 ## Value
 

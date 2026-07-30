@@ -7,30 +7,46 @@
 #'   - `log2FoldChange`: The log2 fold change values for each gene.
 #'   - `padj`: The adjusted p-value for each gene.
 #' @param nb The number of genes that have an annotation
-#' @param lfc_threshold A numeric vector of length 2 giving the log2 fold change
+#' @param lfc_threshold A single non-negative number giving the absolute log2 fold change
+#' cutoff used to call a gene up-/down-regulated (i.e. `|log2FoldChange| > lfc_threshold`).
+#' Default is `1` (a 2-fold change), a fixed, dataset-independent effect-size bar - not a
+#' data-adaptive value like a percentile of the observed fold changes, since that would make
+#' the same real effect size count as "significant" or not depending on the shape of each
+#' dataset's fold-change distribution, breaking comparability across analyses.
+#' @param padj_threshold A single number giving the adjusted p-value cutoff used to call a gene
+#' significant. Default is `0.05`.
 #' @param color_up Color used for upregulated genes (default is "#0072B2").
 #' @param color_down Color used for downregulated genes (default is "#D55E00").
 #' @param color_ns Color used for non-significant genes (default is "gray80").
+#' @param out A character string indicating the output type: `"plotly"` (interactive Plotly plot)
+#' or `"ggplot"` (static ggplot). Default is `"ggplot"`. Only affects the returned object; when
+#' `fname` is provided, the static ggplot version is always what gets saved to file.
 #'
-#' @return A `ggplot` object representing the volcano plot.
+#' @return A volcano plot, either as a `ggplot` static object or a `plotly` interactive object,
+#' depending on the `out` parameter.
 #'
-#' @importFrom ggplot2 ggplot aes geom_point geom_hline geom_vline labs theme_minimal element_text ggsave
-#' @importFrom ggrepel geom_text_repel
+#' @importFrom ggplot2 ggplot aes geom_point geom_text geom_hline geom_vline labs theme_minimal element_text ggsave
 #' @importFrom dplyr filter arrange slice_head
 #' @importFrom forcats fct_rev
 #' @importFrom fs path_dir
+#' @importFrom plotly ggplotly
 #' @export
 #'
 plot_exp_volcano <- function(diffexp, nb = 10, title = "Volcano Plot of Differential Expression",
-                             lfc_threshold = c(-1, 1),
+                             lfc_threshold = 1,
+                             padj_threshold = 0.05,
                              color_up = "#0072B2",
                              color_down = "#D32F2F",
                              color_ns = "gray80",
-                             fname = NULL) {
+                             fname = NULL,
+                             out = c("ggplot", "plotly")[1]) {
   # Check required columns
   required_cols <- c("log2FoldChange", "padj")
   if (!all(required_cols %in% colnames(diffexp))) {
     stop("diffexp must contain columns: log2FoldChange and padj.")
+  }
+  if (length(lfc_threshold) != 1 || lfc_threshold < 0) {
+    stop("`lfc_threshold` must be a single non-negative number.")
   }
 
   # Handle gene names
@@ -38,13 +54,13 @@ plot_exp_volcano <- function(diffexp, nb = 10, title = "Volcano Plot of Differen
     diffexp$gene <- rownames(diffexp)
   }
 
-  lfc_low <- min(lfc_threshold)
-  lfc_high <- max(lfc_threshold)
+  lfc_low <- -lfc_threshold
+  lfc_high <- lfc_threshold
 
   # Define significance groups
   diffexp$Significance <- case_when(
-    diffexp$padj < 0.05 & diffexp$log2FoldChange > lfc_high ~ "Upregulated",
-    diffexp$padj < 0.05 & diffexp$log2FoldChange < lfc_low ~ "Downregulated",
+    diffexp$padj < padj_threshold & diffexp$log2FoldChange > lfc_high ~ "Upregulated",
+    diffexp$padj < padj_threshold & diffexp$log2FoldChange < lfc_low ~ "Downregulated",
     TRUE ~ "Not Significant"
   )
 
@@ -54,8 +70,15 @@ plot_exp_volcano <- function(diffexp, nb = 10, title = "Volcano Plot of Differen
     arrange(padj) |>
     slice_head(n = nb)
 
-  # Add label column
-  diffexp$label <- ifelse(diffexp$gene %in% top_genes$gene, diffexp$gene, NA)
+  # Label shown on-plot (via geom_text) for only the top `nb` genes
+  diffexp$repel_label <- ifelse(diffexp$gene %in% top_genes$gene, diffexp$gene, NA)
+
+  # Custom plotly hover text: gene name, then log2FC and padj rounded to 3 significant figures.
+  diffexp$hover_text <- paste0(
+    "Gene: ", diffexp$gene,
+    "<br>log2FC: ", signif(diffexp$log2FoldChange, 3),
+    "<br>padj: ", signif(diffexp$padj, 3)
+  )
 
   # Custom color palette
   color_palette <- c(
@@ -73,23 +96,26 @@ plot_exp_volcano <- function(diffexp, nb = 10, title = "Volcano Plot of Differen
   y_limit <- ceiling(max(y_range, na.rm = TRUE)) + 1
 
   # Build plot
+  # `text = hover_text` at the top level carries the custom plotly tooltip content without
+  # affecting the static plot, since no geom here consumes it as such - geom_text below uses
+  # its own `repel_label` (top `nb` genes only) instead. Plain geom_text (not geom_text_repel)
+  # is used because plotly doesn't support ggrepel geoms.
   vplot <- ggplot(diffexp, aes(
     x = log2FoldChange,
     y = -log10(padj),
-    color = Significance
+    color = Significance,
+    text = hover_text
   )) +
     geom_point(alpha = 0.7, size = 1.5) +
-    geom_text_repel(
-      aes(label = label),
+    geom_text(
+      aes(label = repel_label),
       size = 2.5,
       color = "black",
-      max.overlaps = 100,
-      box.padding = 0.4,
-      max.iter = 10000,
-      seed = 42
+      vjust = -0.8,
+      nudge_y = y_limit * 0.03
     ) +
     geom_hline(
-      yintercept = -log10(0.05),
+      yintercept = -log10(padj_threshold),
       linetype = "dashed",
       color = "gray"
     ) +
@@ -103,8 +129,8 @@ plot_exp_volcano <- function(diffexp, nb = 10, title = "Volcano Plot of Differen
     scale_y_continuous(limits = c(0, y_limit)) +
     labs(
       title = title,
-      x = expression(log[2]~Fold~Change),
-      y = expression(-log[10]~adjusted~italic(p)-value),
+      x = "log2 Fold Change",
+      y = "-log10 Adjusted p-value",
       color = "Regulation"
     ) +
     theme_minimal(base_size = 10) +
@@ -119,5 +145,9 @@ plot_exp_volcano <- function(diffexp, nb = 10, title = "Volcano Plot of Differen
     ggsave(fname, vplot)
   }
 
-  return(vplot)
+  if (out == "plotly") {
+    return(ggplotly(vplot, tooltip = "text"))
+  } else {
+    return(vplot)
+  }
 }

@@ -10,8 +10,10 @@ pathwayFGSEA(diffexp, pathwayCollection, seed = 0)
 \item{diffexp}{A data frame of differential expression results, with row names as gene IDs
 and a `log2FoldChange` column used for ranking genes.}
 
-\item{pathwayCollection}{A data frame with at least two columns: one for pathway names (`pathway`)
-and one for gene symbols (`gene_symbol`).}
+\item{pathwayCollection}{Either a data frame with at least two columns, one for pathway names
+(`pathway`) and one for gene symbols (`gene_symbol`), or a named list of character vectors
+(one gene-symbol vector per pathway/signature), e.g. `list(MySignature = c("GENE1", "GENE2"))`.
+The list form lets custom gene signatures be tested the same way as an MSigDB collection.}
 }
 \value{
 A data frame returned by `fgseaMultilevel()`, including columns such as:

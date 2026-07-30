@@ -15,7 +15,12 @@ score_pathways(
 \arguments{
 \item{exp_data}{A `SummarizedExperiment` object containing normalized expression data in the `assays(exp_data)$norm` slot.}
 
-\item{pathways}{A data frame with pathway definitions, containing at least two columns: `pathway` (pathway name) and either `gene_id` (Ensembl IDs) or `gene_symbol` (gene symbols).}
+\item{pathways}{Either a data frame with pathway definitions, containing at least two columns:
+`pathway` (pathway name) and either `gene_id` (Ensembl IDs) or `gene_symbol` (gene symbols); or
+a named list of character vectors (one gene-ID vector per pathway/signature), e.g.
+`list(MySignature = c("GENE1", "GENE2"))`. The list form lets custom gene signatures be scored
+the same way as an MSigDB collection - the gene IDs must match the rownames of
+`assays(exp_data)$norm` directly (no gene_id/gene_symbol auto-detection is performed).}
 
 \item{scoring_method}{A character string specifying the scoring method to use. Options are `"gsva"`, `"ssgsea"`, `"plage"`, or `"zscore"`. Default is `"gsva"`.}
 
@@ -30,7 +35,11 @@ A data frame of pathway scores, with pathways as row names and samples as column
 Computes pathway scores for a given expression dataset using specified scoring methods.
 }
 \details{
-The function identifies the gene annotation used in the expression matrix (`gene_id` or `gene_symbol`) by matching row names of `assays(exp_data)$norm` to the `pathways` data frame.
+When `pathways` is a data frame, the function identifies the gene annotation used in the
+expression matrix (`gene_id` or `gene_symbol`) by matching row names of `assays(exp_data)$norm`
+to the `pathways` data frame. When `pathways` is a named list, its gene IDs are used as-is
+(matched directly against `rownames(assays(exp_data)$norm)`), which is the natural format for
+scoring custom signatures rather than an MSigDB collection.
 It then splits the pathways into gene sets and scores them using the specified method from the `GSVA` package.
 
 The available scoring methods are:

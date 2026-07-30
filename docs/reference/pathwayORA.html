@@ -15,7 +15,7 @@ on a list of differentially expressed genes against a set of predefined pathways
 
     <a class="navbar-brand me-2" href="../index.html">CAIBIrnaseq</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.0.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -79,8 +79,11 @@ where row names correspond to gene identifiers.</p></dd>
 
 
 <dt id="arg-pathways">pathways<a class="anchor" aria-label="anchor" href="#arg-pathways"></a></dt>
-<dd><p>A data frame with at least two columns: one indicating
-pathway names (e.g., 'pathway') and one with gene identifiers.</p></dd>
+<dd><p>Either a data frame with at least two columns, one indicating pathway names
+(`pathway`) and one with gene identifiers (named by `id_col`), or a named list of character
+vectors (one gene-ID vector per pathway/signature), e.g. `list(MySignature = c("GENE1", "GENE2"))`.
+The list form lets custom gene signatures be tested the same way as an MSigDB collection, and
+ignores `id_col`.</p></dd>
 
 
 <dt id="arg-direction">direction<a class="anchor" aria-label="anchor" href="#arg-direction"></a></dt>
@@ -89,7 +92,8 @@ genes to do it's overrepresentation analysis.</p></dd>
 
 
 <dt id="arg-id-col">id_col<a class="anchor" aria-label="anchor" href="#arg-id-col"></a></dt>
-<dd><p>Character. The column name in `pathways` that matches gene identifiers in `diffexp_result`.</p></dd>
+<dd><p>Character. The column name in `pathways` that matches gene identifiers in
+`diffexp_result`. Only used when `pathways` is a data frame.</p></dd>
 
 
 <dt id="arg-pcutoff">pcutoff<a class="anchor" aria-label="anchor" href="#arg-pcutoff"></a></dt>

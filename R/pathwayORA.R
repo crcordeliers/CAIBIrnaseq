@@ -6,9 +6,13 @@
 #'
 #' @param diffexp_result A data frame of differential expression results,
 #' where row names correspond to gene identifiers.
-#' @param pathways A data frame with at least two columns: one indicating
-#' pathway names (e.g., 'pathway') and one with gene identifiers.
-#' @param id_col Character. The column name in `pathways` that matches gene identifiers in `diffexp_result`.
+#' @param pathways Either a data frame with at least two columns, one indicating pathway names
+#' (`pathway`) and one with gene identifiers (named by `id_col`), or a named list of character
+#' vectors (one gene-ID vector per pathway/signature), e.g. `list(MySignature = c("GENE1", "GENE2"))`.
+#' The list form lets custom gene signatures be tested the same way as an MSigDB collection, and
+#' ignores `id_col`.
+#' @param id_col Character. The column name in `pathways` that matches gene identifiers in
+#' `diffexp_result`. Only used when `pathways` is a data frame.
 #' @param pcutoff adjusted p-value to be used to filter differentially expressed genes.
 #' @param direction either "up" or "down". ORA takes only "up" or "down"-regulated
 #' genes to do it's overrepresentation analysis.
@@ -39,8 +43,11 @@ pathwayORA <- function(diffexp_result, pathways,
 
   message("--- Running Overrepresentation Analysis")
 
+  gene_sets <- .as_gene_sets(pathways, id_col = id_col)
+  all_pathway_genes <- unique(unlist(gene_sets, use.names = FALSE))
+
   gene_ids <- rownames(diffexp_result)
-  gene_ids <- gene_ids[gene_ids %in% pathways[[id_col]]]
+  gene_ids <- gene_ids[gene_ids %in% all_pathway_genes]
 
   if (length(gene_ids) == 0) {
     stop("`exp_data` uses unknown gene annotation.
@@ -64,12 +71,9 @@ pathwayORA <- function(diffexp_result, pathways,
   }
 
 
-  # Generate gene set lists
-  gene_sets <- split(pathways[[id_col]], pathways$pathway)
-
   # Universe size
-  univ <- length(unique(pathways[[id_col]]))
-  gene_ids_filtered <- intersect(gene_ids, unique(pathways[[id_col]]))
+  univ <- length(all_pathway_genes)
+  gene_ids_filtered <- intersect(gene_ids, all_pathway_genes)
 
   # Perform Over-representation Analysis
   enrich_res <- lapply(names(gene_sets), function(id) {
