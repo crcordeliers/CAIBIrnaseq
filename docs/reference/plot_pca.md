@@ -18,7 +18,9 @@ plot_pca(
   id_name = "sample_id",
   ellipses = FALSE,
   point_size = 2,
-  out = c("plotly", "ggplot")[1]
+  out = c("plotly", "ggplot")[1],
+  flag_outliers = FALSE,
+  outlier_sd = 3
 )
 ```
 
@@ -77,6 +79,19 @@ plot_pca(
   A character string indicating the output type: \`"plotly"\`
   (interactive Plotly plot) or \`"ggplot"\` (static ggplot). Default is
   \`"plotly"\`.
+
+- flag_outliers:
+
+  Logical. If \`TRUE\`, flags samples whose distance from the
+  \`pcs\[1\]\`/\`pcs\[2\]\` centroid, in SD-standardized PC coordinates,
+  exceeds \`outlier_sd\` standard deviations. Flagged samples (if any)
+  are reported via \`warning()\`, along with example code to remove
+  them; if none are flagged, a message says so. Default is \`FALSE\`.
+
+- outlier_sd:
+
+  Numeric. The standard-deviation threshold used when \`flag_outliers =
+  TRUE\`. Default is \`3\`.
 
 ## Value
 

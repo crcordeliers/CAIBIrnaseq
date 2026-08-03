@@ -21,8 +21,11 @@ pathwayAnalysis(
 
 - pathways:
 
-  A data frame containing pathway information, with columns for pathways
-  and associated genes.
+  Either a data frame containing pathway information, with columns for
+  pathways and associated genes, or a named list of character vectors
+  (one gene-ID vector per pathway/signature), e.g. \`list(MySignature =
+  c("GENE1", "GENE2"))\`. The list form lets custom gene signatures be
+  tested/scored the same way as an MSigDB collection.
 
 - method:
 
@@ -33,7 +36,8 @@ pathwayAnalysis(
 - id_col:
 
   A string specifying the column in the \`pathways\` data frame that
-  contains gene identifiers. Default is \`"gene_symbol"\`.
+  contains gene identifiers. Default is \`"gene_symbol"\`. Only used
+  when \`pathways\` is a data frame.
 
 - pcutoff:
 
@@ -58,8 +62,9 @@ names, p-values, adjusted p-values, and other relevant statistics.
 ## Details
 
 This function allows users to perform pathway enrichment analysis using
-either ORA or FGSEA. The \`pathways\` input should include a column
-specifying gene identifiers and a column specifying pathway names.
+either ORA or FGSEA. The \`pathways\` input should either be a data
+frame including a column specifying gene identifiers and a column
+specifying pathway names, or a named list of gene-ID vectors.
 
 \- \*\*ORA\*\*: Identifies pathways over-represented in the provided
 gene set. - \*\*FGSEA\*\*: Identifies pathways using a ranked list of

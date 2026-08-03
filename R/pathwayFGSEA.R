@@ -7,8 +7,10 @@
 #' @param diffexp A data frame of differential expression results, with row names as gene IDs
 #' and a `log2FoldChange` column used for ranking genes.
 #'
-#' @param pathwayCollection A data frame with at least two columns: one for pathway names (`pathway`)
-#' and one for gene symbols (`gene_symbol`).
+#' @param pathwayCollection Either a data frame with at least two columns, one for pathway names
+#' (`pathway`) and one for gene symbols (`gene_symbol`), or a named list of character vectors
+#' (one gene-symbol vector per pathway/signature), e.g. `list(MySignature = c("GENE1", "GENE2"))`.
+#' The list form lets custom gene signatures be tested the same way as an MSigDB collection.
 #'
 #' @return A data frame returned by `fgseaMultilevel()`, including columns such as:
 #' \describe{
@@ -20,7 +22,7 @@
 #'   \item{leadingEdge}{Vector of leading-edge genes}
 #' }
 #'
-#' @importFrom dplyr arrange desc mutate pull
+#' @importFrom dplyr arrange desc mutate pull filter
 #' @importFrom tibble rownames_to_column as_tibble
 #' @importFrom fgsea fgseaMultilevel
 #' @export
@@ -30,19 +32,21 @@ pathwayFGSEA <- function(diffexp, pathwayCollection, seed = 0) {
     stop("The 'diffexp' data frame must contain a 'log2FoldChange' column.")
   }
 
-  if (!all(c("pathway", "gene_symbol") %in% colnames(pathwayCollection))) {
-    stop("The 'pathwayCollection' data frame must contain 'pathway' and 'gene_symbol' columns.")
-  }
+  pathwayList <- .as_gene_sets(pathwayCollection, id_col = "gene_symbol")
+
   if(!is.null(seed)) {
     set.seed(seed)
   }
+  # Genes with NA pvalue/log2FoldChange (e.g. filtered out internally by DESeq2's
+  # independent filtering or Cook's-distance outlier detection) can't be ranked
+  # and are dropped rather than passed through as non-finite values.
   pheno <- diffexp |>
     rownames_to_column("symbol") |>
+    filter(!is.na(pvalue), !is.na(log2FoldChange)) |>
     mutate(stat = -log10(pvalue)*sign(log2FoldChange)) |>
+    filter(is.finite(stat)) |>
     arrange(stat, desc(stat)) |>
     pull(stat, symbol)
-
-  pathwayList <- split(pathwayCollection$gene_symbol, pathwayCollection$pathway)
 
   message("Running FGSEA analysis...")
 

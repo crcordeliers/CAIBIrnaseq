@@ -40,7 +40,7 @@
 ## Differential Expression Analysis
 
 - [`diffExpAnalysis()`](https://crcordeliers.github.io/CAIBIrnaseq/reference/diffExpAnalysis.md)
-  : Differential expression analysis (DESeq2 wrapper)
+  : Differential expression analysis (DESeq2 / limma-voom wrapper)
 - [`plot_exp_volcano()`](https://crcordeliers.github.io/CAIBIrnaseq/reference/plot_exp_volcano.md)
   : Plot Volcano Plot of Differential Expression Results
 - [`plot_exp_boxplot()`](https://crcordeliers.github.io/CAIBIrnaseq/reference/plot_exp_boxplot.md)

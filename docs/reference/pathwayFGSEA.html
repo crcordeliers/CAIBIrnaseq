@@ -15,7 +15,7 @@ based on a ranked list of differentially expressed genes and a collection of pat
 
     <a class="navbar-brand me-2" href="../index.html">CAIBIrnaseq</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.0.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,8 +73,10 @@ and a `log2FoldChange` column used for ranking genes.</p></dd>
 
 
 <dt id="arg-pathwaycollection">pathwayCollection<a class="anchor" aria-label="anchor" href="#arg-pathwaycollection"></a></dt>
-<dd><p>A data frame with at least two columns: one for pathway names (`pathway`)
-and one for gene symbols (`gene_symbol`).</p></dd>
+<dd><p>Either a data frame with at least two columns, one for pathway names
+(`pathway`) and one for gene symbols (`gene_symbol`), or a named list of character vectors
+(one gene-symbol vector per pathway/signature), e.g. `list(MySignature = c("GENE1", "GENE2"))`.
+The list form lets custom gene signatures be tested the same way as an MSigDB collection.</p></dd>
 
 </dl></div>
     <div class="section level2">

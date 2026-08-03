@@ -14,13 +14,13 @@ Source:
 [`DESCRIPTION`](https://github.com/crcordeliers/CAIBIrnaseq.git/blob/HEAD/DESCRIPTION)
 
 Witz C (2026). *CAIBIrnaseq: Supervised and Unsupervised RNAseq(bulk)
-Analysis*. R package version 1.0.5,
+Analysis*. R package version 1.1.1,
 <https://crcordeliers.github.io/CAIBIrnaseq>.
 
     @Manual{,
       title = {CAIBIrnaseq: Supervised and Unsupervised RNAseq(bulk) Analysis},
       author = {Chloe Witz},
       year = {2026},
-      note = {R package version 1.0.5},
+      note = {R package version 1.1.1},
       url = {https://crcordeliers.github.io/CAIBIrnaseq},
     }

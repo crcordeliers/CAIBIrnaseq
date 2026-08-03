@@ -15,7 +15,7 @@ highlighting upregulated and downregulated genes, with labels for top significan
 
     <a class="navbar-brand me-2" href="../index.html">CAIBIrnaseq</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.0.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,11 +64,13 @@ highlighting upregulated and downregulated genes, with labels for top significan
 <span>  <span class="va">diffexp</span>,</span>
 <span>  nb <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  title <span class="op">=</span> <span class="st">"Volcano Plot of Differential Expression"</span>,</span>
-<span>  lfc_threshold <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>,</span>
+<span>  lfc_threshold <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  padj_threshold <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>  color_up <span class="op">=</span> <span class="st">"#0072B2"</span>,</span>
 <span>  color_down <span class="op">=</span> <span class="st">"#D32F2F"</span>,</span>
 <span>  color_ns <span class="op">=</span> <span class="st">"gray80"</span>,</span>
-<span>  fname <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  fname <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  out <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ggplot"</span>, <span class="st">"plotly"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -87,7 +89,17 @@ highlighting upregulated and downregulated genes, with labels for top significan
 
 
 <dt id="arg-lfc-threshold">lfc_threshold<a class="anchor" aria-label="anchor" href="#arg-lfc-threshold"></a></dt>
-<dd><p>A numeric vector of length 2 giving the log2 fold change</p></dd>
+<dd><p>A single non-negative number giving the absolute log2 fold change
+cutoff used to call a gene up-/down-regulated (i.e. `|log2FoldChange| &gt; lfc_threshold`).
+Default is `1` (a 2-fold change), a fixed, dataset-independent effect-size bar - not a
+data-adaptive value like a percentile of the observed fold changes, since that would make
+the same real effect size count as "significant" or not depending on the shape of each
+dataset's fold-change distribution, breaking comparability across analyses.</p></dd>
+
+
+<dt id="arg-padj-threshold">padj_threshold<a class="anchor" aria-label="anchor" href="#arg-padj-threshold"></a></dt>
+<dd><p>A single number giving the adjusted p-value cutoff used to call a gene
+significant. Default is `0.05`.</p></dd>
 
 
 <dt id="arg-color-up">color_up<a class="anchor" aria-label="anchor" href="#arg-color-up"></a></dt>
@@ -101,10 +113,17 @@ highlighting upregulated and downregulated genes, with labels for top significan
 <dt id="arg-color-ns">color_ns<a class="anchor" aria-label="anchor" href="#arg-color-ns"></a></dt>
 <dd><p>Color used for non-significant genes (default is "gray80").</p></dd>
 
+
+<dt id="arg-out">out<a class="anchor" aria-label="anchor" href="#arg-out"></a></dt>
+<dd><p>A character string indicating the output type: `"plotly"` (interactive Plotly plot)
+or `"ggplot"` (static ggplot). Default is `"ggplot"`. Only affects the returned object; when
+`fname` is provided, the static ggplot version is always what gets saved to file.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A `ggplot` object representing the volcano plot.</p>
+    <p>A volcano plot, either as a `ggplot` static object or a `plotly` interactive object,
+depending on the `out` parameter.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

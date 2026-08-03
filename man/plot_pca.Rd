@@ -14,7 +14,9 @@ plot_pca(
   id_name = "sample_id",
   ellipses = FALSE,
   point_size = 2,
-  out = c("plotly", "ggplot")[1]
+  out = c("plotly", "ggplot")[1],
+  flag_outliers = FALSE,
+  outlier_sd = 3
 )
 }
 \arguments{
@@ -42,6 +44,14 @@ on the x and y axes. Default is `c(1, 2)`.}
 \item{point_size}{A numeric value specifying the size of the points in the plot. Default is `2`.}
 
 \item{out}{A character string indicating the output type: `"plotly"` (interactive Plotly plot) or `"ggplot"` (static ggplot). Default is `"plotly"`.}
+
+\item{flag_outliers}{Logical. If `TRUE`, flags samples whose distance from the
+`pcs[1]`/`pcs[2]` centroid, in SD-standardized PC coordinates, exceeds `outlier_sd`
+standard deviations. Flagged samples (if any) are reported via `warning()`, along with
+example code to remove them; if none are flagged, a message says so. Default is `FALSE`.}
+
+\item{outlier_sd}{Numeric. The standard-deviation threshold used when `flag_outliers = TRUE`.
+Default is `3`.}
 }
 \value{
 A PCA plot, either as a `plotly` interactive object or a `ggplot` static object, depending on the `out` parameter.

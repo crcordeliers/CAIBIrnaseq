@@ -15,7 +15,7 @@ or Gene Set Enrichment Analysis (FGSEA) based on the provided gene set and pathw
 
     <a class="navbar-brand me-2" href="../index.html">CAIBIrnaseq</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.0.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -75,7 +75,10 @@ or Gene Set Enrichment Analysis (FGSEA) based on the provided gene set and pathw
 
 
 <dl><dt id="arg-pathways">pathways<a class="anchor" aria-label="anchor" href="#arg-pathways"></a></dt>
-<dd><p>A data frame containing pathway information, with columns for pathways and associated genes.</p></dd>
+<dd><p>Either a data frame containing pathway information, with columns for pathways
+and associated genes, or a named list of character vectors (one gene-ID vector per
+pathway/signature), e.g. `list(MySignature = c("GENE1", "GENE2"))`. The list form lets custom
+gene signatures be tested/scored the same way as an MSigDB collection.</p></dd>
 
 
 <dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
@@ -83,7 +86,7 @@ or Gene Set Enrichment Analysis (FGSEA) based on the provided gene set and pathw
 
 
 <dt id="arg-id-col">id_col<a class="anchor" aria-label="anchor" href="#arg-id-col"></a></dt>
-<dd><p>A string specifying the column in the `pathways` data frame that contains gene identifiers. Default is `"gene_symbol"`.</p></dd>
+<dd><p>A string specifying the column in the `pathways` data frame that contains gene identifiers. Default is `"gene_symbol"`. Only used when `pathways` is a data frame.</p></dd>
 
 
 <dt id="arg-pcutoff">pcutoff<a class="anchor" aria-label="anchor" href="#arg-pcutoff"></a></dt>
@@ -105,7 +108,8 @@ or Gene Set Enrichment Analysis (FGSEA) based on the provided gene set and pathw
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>This function allows users to perform pathway enrichment analysis using either ORA or FGSEA.
-The `pathways` input should include a column specifying gene identifiers and a column specifying pathway names.</p>
+The `pathways` input should either be a data frame including a column specifying gene
+identifiers and a column specifying pathway names, or a named list of gene-ID vectors.</p>
 <p>- **ORA**: Identifies pathways over-represented in the provided gene set.
 - **FGSEA**: Identifies pathways using a ranked list of genes based on differential expression statistics.</p>
 <p>The function dynamically calls internal implementations of ORA or FGSEA based on the `method` argument.</p>
