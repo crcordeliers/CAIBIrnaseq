@@ -301,7 +301,7 @@ We pick which pathways to plot here:
 
 ```{r}
 #| message: false
-boxplot_pathways <- c("GOBP RESPONSE TO HORMONE", "GOBP SMALL MOLECULE METABOLIC PROCESS", "GOBP POSITIVE REGULATION OF SYNAPSE ASSEMBLY")
+boxplot_pathways <- c("GOBP RESPONSE TO CORTICOSTEROID", "GOBP REGULATION OF SMALL MOLECULE METABOLIC PROCESS", "GOBP POSITIVE REGULATION OF SYNAPSE ASSEMBLY")
 
 boxplots <- lapply(boxplot_pathways, function(path) {
   lapply(group_var, function(group_var) {
@@ -362,7 +362,7 @@ We pick which pathways' genes to display:
 #| fig.height: 5
 #| fig.width: 8
 #| message: false
-pathway_genes <- c("GOBP SMALL MOLECULE METABOLIC PROCESS",
+pathway_genes <- c("GOBP REGULATION OF SMALL MOLECULE METABOLIC PROCESS",
                    "GOBP POSITIVE REGULATION OF SYNAPSE ASSEMBLY")
 
 hms_path <- lapply(pathway_genes, function(path) {
