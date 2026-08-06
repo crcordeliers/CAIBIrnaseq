@@ -33,7 +33,7 @@
 
     <a class="navbar-brand me-2" href="index.html">CAIBIrnaseq</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.1.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -74,35 +74,39 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9"><p><img src="reference/figures/CAIBI.png" align="right" alt="" width="120"></p>
-<div class="section level2">
-<h2 id="id_-welcome-to-caibirnaseq">🎯 Welcome to CAIBIrnaseq<a class="anchor" aria-label="anchor" href="#id_-welcome-to-caibirnaseq"></a>
-</h2>
-<p><strong>CAIBIrnaseq</strong> is an R package designed to streamline, standardize, and reproduce key steps of gene expression analysis from RNA-seq data. Developed by the <strong>CAIBI platform team</strong>, it integrates powerful tools for:</p>
+<div class="section level1">
+<div class="page-header"><h1 id="caibirnaseq">CAIBIrnaseq<a class="anchor" aria-label="anchor" href="#caibirnaseq"></a>
+</h1></div>
+<p><strong>CAIBIrnaseq</strong> is an R package for streamlining, standardizing, and reproducing key steps of RNA-seq gene expression analysis. Developed by the <strong>CAIBI platform team</strong>, it covers the full workflow from raw counts to biological interpretation:</p>
 <ul>
 <li>
 <strong>Preprocessing</strong> raw expression data (TPM calculation, filtering, normalization, etc.)</li>
 <li>
 <strong>Exploratory data analysis</strong> (PCA, clustering, heatmaps)</li>
 <li>
-<strong>Differential expression analysis</strong> (DESeq2 and visualization of DE genes)</li>
+<strong>Differential expression analysis</strong> (DESeq2 or limma-voom, with visualization of DE genes)</li>
 <li>
 <strong>Functional and pathway analysis</strong> (FGSEA, ORA, PROGENy scoring)</li>
 <li>
 <strong>Tumor microenvironment investigation</strong> (MCPcounter, cell-type signatures)</li>
 </ul>
+<p>Whether you’re running a supervised or unsupervised RNA-seq analysis, CAIBIrnaseq provides robust, reusable methods for interpreting gene expression data.</p>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># If not already installed</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Install from GitHub</span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"crcordeliers/CAIBIrnaseq"</span>, dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="quick-installation">Quick Installation<a class="anchor" aria-label="anchor" href="#quick-installation"></a>
+<h2 id="getting-started">Getting started<a class="anchor" aria-label="anchor" href="#getting-started"></a>
 </h2>
-<p>In RStudio, try running these command lines :</p>
-<pre><code><span><span class="co"># If not already installed</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Installation from Github :</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/install-deprecated.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"crcordeliers/CAIBIrnaseq"</span>, dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre>
-<p>If you have any problems, more informations about installation are available on our package website : <a href="https://crcordeliers.github.io/CAIBIrnaseq/" class="uri">https://crcordeliers.github.io/CAIBIrnaseq/</a></p>
-<p><strong>We hope this will help you in your projects !!!</strong></p>
+<p>The package website has the full function reference and worked examples for both supervised and unsupervised RNA-seq analysis: <a href="https://crcordeliers.github.io/CAIBIrnaseq/" class="uri">https://crcordeliers.github.io/CAIBIrnaseq/</a></p>
+<p>If you run into any issues, please <a href="https://github.com/crcordeliers/CAIBIrnaseq/issues" class="external-link">open an issue</a> on GitHub.</p>
+</div>
 </div>
 
   </main><aside class="col-md-3"><div class="links">

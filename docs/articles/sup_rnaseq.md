@@ -27,39 +27,10 @@ library(tidyverse)
 library(patchwork)
 ```
 
-Before analysing the dataset, we define the variables with the names of
-the genes / pathways we want to analyse. This is not mandatory, but it
-can allow someone with limited coding experience to execute the notebook
-without changing the downstream code except for these variables.
-
-These variables will change in function of how your dataset is build and
-which type of data it is.
-
-## Parameters
-
-Code
-
-``` r
-annotation <- "dex"
-species <- "human"
-pathwayMethod <- "ora"  
-
-collections <- c("Hallmark", "GO:BP")
-
-boxplot_pathways <- c("GOBP RESPONSE TO HORMONE", "GOBP SMALL MOLECULE METABOLIC PROCESS", "GOBP POSITIVE REGULATION OF SYNAPSE ASSEMBLY")
-
-heatmap_genes <- list(
-  `Glucocorticoid response genes` = c("FKBP5", "TSC22D3", "PER1", "ZBTB16"),
-  `Anti-inflammatory genes`  = c("DUSP1", "SOCS1", "MT2A"))
-
-pathway_genes <- c("GOBP SMALL MOLECULE METABOLIC PROCESS", 
-                   "GOBP POSITIVE REGULATION OF SYNAPSE ASSEMBLY")
-
-heatmap_pathways <- c("GOBP RESPONSE TO HORMONE", "GOBP SMALL MOLECULE METABOLIC PROCESS", "GOBP POSITIVE REGULATION OF SYNAPSE ASSEMBLY")
-```
-
-Remember to come back in this cell to modify the genes, pathways you are
-interested in studying.
+As you go through the notebook, you’ll define a few variables along the
+way (gene/pathway names, grouping variables, etc.) right before the step
+that uses them, so you can adapt each one to your own dataset without
+hunting through the surrounding code.
 
 ## Load data
 
@@ -188,12 +159,19 @@ exp_data <- normalize_gexp(exp_data)
 the dataset. These patterns help explore similarities or differences
 among samples based on gene expression.
 
+We also define the grouping variable of interest here — the column in
+`colData` representing our main condition of interest. We’ll reuse it
+throughout the analysis: to color the PCA, as the design variable for
+differential expression, and as an annotation track for heatmaps and
+boxplots.
+
 Code
 
 ``` r
+group_var <- "dex"
+
 metadata(exp_data)[["pca_res"]] <- pca_gexp(exp_data)
-annotations <- setdiff(annotation, c("exp_cluster", "path_cluster"))
-plot_pca(exp_data, color = annotation, ellipses = TRUE)
+plot_pca(exp_data, color = group_var, ellipses = TRUE)
 ```
 
     Warning: The following aesthetics were dropped during statistical transformation: label.
@@ -222,12 +200,12 @@ The differential expression `design` argument allows us to control which
 variables will be considered sources of biological (or technical)
 variation by the model.
 
-In our example, we say our only source of variation is the `annotation`
+In our example, we say our only source of variation is the `group_var`
 variable (which corresponds to the treatment column, `dex`).
 
 The `~` symbol may be added before the variable name to represent that
 it’s the independent variable (i.e. the differential expressed genes
-will depend on `annotation` *i.e.* `DEGs ~ annotation`.
+will depend on `group_var` *i.e.* `DEGs ~ group_var`.
 
 However, it is possible to make an additive model by adding variables
 together in the design (e.g. `design = "~ var1 + var2"`). This can be
@@ -272,7 +250,7 @@ Code
 
 ``` r
 colData(exp_data)$dex <- factor(colData(exp_data)$dex, levels = c("untrt", "trt"))
-diffexp <- diffExpAnalysis(exp_data, design = annotation, contrasts = "dex_trt_vs_untrt")
+diffexp <- diffExpAnalysis(exp_data, design = group_var, contrasts = "dex_trt_vs_untrt")
 ```
 
 ### Volcano plot
@@ -358,10 +336,10 @@ paper](https://academic.oup.com/bioinformatics/article/35/12/2084/5159452)).
 
 ## Pathway analysis
 
-Pathway collections available in the MSIGdb can be specified in the
-parameters. These pathways are scored and ranked by their variance in
-the data. These are the available collections (use `gs_subcollection` as
-name except for Hallmarks, which should be ‘H’).
+Pathway collections available in the MSIGdb can be specified below.
+These pathways are scored and ranked by their variance in the data.
+These are the available collections (use `gs_subcollection` as name
+except for Hallmarks, which should be ‘H’).
 
 Code
 
@@ -398,6 +376,37 @@ msigdbr::msigdbr_collections()
 | 2026.1.Hs  | C9            |                  | Computational Perturbation Signature |           62 |
 | 2026.1.Hs  | H             |                  | Hallmark                             |           50 |
 
+### Optional: Filtering pathways
+
+First, we specify which collections to pull from MSIGdb and the species
+(matching your dataset’s organism), then get the pathway collections
+using the `get_annotation_collection` function.
+
+Code
+
+``` r
+collections <- c("Hallmark", "GO:BP")
+species <- "human"
+
+pathways <- get_annotation_collection(collections,
+                                      species = species)
+```
+
+    -- Collecting Hallmark from MSigDB...
+
+    -- Collecting GO:BP from MSigDB...
+
+To ease the interpretation of the pathway enrichment outputs, we can
+filter the pathways to remove pathways that have a gene set that is too
+small (too specific) or too large (too general).
+
+Code
+
+``` r
+keep_pathways <- pathways |> count(pathway) |> dplyr::filter(n >= 30 & n <= 500) |> pull(pathway)
+pathways <- pathways |> filter(pathway %in% keep_pathways)
+```
+
 ### Pathway scores
 
 For scoring pathways from differential expression analysis results, we
@@ -421,9 +430,6 @@ propose two scoring methods:
 Code
 
 ``` r
-pathways <- get_annotation_collection(collections, 
-                                      species = species)
-
 pathwayResult <- pathwayAnalysis(diffexp, 
                               pathways = pathways,
                               method = "ora")
@@ -449,7 +455,7 @@ plot_pathway_dotplot(exp_data, score_name = "pathwayEnrichment_fgsea")
     ℹ The deprecated feature was likely used in the CAIBIrnaseq package.
       Please report the issue to the authors.
 
-[![](sup_rnaseq_files/figure-html/unnamed-chunk-10-1.png)](https://crcordeliers.github.io/CAIBIrnaseq/articles/sup_rnaseq_files/figure-html/unnamed-chunk-10-1.png)
+[![](sup_rnaseq_files/figure-html/unnamed-chunk-12-1.png)](https://crcordeliers.github.io/CAIBIrnaseq/articles/sup_rnaseq_files/figure-html/unnamed-chunk-12-1.png)
 
 ### Single-sample pathway scores
 
@@ -470,18 +476,22 @@ single-sample pathway scores using a variation called a “beeswarm” plot,
 that highlights all the points belonging to each group. We also add a
 line representing the mean per group and the results of a Wilcoxon test.
 
+We pick which pathways to plot here:
+
 Code
 
 ``` r
-boxplots <- lapply(heatmap_pathways, function(path) {
-  lapply(annotation, function(annotation) {
-    plt <- plot_pathway_boxplot(exp_data, 
+boxplot_pathways <- c("GOBP RESPONSE TO CORTICOSTEROID", "GOBP REGULATION OF SMALL MOLECULE METABOLIC PROCESS", "GOBP POSITIVE REGULATION OF SYNAPSE ASSEMBLY")
+
+boxplots <- lapply(boxplot_pathways, function(path) {
+  lapply(group_var, function(group_var) {
+    plt <- plot_pathway_boxplot(exp_data,
                              pathway = path,
-                   annotation = annotation, 
-                  color_var = annotation, 
+                   annotation = group_var,
+                  color_var = group_var,
                    pt_size = 2,
                    fname = str_glue(
-                     "results/sup/box_{path}_{annotation}.pdf"))
+                     "results/sup/box_{path}_{group_var}.pdf"))
   })
 }) |> flatten()
 ```
@@ -492,7 +502,7 @@ Code
 wrap_plots(boxplots, nrows = round(length(boxplots)/2), guides = "collect")
 ```
 
-[![](sup_rnaseq_files/figure-html/unnamed-chunk-13-1.png)](https://crcordeliers.github.io/CAIBIrnaseq/articles/sup_rnaseq_files/figure-html/unnamed-chunk-13-1.png)
+[![](sup_rnaseq_files/figure-html/unnamed-chunk-15-1.png)](https://crcordeliers.github.io/CAIBIrnaseq/articles/sup_rnaseq_files/figure-html/unnamed-chunk-15-1.png)
 
 ## Heatmap of genes
 
@@ -503,34 +513,45 @@ group their expression profiles in our samples. Annotation tracks
 highlight whether samples group logically according to the expression
 profile of selected genes.
 
+We pick the gene signatures we want to display, grouped by name:
+
 Code
 
 ``` r
+heatmap_genes <- list(
+  `Glucocorticoid response genes` = c("FKBP5", "TSC22D3", "PER1", "ZBTB16"),
+  `Anti-inflammatory genes`  = c("DUSP1", "SOCS1", "MT2A"))
+
 hms <- lapply(1:length(heatmap_genes), function(i) {
   genes <- heatmap_genes[[i]]
   name <- ifelse(is.null(names(heatmap_genes)), i, names(heatmap_genes)[i])
-  hm <- plot_exp_heatmap(exp_data, genes = genes, 
-                   annotations = annotation,
+  hm <- plot_exp_heatmap(exp_data, genes = genes,
+                   annotations = group_var,
                    show_rownames = ifelse(length(genes) <= 100, TRUE, FALSE),
                    hm_color_limits = c(-2,2),
                    show_dend_row = FALSE,
                    fname = str_glue("results/sup/hm_genes_{name}.pdf"))
 })
-wrap_plots(hms, ncol = 2)
+wrap_plots(hms, ncol = 2, guides = "collect")
 ```
 
-[![](sup_rnaseq_files/figure-html/unnamed-chunk-14-1.png)](https://crcordeliers.github.io/CAIBIrnaseq/articles/sup_rnaseq_files/figure-html/unnamed-chunk-14-1.png)
+[![](sup_rnaseq_files/figure-html/unnamed-chunk-16-1.png)](https://crcordeliers.github.io/CAIBIrnaseq/articles/sup_rnaseq_files/figure-html/unnamed-chunk-16-1.png)
 
 ### Pathway genes
+
+We pick which pathways’ genes to display:
 
 Code
 
 ``` r
+pathway_genes <- c("GOBP REGULATION OF SMALL MOLECULE METABOLIC PROCESS",
+                   "GOBP POSITIVE REGULATION OF SYNAPSE ASSEMBLY")
+
 hms_path <- lapply(pathway_genes, function(path) {
   path <- str_replace_all(path, " ", "_")
   genes <- pathways |> filter(pathway %in% path) |> pull(gene_symbol) |> unique()
   hm <- plot_exp_heatmap(exp_data, genes = genes,
-                   annotations = annotation,
+                   annotations = group_var,
                    show_rownames = ifelse(length(genes) <= 100, TRUE, FALSE),
                    hm_color_limits = c(-2,2),
                    show_dend_row = FALSE,
@@ -539,4 +560,4 @@ hms_path <- lapply(pathway_genes, function(path) {
 wrap_plots(hms_path, ncol = 2)
 ```
 
-[![](sup_rnaseq_files/figure-html/unnamed-chunk-15-1.png)](https://crcordeliers.github.io/CAIBIrnaseq/articles/sup_rnaseq_files/figure-html/unnamed-chunk-15-1.png)
+[![](sup_rnaseq_files/figure-html/unnamed-chunk-17-1.png)](https://crcordeliers.github.io/CAIBIrnaseq/articles/sup_rnaseq_files/figure-html/unnamed-chunk-17-1.png)

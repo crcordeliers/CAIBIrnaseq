@@ -58,23 +58,28 @@ You should have these variables (with these exact same names):
   - **gene_description** : A brief textual summary of the gene’s function or characteristics. 
   - **gene_biotype** : A classification of the gene based on its biological function or transcript type, such as protein_coding, lncRNA, or pseudogene.  
 
-If you are using the notebook that Clarice GROENEVELD created to convert a .xls file into a .RDS one, you can SKIP the next cell. 
-If not, you should look at how your dataset is defined. You might need to run some command line as the following ones: 
-
-``` {r}
+```{r}
 #| message: false
-library(biomaRt)
-
-rowData(exp_data)$gene_length_kb <- 
+rowData(exp_data)$gene_length_kb <-
   (rowData(exp_data)$gene_seq_end - rowData(exp_data)$gene_seq_start) / 1000
+```
+
+Some datasets come with gene metadata already attached. If gene metadata is missing, we can fetch it Ensembl's BioMart. This requires a live network connection; if BioMart is unreachable or incompatible with your `biomaRt` version, this chunk may fail to run.
+
+
+```{r}
+#| message: false
+#| eval: false
+
+library(biomaRt)
 
 mart <- useEnsembl("ensembl", dataset = "hsapiens_gene_ensembl")
 gene_ids <- rowData(exp_data)$gene_id
 
-annot <- getBM(attributes = c("ensembl_gene_id", "description"),
-               filters = "ensembl_gene_id",
-               values = gene_ids,
-               mart = mart)
+annot <- getBM(attributes = c("ensembl_gene_id", "gene_name"),
+                filters = "ensembl_gene_id",
+                values = gene_ids,
+                mart = mart)
 
 matched <- match(rowData(exp_data)$gene_id, annot$ensembl_gene_id)
 rowData(exp_data)$gene_description <- annot$description[matched]
@@ -167,10 +172,13 @@ We define the clustering parameters below (number of clusters, and optionally th
 
 ```{r}
 #| message: false
+exp_cluster <- data.frame(k = 2) # Number of clusters
+```
+
+```{r}
+#| message: false
 #| label: exp cluster
 #| eval: !expr is.list(exp_cluster)
-exp_cluster <- data.frame(k = 2) # Number of clusters
-
 exp_data <- cluster_exp(exp_data, k = exp_cluster$k, genes = exp_cluster$genes, n_pcs = 3)
 ```
 
@@ -238,8 +246,6 @@ msigdbr::msigdbr_collections() |>
 
 ```
 
-Filtering the pathways is an optional step to remove very small or very large pathways, which can be less informative or harder to interpret. Here, we keep pathways with between 30 and 500 genes.
-
 ```{r, warning=FALSE}
 #| message: false
 #| label: pathways
@@ -250,9 +256,6 @@ pathway_collections <- c("CGP", "CP", "CP:KEGG_LEGACY", "Hallmark") # See the ms
 
 pathways <- get_annotation_collection(pathway_collections,
                                       species = species)
-
-keep_pathways <- pathways |> count(pathway) |> dplyr::filter(n >= 30 & n <= 500) |> pull(pathway)
-pathways <- pathways |> filter(pathway %in% keep_pathways)
 ```
 
 Pathways are scored by default using the `GSVA` method but others are available (see: `? score_pathways`)

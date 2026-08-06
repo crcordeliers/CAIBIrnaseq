@@ -1,34 +1,31 @@
 <img src="man/figures/CAIBI.png" align="right" alt="" width="120" />
 
-## 🎯 Welcome to CAIBIrnaseq 
+# CAIBIrnaseq
 
-**CAIBIrnaseq** is an R package designed to streamline, standardize, and reproduce key steps of gene expression analysis from RNA-seq data. Developed by the **CAIBI platform team**, it integrates powerful tools for:
+**CAIBIrnaseq** is an R package for streamlining, standardizing, and reproducing key steps of RNA-seq gene expression analysis. Developed by the **CAIBI platform team**, it covers the full workflow from raw counts to biological interpretation:
 
-- **Preprocessing** raw expression data (TPM calculation, filtering, normalization, etc.)  
+- **Preprocessing** raw expression data (TPM calculation, filtering, normalization, etc.)
 - **Exploratory data analysis** (PCA, clustering, heatmaps)
-- **Differential expression analysis** (DESeq2 and visualization of DE genes)  
-- **Functional and pathway analysis** (FGSEA, ORA, PROGENy scoring)  
-- **Tumor microenvironment investigation** (MCPcounter, cell-type signatures)  
+- **Differential expression analysis** (DESeq2 or limma-voom, with visualization of DE genes)
+- **Functional and pathway analysis** (FGSEA, ORA, PROGENy scoring)
+- **Tumor microenvironment investigation** (MCPcounter, cell-type signatures)
 
-Whether you are performing supervised or unsupervised RNA-seq analysis, this package provides robust methods for interpreting gene expression data  
- 
+Whether you're running a supervised or unsupervised RNA-seq analysis, CAIBIrnaseq provides robust, reusable methods for interpreting gene expression data.
 
-## Quick Installation
-
-In RStudio, just try run these command lines :
+## Installation
 
 ```{r, eval = FALSE}
 # If not already installed
-install.packages("devtools")
-install.packages("BiocManager")
+install.packages("remotes")
 
-# Installation from Github : 
-devtools::install_github("crcordeliers/CAIBIrnaseq", dependencies = TRUE)
+# Install from GitHub
+remotes::install_github("crcordeliers/CAIBIrnaseq", dependencies = TRUE)
 ```
 
-If you have any problems, more informations about installation are available on our package website : 
-https://crcordeliers.github.io/CAIBIrnaseq/
+## Getting started
 
-**We hope this will help you in your projects !!!**
- 
+The package website has the full function reference and worked examples for both supervised and unsupervised RNA-seq analysis:
+<https://crcordeliers.github.io/CAIBIrnaseq/>
+
+If you run into any issues, please [open an issue](https://github.com/crcordeliers/CAIBIrnaseq/issues) on GitHub.
 
