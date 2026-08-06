@@ -15,11 +15,14 @@
 #' dataset's fold-change distribution, breaking comparability across analyses.
 #' @param padj_threshold A single number giving the adjusted p-value cutoff used to call a gene
 #' significant. Default is `0.05`.
+#' @param labelled_genes An optional character vector of gene names to label on the plot. 
+#' If provided, these genes will be labeled instead of the top `nb` genes.
 #' @param color_up Color used for upregulated genes (default is "#0072B2").
 #' @param color_down Color used for downregulated genes (default is "#D55E00").
 #' @param color_ns Color used for non-significant genes (default is "gray80").
+#' @param fname Optional file name (including path) to save the static ggplot version of the volcano plot.
 #' @param out A character string indicating the output type: `"plotly"` (interactive Plotly plot)
-#' or `"ggplot"` (static ggplot). Default is `"ggplot"`. Only affects the returned object; when
+#' or `"ggplot"` (static ggplot). Default is `"plotly"`. Only affects the returned object; when
 #' `fname` is provided, the static ggplot version is always what gets saved to file.
 #'
 #' @return A volcano plot, either as a `ggplot` static object or a `plotly` interactive object,
@@ -32,14 +35,16 @@
 #' @importFrom plotly ggplotly
 #' @export
 #'
-plot_exp_volcano <- function(diffexp, nb = 10, title = "Volcano Plot of Differential Expression",
+plot_exp_volcano <- function(diffexp, nb = 10, 
+                             title = "Volcano Plot of Differential Expression",
                              lfc_threshold = 1,
                              padj_threshold = 0.05,
+                             labelled_genes = NULL,
                              color_up = "#0072B2",
                              color_down = "#D32F2F",
                              color_ns = "gray80",
                              fname = NULL,
-                             out = c("ggplot", "plotly")[1]) {
+                             out = c("plotly", "ggplot")[1]) {
   # Check required columns
   required_cols <- c("log2FoldChange", "padj")
   if (!all(required_cols %in% colnames(diffexp))) {
@@ -64,14 +69,21 @@ plot_exp_volcano <- function(diffexp, nb = 10, title = "Volcano Plot of Differen
     TRUE ~ "Not Significant"
   )
 
-  # Select top nb genes
-  top_genes <- diffexp |>
-    filter(Significance != "Not Significant") |>
-    arrange(padj) |>
-    slice_head(n = nb)
+  if(is.null(labelled_genes)) {
+    # Select top nb genes
+    top_genes <- diffexp |>
+      filter(Significance != "Not Significant") |>
+      arrange(padj) |>
+      slice_head(n = nb)
 
-  # Label shown on-plot (via geom_text) for only the top `nb` genes
-  diffexp$repel_label <- ifelse(diffexp$gene %in% top_genes$gene, diffexp$gene, NA)
+    top_genes <-  top_genes$gene
+  } else {
+    # Use provided labelled_genes
+    top_genes <- intersect(labelled_genes, diffexp$gene)
+  }
+
+  # Label shown on-plot (via geom_text)
+  diffexp$repel_label <- ifelse(diffexp$gene %in% top_genes, diffexp$gene, NA)
 
   # Custom plotly hover text: gene name, then log2FC and padj rounded to 3 significant figures.
   diffexp$hover_text <- paste0(
@@ -96,10 +108,6 @@ plot_exp_volcano <- function(diffexp, nb = 10, title = "Volcano Plot of Differen
   y_limit <- ceiling(max(y_range, na.rm = TRUE)) + 1
 
   # Build plot
-  # `text = hover_text` at the top level carries the custom plotly tooltip content without
-  # affecting the static plot, since no geom here consumes it as such - geom_text below uses
-  # its own `repel_label` (top `nb` genes only) instead. Plain geom_text (not geom_text_repel)
-  # is used because plotly doesn't support ggrepel geoms.
   vplot <- ggplot(diffexp, aes(
     x = log2FoldChange,
     y = -log10(padj),
