@@ -2,7 +2,7 @@ Package: CAIBIrnaseq
 Type: Package
 Title: Supervised and Unsupervised RNAseq(bulk) Analysis
 Description: This package provides functions to visualize and analyze RNA-seq results
-Version: 1.1.2
+Version: 1.1.3
 Authors@R: c(
     person("Nicolas", "Salaün", email = "nicolas.salaun@inserm.fr", role = "ctb"),
     person("Clarice", "Groeneveld", email = "clarice.groeneveld@inserm.fr", role = "cre"),
