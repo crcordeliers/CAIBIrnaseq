@@ -23,10 +23,35 @@
 prep_exp_hm <- function(expData,
                         genes,
                         assay = "norm",
-                        gene_name = "gene_name") {
+                        gene_name = NULL) {
+  
   gene_annot <- SummarizedExperiment::rowData(expData)
+  if(is.null(gene_name)) {
+    if (!any(genes %in% rownames(expData))) {
+      stop("No `genes` were found in `expData` object. Please check your `genes` input and ensure they match the identifiers in `expData`.")
+    }
+    missing_genes <- genes[!genes %in% rownames(expData)]
+    if (length(missing_genes) > 0) {
+      warning(paste0("The following `genes` were not found in `expData` and will be ignored: ", paste(missing_genes, collapse = ", ")))
+    genes <- genes[genes %in% rownames(expData)]
+    }
+  } else {
+    if (!gene_name %in% colnames(gene_annot)) {
+      stop(paste0("The specified `gene_name` column '", gene_name, "' does not exist in the rowData of `expData`."))
+    }
+    keep_genes <- gene_annot |>
+      as_tibble() |>
+      filter(!!sym(gene_name) %in% genes) |>
+      pull(!!sym(gene_name))
+
+    missing_genes <- setdiff(genes, keep_genes)
+    if (length(missing_genes) > 0) {  
+      warning(paste0("The following `genes` were not found in the specified `gene_name` column and will be ignored: ", paste(missing_genes, collapse = ", ")))
+    }
+  }
+
   if (!any(genes %in% rownames(expData))) {
-    stop("No `genes` were found as `gene_name` in the `expData` object.")
+    stop("No `genes` were found in `expData` object. Please check your `genes` input and ensure they match the identifiers in `expData`.")
   } else if(!all(genes %in% gene_annot$gene_name)) {
     genes <- genes[genes %in% rownames(expData)]
   } else {
