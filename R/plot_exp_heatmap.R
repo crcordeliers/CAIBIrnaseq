@@ -6,7 +6,7 @@
 #' @param genes A character vector of gene identifiers (e.g., `gene_name`) to include in the heatmap.
 #' @param annotations A character vector of column names in the `colData` of `expData` to use for sample annotations in the heatmap. Default is `NA` (no annotations).
 #' @param assay A character string specifying the assay to use from `expData`. Default is `"norm"`.
-#' @param gene_name A character string specifying the gene identifier column in `rowData(expData)`. Default is `"gene_name"`.
+#' @param gene_name A character string specifying the gene identifier column in `rowData(expData)`. Default is `NULL` (use row names).
 #' @param annotation_prop A numeric value specifying the proportion of the heatmap height/width allocated to the annotation tracks. Default is `0.1`.
 #' @param annotation_colors A named list of colors for the annotation tracks. Default is `NULL` (automatic coloring).
 #' @param fname A character string specifying the file name for saving the heatmap. Default is `NULL` (no file saved).
@@ -24,7 +24,7 @@ plot_exp_heatmap <- function(expData,
                              genes,
                              annotations = NA,
                              assay = "norm",
-                             gene_name = "gene_name",
+                             gene_name = NULL,
                              annotation_prop = 0.1,
                              annotation_colors = NULL,
                              fname = NULL,
@@ -45,12 +45,6 @@ plot_exp_heatmap <- function(expData,
     stop(paste0("Assay '", assay, "' not found in expData. Available assays are: ",
                 paste(assayNames(expData), collapse = ", ")))
   }
-  if (!is.character(gene_name) || length(gene_name) != 1) {
-    stop("gene_name must be a single character string.")
-  }
-  if (!gene_name %in% colnames(rowData(expData))) {
-    stop(paste0("gene_name '", gene_name, "' not found in rowData(expData)."))
-  }
   if (!is.numeric(annotation_prop) || annotation_prop < 0 || annotation_prop > 1) {
     stop("annotation_prop must be a numeric value between 0 and 1.")
   }
@@ -67,6 +61,7 @@ plot_exp_heatmap <- function(expData,
     }
   }
 
+  colData(expData)$sample_id <- colnames(expData)
   # Prepare the heatmap data (gene expression values)
   hm_data <- prep_exp_hm(expData, genes, assay, gene_name)
 
