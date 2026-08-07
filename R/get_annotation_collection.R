@@ -32,27 +32,38 @@ get_annotation_collection <- function(collections, species = "Homo sapiens") {
     stop("`species` must be a single character string.")
   }
 
+  db_species <- case_when(
+    species == "Homo sapiens" ~ "HS",
+    species == "Mus musculus" ~ "MM",
+    TRUE ~ species
+  )
+
   # --- Get available collections from MSigDB ---
-  available_subcollections <- msigdbr::msigdbr_collections()$gs_subcollection
-  collections <- if_else(tolower(collections) == "hallmark", "H", collections)
-  all_collections <- unique(c(available_subcollections, "H"))
+  available_collections <- msigdbr::msigdbr_collections(db_species = db_species) |> pull(gs_collection_name, gs_subcollection)
+  names(available_collections)[available_collections == "Hallmark"] <- "H"
+
+
+  collections <- sapply(collections, function(collection) {
+    if(collection %in% available_collections) {
+      return(collection)
+    } else if (collection %in% names(available_collections)) {
+      new_collection_name <- available_collections[collection == names(available_collections)]
+      return(new_collection_name)
+    } else {
+      return(NA)
+    }
+  })
+
+  all_collections <- collections
 
   results <- lapply(collections, function(collection) {
     if (collection %in% all_collections) {
       message("-- Collecting ", collection, " from MSigDB...")
 
-      collection_key <- if (tolower(collection) == "hallmark") "H" else collection
-
-      msigdb <- msigdbr::msigdbr(species = species) |>
-        mutate(
-          gs_subcollection = if_else(
-            is.na(gs_subcollection) | gs_subcollection == "",
-            gs_collection, gs_subcollection
-          )
-        )
+      msigdb <- msigdbr::msigdbr(species = species, db_species = db_species)
 
       gene_sets <- msigdb |>
-        filter(gs_subcollection %in% collection_key | gs_collection %in% collection_key) |>
+        filter(gs_collection_name %in% collection | gs_collection %in% collection) |>
         mutate(collection = collection) |>
         rename(pathway = gs_name) |>
         select(collection, pathway, gene_id = ensembl_gene, gene_symbol)
