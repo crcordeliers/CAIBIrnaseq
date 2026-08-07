@@ -9,11 +9,12 @@
 #' @param gene_name A character string specifying the gene identifier column in `rowData(expData)`. Default is `NULL` (use row names).
 #' @param annotation_prop A numeric value specifying the proportion of the heatmap height/width allocated to the annotation tracks. Default is `0.1`.
 #' @param annotation_colors A named list of colors for the annotation tracks. Default is `NULL` (automatic coloring).
+#' @param scale Logical, whether to scale the expression values across genes (rows). Default is `TRUE`.
+#' @param center Logical, whether to center the expression values across genes (rows). Default is `TRUE`.
 #' @param fname A character string specifying the file name for saving the heatmap. Default is `NULL` (no file saved).
 #' @param fwidth Numeric, the width of the saved plot in inches. Default is `7`.
 #' @param fheight Numeric, the height of the saved plot in inches. Default is `5`.
-#' @param ... Additional arguments passed to the underlying heatmap plotting functions.
-#'
+#' @param ... Additional arguments passed to \link[ggheatmapper]{ggheatmap}.
 #' @return A `ggplot` object representing the heatmap.
 #'
 #' @importFrom SummarizedExperiment colData rowData assayNames
@@ -27,6 +28,8 @@ plot_exp_heatmap <- function(expData,
                              gene_name = NULL,
                              annotation_prop = 0.1,
                              annotation_colors = NULL,
+                             scale = TRUE,
+                             center = TRUE,
                              fname = NULL,
                              fwidth = 7,
                              fheight = 5,
@@ -73,8 +76,8 @@ plot_exp_heatmap <- function(expData,
   hm <- plt_heatmap(hm_data,
                     annotations = annotations,
                     colors_title = "Scaled gene exp",
-                    center = TRUE,
-                    scale = TRUE,
+                    center = center,
+                    scale = scale,
                     hm_colors = 'RdBu',
                     raster = TRUE,
                     track_prop = annotation_prop,
