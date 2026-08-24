@@ -33,6 +33,7 @@
 #' @importFrom forcats fct_rev
 #' @importFrom fs path_dir
 #' @importFrom plotly ggplotly
+#' @importFrom ggrepel geom_text_repel
 #' @export
 #'
 plot_exp_volcano <- function(diffexp, nb = 10, 
@@ -114,14 +115,28 @@ plot_exp_volcano <- function(diffexp, nb = 10,
     color = Significance,
     text = hover_text
   )) +
-    geom_point(alpha = 0.7, size = 1.5) +
-    geom_text(
-      aes(label = repel_label),
-      size = 2.5,
-      color = "black",
-      vjust = -0.8,
-      nudge_y = y_limit * 0.03
-    ) +
+    geom_point(alpha = 0.7, size = 1.5)
+
+  if (out == "ggplot") {
+    vplot <- vplot +
+      geom_text_repel(
+        aes(label = repel_label),
+        size = 2.5,
+        color = "black",
+        max.overlaps = Inf
+      )
+  } else {
+    vplot <- vplot +
+      geom_text(
+        aes(label = repel_label),
+        size = 2.5,
+        color = "black",
+        vjust = -0.8,
+        nudge_y = y_limit * 0.03
+      )
+  }
+
+  vplot <- vplot +
     geom_hline(
       yintercept = -log10(padj_threshold),
       linetype = "dashed",
