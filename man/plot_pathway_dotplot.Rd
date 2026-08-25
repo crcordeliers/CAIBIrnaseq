@@ -4,16 +4,27 @@
 \alias{plot_pathway_dotplot}
 \title{Plot Pathway Analysis Results as a Dot Plot}
 \usage{
-plot_pathway_dotplot(exp_data, score_name = NULL, top_n = 10, maxPval = 0.05)
+plot_pathway_dotplot(
+  exp_data,
+  pathways = NULL,
+  score_name = NULL,
+  top_n = 10,
+  padj_cutoff = 0.05,
+  title = NULL
+)
 }
 \arguments{
 \item{exp_data}{A `SummarizedExperiment` object containing pathway analysis results stored in the `metadata()`.}
+
+\item{pathways}{An optional character vector of pathway names to include in the plot. If `NULL`, the top pathways based on adjusted p-value will be used.}
 
 \item{score_name}{A character string indicating the metadata field where pathway results are stored.}
 
 \item{top_n}{Number of top pathways to display. Default is `10`.}
 
-\item{maxPval}{Maximum adjusted p-value for filtering pathways (if `usePval = TRUE`). Default is `0.05`.}
+\item{padj_cutoff}{Maximum adjusted p-value for a pathway to be included when `pathways` is not specified. Default is `0.05`.}
+
+\item{title}{An optional plot title. `NULL` (the default) omits the title.}
 }
 \value{
 A `ggplot2` dot plot object showing pathway enrichment.

@@ -4,12 +4,15 @@
 \alias{prep_exp_hm}
 \title{Prepare Gene Expression Data for Heatmap Visualization}
 \usage{
-prep_exp_hm(expData, genes, assay = "norm", gene_name = "gene_name")
+prep_exp_hm(expData, genes, assay = "norm", gene_name = NULL)
 }
 \arguments{
 \item{expData}{A `SummarizedExperiment` object.}
 
-\item{genes}{Character vector of gene names or IDs to extract.}
+\item{genes}{Either a character vector of gene names or IDs to extract, or
+a named list of such vectors (e.g. one per pathway) to produce a
+row-faceted heatmap, with each list element plotted as its own row group
+labeled by its name.}
 
 \item{assay}{Character. The name of the assay to use (default is "norm").}
 
@@ -20,7 +23,8 @@ A list containing:
 \describe{
   \item{table}{A data frame with expression values and sample annotations.}
   \item{colv}{Column variable to use as the x-axis (typically sample IDs).}
-  \item{rowv}{Row variable(s) corresponding to the genes.}
+  \item{rowv}{Row variable(s) corresponding to the genes: a plain vector,
+  or a named list of vectors when `genes` was a named list.}
 }
 }
 \description{

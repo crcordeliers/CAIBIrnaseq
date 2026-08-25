@@ -29,14 +29,17 @@ navbar:
     example:
       text: Examples
       menu:
-        - text: "Unsupervised analysis"
-          href: articles/unsup_rnaseq.html
-        - text: "Supervised analysis"
-          href: articles/sup_rnaseq.html
+        - text: "RNA-seq analysis walkthrough"
+          href: articles/rnaseq_analysis.html
         - text: "Comparing datasets"
           href: articles/venn.html
         - text: "Pathview"
           href: articles/pathview.html
+        - text: "---"
+        - text: "Archive: unsupervised analysis"
+          href: articles/archive/unsup_rnaseq.html
+        - text: "Archive: supervised analysis"
+          href: articles/archive/sup_rnaseq.html
     search:
       search: []
     github: ~
@@ -84,10 +87,16 @@ articles:
       - installation
   - title: "Examples"
     contents:
-      - unsup_rnaseq
-      - sup_rnaseq
+      - rnaseq_analysis
       - venn
       - pathview
+  - title: "Archive"
+    desc: >
+      Superseded by the RNA-seq analysis walkthrough above; kept here for
+      reference only.
+    contents:
+      - archive/unsup_rnaseq
+      - archive/sup_rnaseq
 reference:
   - title: "Preprocessing"
     contents:

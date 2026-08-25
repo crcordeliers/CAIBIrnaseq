@@ -7,6 +7,7 @@
 #'   - `log2FoldChange`: The log2 fold change values for each gene.
 #'   - `padj`: The adjusted p-value for each gene.
 #' @param nb The number of genes that have an annotation
+#' @param title An optional plot title. `NULL` (the default) omits the title.
 #' @param lfc_threshold A single non-negative number giving the absolute log2 fold change
 #' cutoff used to call a gene up-/down-regulated (i.e. `|log2FoldChange| > lfc_threshold`).
 #' Default is `1` (a 2-fold change), a fixed, dataset-independent effect-size bar - not a
@@ -33,10 +34,11 @@
 #' @importFrom forcats fct_rev
 #' @importFrom fs path_dir
 #' @importFrom plotly ggplotly
+#' @importFrom ggrepel geom_text_repel
 #' @export
 #'
-plot_exp_volcano <- function(diffexp, nb = 10, 
-                             title = "Volcano Plot of Differential Expression",
+plot_exp_volcano <- function(diffexp, nb = 10,
+                             title = NULL,
                              lfc_threshold = 1,
                              padj_threshold = 0.05,
                              labelled_genes = NULL,
@@ -114,14 +116,28 @@ plot_exp_volcano <- function(diffexp, nb = 10,
     color = Significance,
     text = hover_text
   )) +
-    geom_point(alpha = 0.7, size = 1.5) +
-    geom_text(
-      aes(label = repel_label),
-      size = 2.5,
-      color = "black",
-      vjust = -0.8,
-      nudge_y = y_limit * 0.03
-    ) +
+    geom_point(alpha = 0.7, size = 1.5)
+
+  if (out == "ggplot") {
+    vplot <- vplot +
+      geom_text_repel(
+        aes(label = repel_label),
+        size = 2.5,
+        color = "black",
+        max.overlaps = Inf
+      )
+  } else {
+    vplot <- vplot +
+      geom_text(
+        aes(label = repel_label),
+        size = 2.5,
+        color = "black",
+        vjust = -0.8,
+        nudge_y = y_limit * 0.03
+      )
+  }
+
+  vplot <- vplot +
     geom_hline(
       yintercept = -log10(padj_threshold),
       linetype = "dashed",
@@ -144,7 +160,6 @@ plot_exp_volcano <- function(diffexp, nb = 10,
     theme_minimal(base_size = 10) +
     theme(
       legend.position = "right",
-      legend.title = element_text(face = "bold"),
       plot.title = element_text(face = "bold", hjust = 0.5)
     )
 

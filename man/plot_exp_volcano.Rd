@@ -7,14 +7,15 @@
 plot_exp_volcano(
   diffexp,
   nb = 10,
-  title = "Volcano Plot of Differential Expression",
+  title = NULL,
   lfc_threshold = 1,
   padj_threshold = 0.05,
+  labelled_genes = NULL,
   color_up = "#0072B2",
   color_down = "#D32F2F",
   color_ns = "gray80",
   fname = NULL,
-  out = c("ggplot", "plotly")[1]
+  out = c("plotly", "ggplot")[1]
 )
 }
 \arguments{
@@ -23,6 +24,8 @@ plot_exp_volcano(
 - `padj`: The adjusted p-value for each gene.}
 
 \item{nb}{The number of genes that have an annotation}
+
+\item{title}{An optional plot title. `NULL` (the default) omits the title.}
 
 \item{lfc_threshold}{A single non-negative number giving the absolute log2 fold change
 cutoff used to call a gene up-/down-regulated (i.e. `|log2FoldChange| > lfc_threshold`).
@@ -34,14 +37,19 @@ dataset's fold-change distribution, breaking comparability across analyses.}
 \item{padj_threshold}{A single number giving the adjusted p-value cutoff used to call a gene
 significant. Default is `0.05`.}
 
+\item{labelled_genes}{An optional character vector of gene names to label on the plot. 
+If provided, these genes will be labeled instead of the top `nb` genes.}
+
 \item{color_up}{Color used for upregulated genes (default is "#0072B2").}
 
 \item{color_down}{Color used for downregulated genes (default is "#D55E00").}
 
 \item{color_ns}{Color used for non-significant genes (default is "gray80").}
 
+\item{fname}{Optional file name (including path) to save the static ggplot version of the volcano plot.}
+
 \item{out}{A character string indicating the output type: `"plotly"` (interactive Plotly plot)
-or `"ggplot"` (static ggplot). Default is `"ggplot"`. Only affects the returned object; when
+or `"ggplot"` (static ggplot). Default is `"plotly"`. Only affects the returned object; when
 `fname` is provided, the static ggplot version is always what gets saved to file.}
 }
 \value{
