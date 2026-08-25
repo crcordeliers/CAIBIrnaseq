@@ -3,7 +3,9 @@
 #' Generate a heatmap for gene expression data from a `SummarizedExperiment` object, with optional sample annotations and custom styling.
 #'
 #' @param expData A `SummarizedExperiment` object containing gene expression data.
-#' @param genes A character vector of gene identifiers (e.g., `gene_name`) to include in the heatmap.
+#' @param genes Either a character vector of gene identifiers (e.g., `gene_name`) to include
+#' in the heatmap, or a named list of such vectors (e.g. one per pathway or gene signature) to
+#' produce a row-faceted heatmap, with each list element shown as its own labeled row group.
 #' @param annotations A character vector of column names in the `colData` of `expData` to use for sample annotations in the heatmap. Default is `NA` (no annotations).
 #' @param assay A character string specifying the assay to use from `expData`. Default is `"norm"`.
 #' @param gene_name A character string specifying the gene identifier column in `rowData(expData)`. Default is `NULL` (use row names).
@@ -38,8 +40,11 @@ plot_exp_heatmap <- function(expData,
   if (!inherits(expData, "SummarizedExperiment")) {
     stop("expData must be a SummarizedExperiment object.")
   }
-  if (missing(genes) || !is.character(genes) || length(genes) == 0) {
-    stop("You must provide a non-empty character vector for genes.")
+  if (missing(genes) || length(genes) == 0 || !(is.character(genes) || is.list(genes))) {
+    stop("You must provide a non-empty character vector, or a named list of character vectors, for genes.")
+  }
+  if (is.list(genes) && (is.null(names(genes)) || any(names(genes) == ""))) {
+    stop("When `genes` is a list, every element must be named; the names are used as row-facet labels.")
   }
   if (!is.character(assay) || length(assay) != 1) {
     stop("assay must be a single character string.")

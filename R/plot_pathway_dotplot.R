@@ -6,7 +6,8 @@
 #' @param pathways An optional character vector of pathway names to include in the plot. If `NULL`, the top pathways based on adjusted p-value will be used.
 #' @param score_name A character string indicating the metadata field where pathway results are stored.
 #' @param top_n Number of top pathways to display. Default is `10`.
-#' @param maxPval Maximum adjusted p-value for filtering pathways (if `usePval = TRUE`). Default is `0.05`.
+#' @param padj_cutoff Maximum adjusted p-value for a pathway to be included when `pathways` is not specified. Default is `0.05`.
+#' @param title An optional plot title. `NULL` (the default) omits the title.
 #'
 #' @return A `ggplot2` dot plot object showing pathway enrichment.
 #'
@@ -20,7 +21,7 @@
 #' When `usePval = TRUE`, the plot will show -log10 adjusted p-values on the x-axis, colored by significance.
 #' When `usePval = FALSE`, the plot will rank and size pathways by gene ratio or enrichment size.
 #'
-#' @importFrom ggplot2 ggplot aes geom_point geom_segment geom_vline scale_x_continuous scale_color_gradient scale_fill_distiller scale_size_continuous scale_y_discrete ggtitle labs theme element_text element_blank element_line
+#' @importFrom ggplot2 ggplot aes geom_point geom_segment geom_vline scale_x_continuous scale_color_gradient scale_fill_distiller scale_size_continuous scale_y_discrete labs theme theme_minimal element_text element_blank element_line
 #' @importFrom dplyr arrange filter slice slice_head mutate rowwise ungroup case_when
 #' @importFrom scales pretty_breaks
 #' @importFrom stringr str_wrap str_replace_all
@@ -32,7 +33,8 @@ plot_pathway_dotplot <- function(exp_data,
                                  pathways = NULL,
                                  score_name = NULL,
                                  top_n = 10,
-                                 maxPval = 0.05) {
+                                 padj_cutoff = 0.05,
+                                 title = NULL) {
   
   if(is.null(score_name)) {
     scores <- names(metadata(exp_data))
@@ -58,7 +60,7 @@ plot_pathway_dotplot <- function(exp_data,
       message("No pathways specified. Using top ", top_n, " pathways based on adjusted p-value.")
       results <- results |>
         arrange(padj) |>
-        filter(padj < maxPval) |>
+        filter(padj < padj_cutoff) |>
         slice(1:top_n) |>
         rowwise() |>
         mutate(geneRatioNum = .fraction_to_decimal(geneRatio)) |>
@@ -90,7 +92,7 @@ plot_pathway_dotplot <- function(exp_data,
       message("No pathways specified. Using top ", top_n, " pathways based on adjusted p-value.")
       results <- results %>%
         arrange(padj) |>
-        filter(padj < maxPval) %>%
+        filter(padj < padj_cutoff) %>%
         slice(1:top_n) %>%
         arrange(NES) %>%
         mutate(
@@ -123,20 +125,17 @@ plot_pathway_dotplot <- function(exp_data,
       name = "Adjusted p-value",
       palette = "Reds", direction = 1,
       labels = function(x) signif(10^-x, 2),
-      limits = c(-log10(maxPval), max(results$logpadj, na.rm = TRUE))
+      limits = c(-log10(padj_cutoff), max(results$logpadj, na.rm = TRUE))
     ) +
     geom_segment(aes(xend = 0, yend = pathway), size = 0.5, color = "grey", linetype = "dotted") +
     geom_point(pch = 21, color = "black") +
     scale_size_continuous(range = c(2, 10)) +
     scale_y_discrete(labels = function(x) stringr::str_wrap(stringr::str_replace_all(x, "_", " "), width = 30)) +
-    ggtitle("Pathway Analysis") +
-    labs(y = "Pathway", size = "Gene Ratio") +
+    labs(title = title, y = "Pathway", size = "Gene Ratio") +
+    theme_minimal(base_size = 10) +
     theme(
-      plot.title = element_text(size = 12, face = "bold"),
-      axis.text.y = element_text(size = 10),
-      axis.text.x = element_text(size = 10, angle = 45, hjust = 1),
-      axis.title.x = element_text(size = 12),
-      axis.title.y = element_text(size = 12),
+      plot.title = element_text(face = "bold"),
+      axis.text = element_text(color = "black"),
       panel.background = element_blank(),
       panel.grid.major = element_line(colour = "gray90")
     )

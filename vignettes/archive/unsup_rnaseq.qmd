@@ -9,8 +9,12 @@ format:
     code-tools: true
     lightbox: true
 ---
-<img src="../man/figures/CAIBI.png" align="right" alt="" width="120" />
+<img src="../../man/figures/CAIBI.png" align="right" alt="" width="120" />
 
+> **Archived.** This notebook has been superseded by the consolidated
+> [RNA-seq Analysis Walkthrough](../rnaseq_analysis.html), which combines
+> the supervised and unsupervised workflows into a single narrative. It's
+> kept here for reference only and is no longer actively maintained.
 
 As with the supervised example, we are using an open dataset which is given by t
 he `airway` package.  It provides a gene expression dataset derived from 

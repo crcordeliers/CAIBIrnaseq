@@ -16,7 +16,7 @@
 #' @export
 #'
 #' @importFrom dplyr group_by summarize pull n
-#' @importFrom ggplot2 ggplot aes geom_boxplot theme_light stat_summary
+#' @importFrom ggplot2 ggplot aes geom_boxplot geom_violin theme_light stat_summary
 #' @importFrom ggbeeswarm geom_beeswarm
 #' @importFrom ggpubr stat_compare_means
 #' @importFrom rlang sym
@@ -33,7 +33,23 @@ plt_boxplot <- function(exp_df, gene, annotation,
     pull(count) |>
     max()
 
+  use_box <- largest_n > 10 & summary_type != "line" | summary_type == "box"
+
   plt <- ggplot(exp_df, aes(!!sym(annotation), !!sym(gene)))
+
+  # geom_violin needs at least 2 points per group to draw a density; below
+  # that it silently drops the group, so only skip it for singleton groups.
+  smallest_n <- exp_df |>
+    group_by(!!sym(annotation)) |>
+    summarize(count = n()) |>
+    pull(count) |>
+    min()
+
+  if (smallest_n >= 2) {
+    plt <- plt + geom_violin(aes(fill = !!sym(annotation)),
+                              color = "grey40", alpha = 0.25,
+                              trim = TRUE, show.legend = FALSE)
+  }
 
   # Add beeswarm
   if (!is.na(color_var)) {
@@ -43,8 +59,8 @@ plt_boxplot <- function(exp_df, gene, annotation,
   }
 
   # Add summary (boxplot or mean line)
-  if (largest_n > 10 & summary_type != "line" | summary_type == "box") {
-    plt <- plt + geom_boxplot(width = 0.05)
+  if (use_box) {
+    plt <- plt + geom_boxplot(width = 0.05, outlier.shape = NA)
   } else {
     plt <- plt + stat_summary(fun = mean, geom = "crossbar",
                                        fun.min = mean, fun.max = mean,

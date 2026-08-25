@@ -9,9 +9,11 @@ plot_exp_heatmap(
   genes,
   annotations = NA,
   assay = "norm",
-  gene_name = "gene_name",
+  gene_name = NULL,
   annotation_prop = 0.1,
   annotation_colors = NULL,
+  scale = TRUE,
+  center = TRUE,
   fname = NULL,
   fwidth = 7,
   fheight = 5,
@@ -21,17 +23,23 @@ plot_exp_heatmap(
 \arguments{
 \item{expData}{A `SummarizedExperiment` object containing gene expression data.}
 
-\item{genes}{A character vector of gene identifiers (e.g., `gene_name`) to include in the heatmap.}
+\item{genes}{Either a character vector of gene identifiers (e.g., `gene_name`) to include
+in the heatmap, or a named list of such vectors (e.g. one per pathway or gene signature) to
+produce a row-faceted heatmap, with each list element shown as its own labeled row group.}
 
 \item{annotations}{A character vector of column names in the `colData` of `expData` to use for sample annotations in the heatmap. Default is `NA` (no annotations).}
 
 \item{assay}{A character string specifying the assay to use from `expData`. Default is `"norm"`.}
 
-\item{gene_name}{A character string specifying the gene identifier column in `rowData(expData)`. Default is `"gene_name"`.}
+\item{gene_name}{A character string specifying the gene identifier column in `rowData(expData)`. Default is `NULL` (use row names).}
 
 \item{annotation_prop}{A numeric value specifying the proportion of the heatmap height/width allocated to the annotation tracks. Default is `0.1`.}
 
 \item{annotation_colors}{A named list of colors for the annotation tracks. Default is `NULL` (automatic coloring).}
+
+\item{scale}{Logical, whether to scale the expression values across genes (rows). Default is `TRUE`.}
+
+\item{center}{Logical, whether to center the expression values across genes (rows). Default is `TRUE`.}
 
 \item{fname}{A character string specifying the file name for saving the heatmap. Default is `NULL` (no file saved).}
 
@@ -39,7 +47,7 @@ plot_exp_heatmap(
 
 \item{fheight}{Numeric, the height of the saved plot in inches. Default is `5`.}
 
-\item{...}{Additional arguments passed to the underlying heatmap plotting functions.}
+\item{...}{Additional arguments passed to \link[ggheatmapper]{ggheatmap}.}
 }
 \value{
 A `ggplot` object representing the heatmap.

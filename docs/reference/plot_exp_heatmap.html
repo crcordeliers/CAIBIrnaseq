@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">CAIBIrnaseq</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.1.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -25,10 +25,12 @@
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">References</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-examples" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Examples</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-examples"><li><a class="dropdown-item" href="../articles/unsup_rnaseq.html">Unsupervised analysis</a></li>
-    <li><a class="dropdown-item" href="../articles/sup_rnaseq.html">Supervised analysis</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-examples"><li><a class="dropdown-item" href="../articles/rnaseq_analysis.html">RNA-seq analysis walkthrough</a></li>
     <li><a class="dropdown-item" href="../articles/venn.html">Comparing datasets</a></li>
     <li><a class="dropdown-item" href="../articles/pathview.html">Pathview</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="../articles/archive/unsup_rnaseq.html">Archive: unsupervised analysis</a></li>
+    <li><a class="dropdown-item" href="../articles/archive/sup_rnaseq.html">Archive: supervised analysis</a></li>
   </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -62,9 +64,11 @@
 <span>  <span class="va">genes</span>,</span>
 <span>  annotations <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  assay <span class="op">=</span> <span class="st">"norm"</span>,</span>
-<span>  gene_name <span class="op">=</span> <span class="st">"gene_name"</span>,</span>
+<span>  gene_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  annotation_prop <span class="op">=</span> <span class="fl">0.1</span>,</span>
 <span>  annotation_colors <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  scale <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  center <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  fname <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  fwidth <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>  fheight <span class="op">=</span> <span class="fl">5</span>,</span>
@@ -81,7 +85,9 @@
 
 
 <dt id="arg-genes">genes<a class="anchor" aria-label="anchor" href="#arg-genes"></a></dt>
-<dd><p>A character vector of gene identifiers (e.g., `gene_name`) to include in the heatmap.</p></dd>
+<dd><p>Either a character vector of gene identifiers (e.g., `gene_name`) to include
+in the heatmap, or a named list of such vectors (e.g. one per pathway or gene signature) to
+produce a row-faceted heatmap, with each list element shown as its own labeled row group.</p></dd>
 
 
 <dt id="arg-annotations">annotations<a class="anchor" aria-label="anchor" href="#arg-annotations"></a></dt>
@@ -93,7 +99,7 @@
 
 
 <dt id="arg-gene-name">gene_name<a class="anchor" aria-label="anchor" href="#arg-gene-name"></a></dt>
-<dd><p>A character string specifying the gene identifier column in `rowData(expData)`. Default is `"gene_name"`.</p></dd>
+<dd><p>A character string specifying the gene identifier column in `rowData(expData)`. Default is `NULL` (use row names).</p></dd>
 
 
 <dt id="arg-annotation-prop">annotation_prop<a class="anchor" aria-label="anchor" href="#arg-annotation-prop"></a></dt>
@@ -102,6 +108,14 @@
 
 <dt id="arg-annotation-colors">annotation_colors<a class="anchor" aria-label="anchor" href="#arg-annotation-colors"></a></dt>
 <dd><p>A named list of colors for the annotation tracks. Default is `NULL` (automatic coloring).</p></dd>
+
+
+<dt id="arg-scale">scale<a class="anchor" aria-label="anchor" href="#arg-scale"></a></dt>
+<dd><p>Logical, whether to scale the expression values across genes (rows). Default is `TRUE`.</p></dd>
+
+
+<dt id="arg-center">center<a class="anchor" aria-label="anchor" href="#arg-center"></a></dt>
+<dd><p>Logical, whether to center the expression values across genes (rows). Default is `TRUE`.</p></dd>
 
 
 <dt id="arg-fname">fname<a class="anchor" aria-label="anchor" href="#arg-fname"></a></dt>
@@ -117,7 +131,7 @@
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Additional arguments passed to the underlying heatmap plotting functions.</p></dd>
+<dd><p>Additional arguments passed to <a href="https://rdrr.io/pkg/ggheatmapper/man/ggheatmap.html" class="external-link">ggheatmap</a>.</p></dd>
 
 </dl></div>
     <div class="section level2">

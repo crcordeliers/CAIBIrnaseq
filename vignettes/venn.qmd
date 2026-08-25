@@ -287,8 +287,8 @@ dir.create("results", "macrophage", "pathways")
 
 pathway_collections <- c("CP:KEGG_MEDICUS")
 
-pathways <- get_annotation_collection(pathway_collections, 
-                                      species = "human")
+pathways <- get_annotation_collection(pathway_collections,
+                                      species = "Homo sapiens")
 scores_airway <- score_pathways(airway, pathways, verbose = FALSE)
 scores_macrophage <- score_pathways(macrophage, pathways, verbose = FALSE)
 

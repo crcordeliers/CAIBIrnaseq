@@ -34,9 +34,10 @@ cluster_k_hc <- function(data, k, pca = TRUE, n_pcs = 10,
     if (!is.numeric(n_pcs) || length(n_pcs) != 1 || n_pcs <= 0 || n_pcs != floor(n_pcs)) {
       stop("Error: `n_pcs` must be a positive integer.")
     }
-    if (n_pcs > nrow(data)) {
-      warning("Warning: `n_pcs` is greater than the number of features. Using all features.")
-      n_pcs <- nrow(data)
+    max_pcs <- min(nrow(data), ncol(data))
+    if (n_pcs > max_pcs) {
+      warning("Warning: `n_pcs` is greater than the number of components `prcomp` can produce (", max_pcs, "). Using ", max_pcs, " components.")
+      n_pcs <- max_pcs
     }
   }
 

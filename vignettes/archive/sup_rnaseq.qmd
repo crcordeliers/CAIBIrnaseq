@@ -10,7 +10,12 @@ format:
     lightbox: true
 ---
 
-<img src="../man/figures/CAIBI.png" align="right" width="120"/>
+<img src="../../man/figures/CAIBI.png" align="right" width="120"/>
+
+> **Archived.** This notebook has been superseded by the consolidated
+> [RNA-seq Analysis Walkthrough](../rnaseq_analysis.html), which combines
+> the supervised and unsupervised workflows into a single narrative. It's
+> kept here for reference only and is no longer actively maintained.
 
 For the supervised and unsupervised analyses, we are using an open dataset which is given by the `airway` package. It provides a gene expression dataset derived from **human bronchial epithelial cells**, treated or not with **dexamethasone** (a corticosteroid).
 
@@ -234,7 +239,7 @@ First, we specify which collections to pull from MSIGdb and the species (matchin
 
 ```{r}
 collections <- c("Hallmark", "GO:BP")
-species <- "human"
+species <- "Homo sapiens"
 
 pathways <- get_annotation_collection(collections,
                                       species = species)
